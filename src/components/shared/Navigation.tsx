@@ -1,0 +1,65 @@
+import React from 'react';
+import { useRole } from '@/contexts/RoleContext';
+import { Button } from '@/components/ui/button';
+import { Home, User, Shield, Tv } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+export const Navigation: React.FC = () => {
+  const { role, setRole, playerName, setPlayerId, setPlayerName } = useRole();
+  const navigate = useNavigate();
+
+  const handleGoHome = () => {
+    setRole(null);
+    setPlayerId(null);
+    setPlayerName(null);
+    navigate('/');
+  };
+
+  const getRoleIcon = () => {
+    switch (role) {
+      case 'player':
+        return <User className="w-4 h-4" />;
+      case 'admin':
+        return <Shield className="w-4 h-4" />;
+      case 'tv':
+        return <Tv className="w-4 h-4" />;
+      default:
+        return null;
+    }
+  };
+
+  const getRoleLabel = () => {
+    switch (role) {
+      case 'player':
+        return playerName || 'Giocatore';
+      case 'admin':
+        return 'Admin';
+      case 'tv':
+        return 'TV Show';
+      default:
+        return '';
+    }
+  };
+
+  if (!role) return null;
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-sm border-b border-border">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <Button
+          variant="ghost"
+          onClick={handleGoHome}
+          className="flex items-center gap-2 text-primary hover:text-primary/80"
+        >
+          <Home className="w-5 h-5" />
+          <span className="font-display text-lg">Tony Buitony Cup</span>
+        </Button>
+
+        <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
+          {getRoleIcon()}
+          <span className="font-game text-sm">{getRoleLabel()}</span>
+        </div>
+      </div>
+    </nav>
+  );
+};
