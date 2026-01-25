@@ -4,6 +4,7 @@ import { useTVCommands } from '@/hooks/useTVCommands';
 import { WaitingMode } from './WaitingMode';
 import { RevealMode } from './RevealMode';
 import { WinnerCelebration } from './WinnerCelebration';
+import { AnimatedBackground } from './AnimatedBackground';
 import { Maximize, Minimize } from 'lucide-react';
 
 export const TVShowView: React.FC = () => {
@@ -46,7 +47,10 @@ export const TVShowView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated background for burn-in protection */}
+      <AnimatedBackground />
+      
       <Button
         onClick={toggleFullscreen}
         className="fixed top-4 right-4 z-50 bg-muted/50 hover:bg-muted text-foreground"
@@ -59,7 +63,9 @@ export const TVShowView: React.FC = () => {
         )}
       </Button>
 
-      {renderContent()}
+      <div className="relative z-10">
+        {renderContent()}
+      </div>
     </div>
   );
 };

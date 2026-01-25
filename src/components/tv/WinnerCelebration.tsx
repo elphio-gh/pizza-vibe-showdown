@@ -1,33 +1,43 @@
 import React, { useMemo } from 'react';
 import { usePizzas } from '@/hooks/usePizzas';
 import { useVotes } from '@/hooks/useVotes';
+import { usePlayers } from '@/hooks/usePlayers';
 import { Confetti } from '@/components/effects/Confetti';
 import { ThugLifeGlasses } from '@/components/effects/ThugLifeGlasses';
-import { PizzaWithScore, calculatePizzaScore } from '@/types/database';
+import { PizzaWithScore, calculatePizzaScore, getRankedPizzas } from '@/types/database';
+import { motion } from 'framer-motion';
 
 export const WinnerCelebration: React.FC = () => {
   const { pizzas } = usePizzas();
   const { votes } = useVotes();
+  const { players } = usePlayers();
 
-  const winner: PizzaWithScore | null = useMemo(() => {
-    if (pizzas.length === 0) return null;
+  const { winners, isTie } = useMemo(() => {
+    if (pizzas.length === 0) return { winners: [], isTie: false };
 
-    const pizzasWithScores = pizzas.map((pizza) => {
+    const pizzasWithScores: PizzaWithScore[] = pizzas.map((pizza) => {
       const pizzaVotes = votes.filter((v) => v.pizza_id === pizza.id);
+      const registeredByPlayer = players.find(p => p.id === pizza.registered_by);
       return {
         ...pizza,
         averageScore: calculatePizzaScore(pizzaVotes),
         voteCount: pizzaVotes.length,
         votes: pizzaVotes,
+        registeredByPlayer,
       };
     });
 
-    return pizzasWithScores.reduce((best, current) =>
-      current.averageScore > best.averageScore ? current : best
-    );
-  }, [pizzas, votes]);
+    const rankedGroups = getRankedPizzas(pizzasWithScores);
+    if (rankedGroups.length === 0) return { winners: [], isTie: false };
 
-  if (!winner) {
+    const topGroup = rankedGroups[0];
+    return {
+      winners: topGroup,
+      isTie: topGroup.length > 1,
+    };
+  }, [pizzas, votes, players]);
+
+  if (winners.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="font-game text-2xl text-muted-foreground">
@@ -42,40 +52,94 @@ export const WinnerCelebration: React.FC = () => {
       <Confetti />
 
       <div className="text-center space-y-8 z-10 animate-bounce-in">
-        <div className="text-[150px] md:text-[200px] animate-float">🏆</div>
+        <motion.div 
+          className="text-[120px] md:text-[180px]"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            rotate: [0, 10, -10, 0]
+          }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          🏆
+        </motion.div>
 
         <h1 className="font-display text-5xl md:text-8xl text-secondary text-glow-yellow">
-          VINCITORE!
+          {isTie ? 'VINCITORI!' : 'VINCITORE!'}
         </h1>
 
         <ThugLifeGlasses />
 
-        <div className="bg-gradient-to-r from-yellow-500/30 to-amber-500/30 rounded-3xl p-8 md:p-12 border-4 border-yellow-500 box-glow-yellow">
-          <div className="text-8xl mb-4">🍕</div>
-          
-          <div className="font-display text-4xl md:text-6xl text-foreground mb-2">
-            Pizza #{winner.number}
-          </div>
-          
-          <div className="font-game text-2xl md:text-3xl text-muted-foreground mb-6">
-            {winner.brand} - {winner.flavor}
-          </div>
+        {/* Winners Display */}
+        <div className={`flex flex-wrap justify-center gap-6 ${isTie ? 'max-w-4xl' : ''}`}>
+          {winners.map((winner, index) => (
+            <motion.div
+              key={winner.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.3 }}
+              className="bg-gradient-to-r from-secondary/30 to-primary/30 rounded-3xl p-6 md:p-10 border-4 border-secondary box-glow-yellow"
+            >
+              <div className="text-6xl md:text-8xl mb-4">🍕</div>
+              
+              <div className="font-display text-3xl md:text-5xl text-foreground mb-2">
+                Pizza #{winner.number}
+              </div>
+              
+              <div className="font-game text-xl md:text-2xl text-muted-foreground mb-4">
+                {winner.brand} - {winner.flavor}
+              </div>
 
-          <div className="font-display text-6xl md:text-9xl text-green-400 text-glow-yellow">
-            {winner.averageScore.toFixed(1)}
-          </div>
-          
-          <div className="font-game text-xl text-muted-foreground mt-2">
-            con {winner.voteCount} voti
-          </div>
+              {/* Winner's username */}
+              {winner.registeredByPlayer && (
+                <div className="p-3 bg-primary/20 rounded-lg border border-primary/50 mb-4">
+                  <p className="font-game text-sm text-muted-foreground">Registrata da:</p>
+                  <p className="font-display text-2xl md:text-3xl text-primary">
+                    🎉 {winner.registeredByPlayer.username} 🎉
+                  </p>
+                </div>
+              )}
+
+              <div className="font-display text-5xl md:text-7xl text-accent text-glow-yellow">
+                {winner.averageScore.toFixed(1)}
+              </div>
+              
+              <div className="font-game text-lg text-muted-foreground mt-2">
+                con {winner.voteCount} voti
+              </div>
+            </motion.div>
+          ))}
         </div>
 
+        {isTie && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="text-center"
+          >
+            <p className="font-display text-3xl text-secondary animate-pulse-glow">
+              🎊 EX AEQUO! 🎊
+            </p>
+          </motion.div>
+        )}
+
         <div className="flex justify-center gap-4 text-5xl">
-          <span className="animate-float" style={{ animationDelay: '0s' }}>🎉</span>
-          <span className="animate-float" style={{ animationDelay: '0.15s' }}>🥳</span>
-          <span className="animate-float" style={{ animationDelay: '0.3s' }}>🎊</span>
-          <span className="animate-float" style={{ animationDelay: '0.45s' }}>🎸</span>
-          <span className="animate-float" style={{ animationDelay: '0.6s' }}>🕶️</span>
+          {['🎉', '🥳', '🎊', '🎸', '🕶️'].map((emoji, i) => (
+            <motion.span 
+              key={i}
+              animate={{ 
+                y: [0, -15, 0],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{ 
+                duration: 1.5, 
+                repeat: Infinity, 
+                delay: i * 0.15 
+              }}
+            >
+              {emoji}
+            </motion.span>
+          ))}
         </div>
       </div>
     </div>

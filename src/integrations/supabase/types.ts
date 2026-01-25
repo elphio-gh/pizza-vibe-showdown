@@ -53,19 +53,63 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_confirmed: boolean
+          is_online: boolean
+          last_seen: string | null
           username: string
         }
         Insert: {
           created_at?: string
           id?: string
+          is_confirmed?: boolean
+          is_online?: boolean
+          last_seen?: string | null
           username: string
         }
         Update: {
           created_at?: string
           id?: string
+          is_confirmed?: boolean
+          is_online?: boolean
+          last_seen?: string | null
           username?: string
         }
         Relationships: []
+      }
+      sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          is_active: boolean
+          player_id: string | null
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          player_id?: string | null
+          token: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          player_id?: string | null
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tv_commands: {
         Row: {
