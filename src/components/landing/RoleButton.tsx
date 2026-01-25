@@ -8,6 +8,7 @@ interface RoleButtonProps {
   emoji: string;
   onClick: () => void;
   variant: 'orange' | 'blue' | 'pink';
+  size?: 'default' | 'small';
 }
 
 const variantStyles = {
@@ -21,21 +22,25 @@ export const RoleButton: React.FC<RoleButtonProps> = ({
   label, 
   emoji, 
   onClick, 
-  variant 
+  variant,
+  size = 'default' 
 }) => {
+  const isSmall = size === 'small';
+
   return (
     <button
       onClick={onClick}
       className={cn(
-        'relative w-full max-w-xs p-8 rounded-2xl transition-all duration-300 transform',
-        'flex flex-col items-center gap-4',
+        'relative w-full max-w-xs rounded-2xl transition-all duration-300 transform',
+        'flex flex-col items-center', 
         'border-4 border-foreground/20',
-        variantStyles[variant]
+        variantStyles[variant],
+        isSmall ? 'p-3 gap-2' : 'p-8 gap-4' 
       )}
     >
-      <div className="text-5xl animate-float">{emoji}</div>
-      <Icon className="w-16 h-16" />
-      <span className="font-display text-3xl tracking-wide">{label}</span>
+      <div className={cn("animate-float", isSmall ? "text-xl" : "text-5xl")}>{emoji}</div>
+      <Icon className={cn(isSmall ? "w-8 h-8" : "w-16 h-16")} />
+      <span className={cn("font-display tracking-wide", isSmall ? "text-lg" : "text-3xl")}>{label}</span>
     </button>
   );
 };

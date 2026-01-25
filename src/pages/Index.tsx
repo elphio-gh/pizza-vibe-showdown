@@ -60,6 +60,7 @@ const Index: React.FC = () => {
           emoji="👑"
           onClick={handleAdminClick}
           variant="blue"
+          size="small"
         />
         <RoleButton
           icon={Tv}
@@ -67,6 +68,7 @@ const Index: React.FC = () => {
           emoji="📺"
           onClick={handleTVClick}
           variant="pink"
+          size="small"
         />
       </div>
 
