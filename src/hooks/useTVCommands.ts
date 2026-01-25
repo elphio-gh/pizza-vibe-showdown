@@ -80,6 +80,7 @@ export const useTVCommands = () => {
   const setWaiting = () => updateCommand.mutate({ command: 'waiting', current_position: 0 });
   const setReveal = () => updateCommand.mutate({ command: 'reveal', current_position: 0 });
   const setWinner = () => updateCommand.mutate({ command: 'winner' });
+  
   const nextPosition = () => {
     if (tvCommand) {
       updateCommand.mutate({ 
@@ -88,6 +89,23 @@ export const useTVCommands = () => {
       });
     }
   };
+  
+  const prevPosition = () => {
+    if (tvCommand && tvCommand.current_position > 0) {
+      updateCommand.mutate({ 
+        command: 'reveal', 
+        current_position: tvCommand.current_position - 1 
+      });
+    }
+  };
+  
+  const setPosition = (position: number) => {
+    updateCommand.mutate({ 
+      command: 'reveal', 
+      current_position: position 
+    });
+  };
+  
   const resetGame = () => updateCommand.mutate({ command: 'reset', current_position: 0 });
 
   return {
@@ -99,6 +117,8 @@ export const useTVCommands = () => {
     setReveal,
     setWinner,
     nextPosition,
+    prevPosition,
+    setPosition,
     resetGame,
   };
 };

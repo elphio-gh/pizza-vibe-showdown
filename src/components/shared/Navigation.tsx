@@ -3,15 +3,23 @@ import { useRole } from '@/contexts/RoleContext';
 import { Button } from '@/components/ui/button';
 import { Home, User, Shield, Tv } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ProfileSwitcher } from '@/components/player/ProfileSwitcher';
+import { useCurrentSession } from '@/hooks/useLocalStorage';
 
-export const Navigation: React.FC = () => {
+interface NavigationProps {
+  showProfileSwitcher?: boolean;
+}
+
+export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = false }) => {
   const { role, setRole, playerName, setPlayerId, setPlayerName } = useRole();
+  const { clearSession } = useCurrentSession();
   const navigate = useNavigate();
 
   const handleGoHome = () => {
     setRole(null);
     setPlayerId(null);
     setPlayerName(null);
+    clearSession();
     navigate('/');
   };
 
@@ -55,9 +63,15 @@ export const Navigation: React.FC = () => {
           <span className="font-display text-lg">Tony Buitony Cup</span>
         </Button>
 
-        <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
-          {getRoleIcon()}
-          <span className="font-game text-sm">{getRoleLabel()}</span>
+        <div className="flex items-center gap-2">
+          {showProfileSwitcher && role === 'player' ? (
+            <ProfileSwitcher />
+          ) : (
+            <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
+              {getRoleIcon()}
+              <span className="font-game text-sm">{getRoleLabel()}</span>
+            </div>
+          )}
         </div>
       </div>
     </nav>
