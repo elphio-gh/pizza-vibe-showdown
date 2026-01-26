@@ -14,15 +14,21 @@ interface PasswordModalProps {
   onClose: () => void;
   onSuccess: () => void;
   title: string;
+  role: 'admin' | 'tv' | 'player';
 }
 
-const CORRECT_PASSWORD = 'pizza';
+const ROLE_PASSWORDS: Record<string, string> = {
+  admin: 'alfonso',
+  tv: 'francesco',
+  player: 'pizza'
+};
 
 export const PasswordModal: React.FC<PasswordModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
   title,
+  role,
 }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
@@ -30,7 +36,7 @@ export const PasswordModal: React.FC<PasswordModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.toLowerCase() === CORRECT_PASSWORD) {
+    if (password.toLowerCase() === ROLE_PASSWORDS[role]) {
       setPassword('');
       setError(false);
       onSuccess();

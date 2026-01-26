@@ -43,53 +43,80 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
     );
   }
 
+  // Filter out the player's own pizza (self-voting prevention)
+  const votablePizzas = pizzas.filter(p => p.registered_by !== playerId);
+
+  // Check if user has their own pizza registered
+  const userPizza = pizzas.find(p => p.registered_by === playerId);
+
   return (
     <div className="space-y-3">
       <h2 className="font-display text-2xl text-accent">
-        Pizze da Votare ({pizzas.length})
+        Pizze da Votare ({votablePizzas.length})
       </h2>
       
-      {pizzas.map((pizza) => {
-        const existingVote = getVoteForPizza(pizza.id);
-        const hasVoted = !!existingVote;
+      {userPizza && (
+        <div className="p-3 bg-primary/10 rounded-lg border border-primary/30 mb-4">
+          <p className="font-game text-sm text-primary">
+            🍕 La tua pizza: <strong>#{userPizza.number}</strong> - {userPizza.brand} ({userPizza.flavor})
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Non puoi votare la tua pizza
+          </p>
+        </div>
+      )}
 
-        return (
-          <Card
-            key={pizza.id}
-            onClick={() => onSelectPizza(pizza, existingVote)}
-            className={`cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
-              hasVoted 
-                ? 'bg-green-500/10 border-green-500/50' 
-                : 'bg-card border-accent/30 hover:border-accent'
-            }`}
-          >
-            <CardContent className="py-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="text-3xl">🍕</div>
-                <div>
-                  <div className="font-display text-xl">
-                    Pizza #{pizza.number}
-                  </div>
-                  <div className="font-game text-sm text-muted-foreground">
-                    {pizza.brand} - {pizza.flavor}
+      {votablePizzas.length === 0 ? (
+        <Card className="bg-muted/30 border-dashed border-2 border-muted">
+          <CardContent className="py-8 text-center">
+            <p className="font-game text-muted-foreground">
+              Non ci sono altre pizze da votare al momento.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        votablePizzas.map((pizza) => {
+          const existingVote = getVoteForPizza(pizza.id);
+          const hasVoted = !!existingVote;
+
+          return (
+            <Card
+              key={pizza.id}
+              onClick={() => onSelectPizza(pizza, existingVote)}
+              className={`cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
+                hasVoted 
+                  ? 'bg-accent/10 border-accent/50' 
+                  : 'bg-card border-accent/30 hover:border-accent'
+              }`}
+            >
+              <CardContent className="py-4 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="text-3xl">🍕</div>
+                  <div>
+                    <div className="font-display text-xl">
+                      Pizza #{pizza.number}
+                    </div>
+                    <div className="font-game text-sm text-muted-foreground">
+                      {pizza.brand} - {pizza.flavor}
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                {hasVoted ? (
-                  <div className="flex items-center gap-1 px-3 py-1 bg-green-500/20 rounded-full">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span className="font-game text-sm text-green-500">Votata</span>
-                  </div>
-                ) : (
-                  <ChevronRight className="w-6 h-6 text-accent" />
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+                
+                <div className="flex items-center gap-2">
+                  {hasVoted ? (
+                    <div className="flex items-center gap-1 px-3 py-1 bg-accent/20 rounded-full">
+                      <Check className="w-4 h-4 text-accent" />
+                      <span className="font-game text-sm text-accent">Votata</span>
+                    </div>
+                  ) : (
+                    <ChevronRight className="w-6 h-6 text-accent" />
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })
+      )}
     </div>
   );
 };
