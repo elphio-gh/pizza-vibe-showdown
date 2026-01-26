@@ -53,10 +53,14 @@ export const usePizzas = () => {
   });
 
   const updatePizza = useMutation({
-    mutationFn: async ({ id, brand, flavor }: { id: string; brand: string; flavor: string }) => {
+    mutationFn: async ({ id, brand, flavor, registered_by }: { id: string; brand: string; flavor: string; registered_by?: string | null }) => {
+      const updateData: { brand: string; flavor: string; registered_by?: string | null } = { brand, flavor };
+      if (registered_by !== undefined) {
+        updateData.registered_by = registered_by;
+      }
       const { data, error } = await supabase
         .from('pizzas')
-        .update({ brand, flavor })
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();
@@ -71,6 +75,9 @@ export const usePizzas = () => {
 
   const deletePizza = useMutation({
     mutationFn: async (id: string) => {
+      // First delete related votes
+      await supabase.from('votes').delete().eq('pizza_id', id);
+      // Then delete pizza
       const { error } = await supabase
         .from('pizzas')
         .delete()
@@ -80,6 +87,7 @@ export const usePizzas = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pizzas'] });
+      queryClient.invalidateQueries({ queryKey: ['votes'] });
     },
   });
 

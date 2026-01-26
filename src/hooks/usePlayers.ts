@@ -52,10 +52,48 @@ export const usePlayers = () => {
     },
   });
 
+  const updatePlayer = useMutation({
+    mutationFn: async ({ id, username }: { id: string; username: string }) => {
+      const { data, error } = await supabase
+        .from('players')
+        .update({ username })
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data as Player;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['players'] });
+    },
+  });
+
+  const deletePlayer = useMutation({
+    mutationFn: async (id: string) => {
+      // First delete related votes
+      await supabase.from('votes').delete().eq('player_id', id);
+      // Then delete related pizzas
+      await supabase.from('pizzas').delete().eq('registered_by', id);
+      // Then delete sessions
+      await supabase.from('sessions').delete().eq('player_id', id);
+      // Finally delete player
+      const { error } = await supabase.from('players').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['players'] });
+      queryClient.invalidateQueries({ queryKey: ['pizzas'] });
+      queryClient.invalidateQueries({ queryKey: ['votes'] });
+    },
+  });
+
   return {
     players,
     isLoading,
     error,
     createPlayer,
+    updatePlayer,
+    deletePlayer,
   };
 };
