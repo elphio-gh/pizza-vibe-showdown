@@ -4,9 +4,13 @@ import { useRole } from '@/contexts/RoleContext';
 import { Navigation } from '@/components/shared/Navigation';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { PizzaManager } from '@/components/admin/PizzaManager';
+import { PlayerManager } from '@/components/admin/PlayerManager';
 import { VoteManager } from '@/components/admin/VoteManager';
 import { AdvancedTVController } from '@/components/admin/AdvancedTVController';
+import { ResetGameButton } from '@/components/admin/ResetGameButton';
 import { PizzaRegistration } from '@/components/player/PizzaRegistration';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Settings } from 'lucide-react';
 
 const AdminPage: React.FC = () => {
   const { role } = useRole();
@@ -34,8 +38,20 @@ const AdminPage: React.FC = () => {
           <div className="space-y-6">
             <AdvancedTVController />
             <PizzaRegistration />
+            <Card className="bg-card border-2 border-destructive/50">
+              <CardHeader>
+                <CardTitle className="font-display text-xl text-destructive flex items-center gap-3">
+                  <Settings className="w-6 h-6" />
+                  Azioni Pericolose
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResetGameButton />
+              </CardContent>
+            </Card>
           </div>
           <div className="space-y-6">
+            <PlayerManager />
             <PizzaManager />
             <VoteManager />
           </div>

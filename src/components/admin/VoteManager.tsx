@@ -99,10 +99,12 @@ export const VoteManager: React.FC = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annulla</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive">
+            <AlertDialogCancel asChild>
+              <Button variant="outline">Annulla</Button>
+            </AlertDialogCancel>
+            <Button onClick={handleDelete} variant="destructive">
               Elimina
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
