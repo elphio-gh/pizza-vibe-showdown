@@ -68,3 +68,32 @@ export const useCurrentSession = () => {
     clearSession
   };
 };
+
+// Role-specific password storage
+export interface RoleAuth {
+  admin: boolean;
+  tv: boolean;
+  player: boolean;
+}
+
+export const useRoleAuth = () => {
+  const [auth, setAuth] = useLocalStorage<RoleAuth>('tbc_role_auth', {
+    admin: false,
+    tv: false,
+    player: false
+  });
+
+  const setRoleAuthenticated = (role: 'admin' | 'tv' | 'player') => {
+    setAuth({ ...auth, [role]: true });
+  };
+
+  const isRoleAuthenticated = (role: 'admin' | 'tv' | 'player') => {
+    return auth[role];
+  };
+
+  const clearAllAuth = () => {
+    setAuth({ admin: false, tv: false, player: false });
+  };
+
+  return { auth, setRoleAuthenticated, isRoleAuthenticated, clearAllAuth };
+};

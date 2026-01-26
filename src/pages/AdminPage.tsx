@@ -5,7 +5,7 @@ import { Navigation } from '@/components/shared/Navigation';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { PizzaManager } from '@/components/admin/PizzaManager';
 import { VoteManager } from '@/components/admin/VoteManager';
-import { TVController } from '@/components/admin/TVController';
+import { AdvancedTVController } from '@/components/admin/AdvancedTVController';
 import { PizzaRegistration } from '@/components/player/PizzaRegistration';
 
 const AdminPage: React.FC = () => {
@@ -32,7 +32,7 @@ const AdminPage: React.FC = () => {
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-6">
-            <TVController />
+            <AdvancedTVController />
             <PizzaRegistration />
           </div>
           <div className="space-y-6">
