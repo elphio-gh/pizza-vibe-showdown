@@ -92,11 +92,9 @@ export const useTVCommands = () => {
     mutationFn: async ({
       command,
       current_position,
-      retryCount = 0
     }: {
       command: TVCommand['command'];
       current_position?: number;
-      retryCount?: number;
     }): Promise<TVCommand> => {
       // Fetch existing ID
       const { data: existing } = await supabase
@@ -109,7 +107,7 @@ export const useTVCommands = () => {
       // Convert to DB format
       const dbPayload = transformToDB(command, current_position ?? 0);
 
-      let resultData;
+      let resultData: LegacyTVCommand;
 
       if (existing) {
         const { data, error } = await supabase
@@ -124,7 +122,7 @@ export const useTVCommands = () => {
           .single();
 
         if (error) throw error;
-        resultData = data;
+        resultData = data as LegacyTVCommand;
       } else {
         const { data, error } = await supabase
           .from('tv_commands')
@@ -136,12 +134,14 @@ export const useTVCommands = () => {
           .single();
 
         if (error) throw error;
-        resultData = data;
+        resultData = data as LegacyTVCommand;
       }
 
       // Return transformed back to App format
-      return transformFromDB(resultData as LegacyTVCommand);
+      return transformFromDB(resultData);
     },
+    // Use built-in retry for network stability
+    retry: 3,
     onMutate: async ({ command, current_position }) => {
       await queryClient.cancelQueries({ queryKey: ['tv-command'] });
       const previousCommand = queryClient.getQueryData<TVCommand>(['tv-command']);
@@ -160,13 +160,7 @@ export const useTVCommands = () => {
       if (context?.previousCommand) {
         queryClient.setQueryData(['tv-command'], context.previousCommand);
       }
-      const retryCount = variables.retryCount ?? 0;
-      if (retryCount < MAX_RETRIES) {
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retryCount + 1)));
-        updateCommand.mutate({ ...variables, retryCount: retryCount + 1 });
-      } else {
-        console.error('Final retry failed for command:', variables.command, err);
-      }
+      console.error('TV Command failed after retries:', variables.command, err);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tv-command'] });

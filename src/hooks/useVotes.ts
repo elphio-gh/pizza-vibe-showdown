@@ -13,7 +13,7 @@ export const useVotes = () => {
         .from('votes')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data as Vote[];
     },
@@ -23,7 +23,7 @@ export const useVotes = () => {
   useEffect(() => {
     const channel = supabase
       .channel('votes-changes')
-      .on('postgres_changes', 
+      .on('postgres_changes',
         { event: '*', schema: 'public', table: 'votes' },
         () => {
           queryClient.invalidateQueries({ queryKey: ['votes'] });
@@ -43,10 +43,11 @@ export const useVotes = () => {
         .insert([vote])
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
+    retry: 3,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['votes'] });
     },
@@ -60,7 +61,7 @@ export const useVotes = () => {
         .eq('id', id)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -75,7 +76,7 @@ export const useVotes = () => {
         .from('votes')
         .delete()
         .eq('id', id);
-      
+
       if (error) throw error;
     },
     onSuccess: () => {

@@ -9,7 +9,6 @@ import { Pizza, Vote } from '@/types/database';
 import { useCurrentSession, useRecentProfiles } from '@/hooks/useLocalStorage';
 import { useSessions } from '@/hooks/useSessions';
 import { usePlayers } from '@/hooks/usePlayers';
-import { usePlayerPresence } from '@/hooks/usePlayerPresence';
 import { usePizzas } from '@/hooks/usePizzas';
 import { Button } from '@/components/ui/button';
 import { Pizza as PizzaIcon, Plus } from 'lucide-react';
@@ -26,8 +25,6 @@ const PlayerPage: React.FC = () => {
   const { createPlayer, players, updatePlayer } = usePlayers();
   const { pizzas } = usePizzas();
 
-  // Use presence tracking - auto confirms presence
-  usePlayerPresence();
 
   // Check if player has registered a pizza
   const myPizza = pizzas.find(p => p.registered_by === playerId);
