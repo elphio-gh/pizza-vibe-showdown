@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { usePizzas } from '@/hooks/usePizzas';
 import { useVotes } from '@/hooks/useVotes';
 import { usePlayers } from '@/hooks/usePlayers';
-import { Confetti } from '@/components/effects/Confetti';
+import { PizzaConfetti } from '@/components/effects/PizzaConfetti';
 import { ThugLifeGlasses } from '@/components/effects/ThugLifeGlasses';
 import { PizzaWithScore, calculatePizzaScore, getRankedPizzas, calculateVoteScore } from '@/types/database';
 import { motion } from 'framer-motion';
@@ -80,11 +80,21 @@ export const WinnerCelebration: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      <Confetti />
+    <div className="h-screen w-screen flex flex-col items-center p-6 relative overflow-hidden">
+      <PizzaConfetti />
 
-      <div className="text-center z-10 animate-bounce-in w-full max-w-7xl flex flex-col items-center">
-        <h1 className="font-display text-7xl text-secondary text-glow-yellow mb-6 flex items-center justify-center gap-4">
+      <div className={`
+        text-center z-10 w-full max-w-7xl flex flex-col items-center h-full
+        ${isTie ? 'justify-start pt-10 overflow-y-auto no-scrollbar pb-20' : 'justify-center'}
+      `}>
+        <motion.h1
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className={`
+            font-display text-secondary text-glow-yellow mb-6 flex items-center justify-center gap-4 shrink-0
+            ${isTie ? 'text-5xl md:text-6xl' : 'text-7xl'}
+          `}
+        >
           <motion.span
             className="inline-block"
             animate={{
@@ -96,12 +106,15 @@ export const WinnerCelebration: React.FC = () => {
             🏆
           </motion.span>
           {isTie ? 'VINCITORI!' : 'VINCITORE!'}
-        </h1>
+        </motion.h1>
 
         <ThugLifeGlasses />
 
         {/* Winners Display */}
-        <div className="flex flex-col items-center gap-6 w-full mt-6">
+        <div className={`
+          flex flex-col items-center w-full mt-6
+          ${isTie ? 'gap-4' : 'gap-6'}
+        `}>
           {winners.map((winner, index) => {
             const details = getPizzaDetails(winner);
             return (
@@ -111,15 +124,16 @@ export const WinnerCelebration: React.FC = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ delay: index * 0.3, type: "spring" }}
                 className={`
-                  p-6 rounded-3xl transition-all duration-500 w-full
-                  flex flex-row gap-8 items-center
-                  bg-gradient-to-br from-yellow-500/40 to-amber-500/40 border-4 border-yellow-400 box-glow-yellow
+                  rounded-3xl transition-all duration-500 w-full
+                  flex flex-row items-center
+                  bg-card/90 border-4 border-yellow-400/80 box-glow-yellow backdrop-blur-md shadow-2xl
+                  ${isTie ? 'p-4 gap-4' : 'p-6 gap-8'}
                 `}
               >
                 {/* Left Column - Trophy & Score */}
-                <div className="flex flex-col items-center justify-center min-w-[280px]">
-                  <div className="text-8xl mb-3">🥇</div>
-                  <div className="font-display text-9xl text-accent text-glow-yellow mb-2">
+                <div className="flex flex-col items-center justify-center min-w-[200px] md:min-w-[250px]">
+                  <div className={`${isTie ? 'text-6xl mb-2' : 'text-8xl mb-3'}`}>🥇</div>
+                  <div className={`font-display text-white drop-shadow-md mb-2 ${isTie ? 'text-7xl' : 'text-9xl'}`}>
                     {winner.averageScore.toFixed(1)}
                   </div>
                   <p className="font-russo text-base text-muted-foreground">
@@ -129,30 +143,30 @@ export const WinnerCelebration: React.FC = () => {
 
                 {/* Middle Column - Pizza Info */}
                 <div className="flex-1 flex flex-col justify-center">
-                  <h2 className="font-display text-6xl text-foreground mb-2 flex flex-col gap-1">
+                  <h2 className={`font-display text-foreground mb-2 flex flex-col gap-1 ${isTie ? 'text-4xl' : 'text-6xl'}`}>
                     <span>{winner.brand}</span>
                     <span>{winner.flavor}</span>
                   </h2>
-                  <p className="font-russo text-3xl text-muted-foreground/80 mb-4">
+                  <p className={`font-russo text-muted-foreground/80 mb-4 ${isTie ? 'text-2xl' : 'text-3xl'}`}>
                     Pizza #{winner.number}
                   </p>
 
                   {/* Category Averages */}
                   {details.averages && (
-                    <div className="flex flex-wrap gap-3">
-                      <div className="px-4 py-2 bg-background/50 rounded-xl text-lg font-russo border border-border/50">
+                    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
                         👀 {details.averages.aspetto.toFixed(1)}
                       </div>
-                      <div className="px-4 py-2 bg-background/50 rounded-xl text-lg font-russo border border-border/50">
+                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
                         😋 {details.averages.gusto.toFixed(1)}
                       </div>
-                      <div className="px-4 py-2 bg-background/50 rounded-xl text-lg font-russo border border-border/50">
+                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
                         🫓 {details.averages.impasto.toFixed(1)}
                       </div>
-                      <div className="px-4 py-2 bg-background/50 rounded-xl text-lg font-russo border border-border/50">
+                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
                         🧀 {details.averages.farcitura.toFixed(1)}
                       </div>
-                      <div className="px-4 py-2 bg-background/50 rounded-xl text-lg font-russo border border-border/50">
+                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
                         🎸 {details.averages.tony_factor.toFixed(1)}
                       </div>
                     </div>
@@ -160,12 +174,12 @@ export const WinnerCelebration: React.FC = () => {
                 </div>
 
                 {/* Right Column - Player Info */}
-                <div className="flex flex-col items-end justify-center gap-4 min-w-[280px]">
+                <div className="flex flex-col items-end justify-center gap-4 min-w-[200px] md:min-w-[250px]">
                   {/* Owner */}
                   {winner.registeredByPlayer && (
-                    <div className="w-full p-4 bg-secondary/20 rounded-2xl border border-secondary/40 text-center">
+                    <div className={`w-full bg-secondary/20 rounded-2xl border border-secondary/40 text-center ${isTie ? 'p-2' : 'p-4'}`}>
                       <p className="font-russo text-sm text-secondary/70 mb-1">🧑‍🍳 Portata da:</p>
-                      <p className="font-display text-3xl text-secondary">
+                      <p className={`font-display text-secondary ${isTie ? 'text-2xl' : 'text-3xl'}`}>
                         {winner.registeredByPlayer.username}
                       </p>
                     </div>
@@ -173,9 +187,9 @@ export const WinnerCelebration: React.FC = () => {
 
                   {/* Top Fan */}
                   {details.topFan && (
-                    <div className="inline-flex items-center gap-3 px-5 py-3 bg-primary/20 rounded-full border border-primary/40">
-                      <span className="text-2xl">⭐</span>
-                      <span className="font-russo text-lg text-primary">
+                    <div className={`inline-flex items-center gap-3 bg-primary/20 rounded-full border border-primary/40 ${isTie ? 'px-4 py-2' : 'px-5 py-3'}`}>
+                      <span className={`${isTie ? 'text-xl' : 'text-2xl'}`}>⭐</span>
+                      <span className={`font-russo text-primary ${isTie ? 'text-base' : 'text-lg'}`}>
                         Top Fan: <span className="font-bold">{details.topFan.username}</span>
                         <span className="text-sm ml-2 opacity-70">({details.topScore.toFixed(1)})</span>
                       </span>
@@ -192,7 +206,7 @@ export const WinnerCelebration: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
-            className="mt-4"
+            className="mt-6 shrink-0"
           >
             <p className="font-display text-4xl text-secondary animate-pulse-glow">
               🎊 EX AEQUO! 🎊
@@ -200,24 +214,6 @@ export const WinnerCelebration: React.FC = () => {
           </motion.div>
         )}
 
-        <div className="flex justify-center gap-6 text-5xl mt-6">
-          {['🎉', '🥳', '🎊', '🎸', '🕶️'].map((emoji, i) => (
-            <motion.span
-              key={i}
-              animate={{
-                y: [0, -15, 0],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                delay: i * 0.15
-              }}
-            >
-              {emoji}
-            </motion.span>
-          ))}
-        </div>
       </div>
     </div>
   );

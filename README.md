@@ -18,8 +18,9 @@
 - 🎮 **Sistema multi-ruolo** — Giocatori, Admin e TV con interfacce dedicate
 - ⚡ **Tempo reale** — Votazioni e classifica aggiornate live via Supabase
 - 📱 **QR Code** — I giocatori si uniscono scansionando un codice
-- 🏆 **Reveal cinematografico** — Classifica dal peggiore al vincitore con animazioni
-- 🎸 **Stile rockettaro** — Design dark con neon, emoji e tanta ironia
+- 🎬 **Regia TV Avanzata** — Telecomando per gestire fasi di gara, stop televoto, pausa e reveal
+- 🏆 **Reveal cinematografico** — Classifica dal peggiore al vincitore con momenti di suspense
+- 🎸 **Intrattenimento TV** — Schermata di attesa con citazioni divertenti e sfondo "Space Drift"
 - 👤 **Proprietario visibile** — Ogni pizza mostra chi l'ha registrata
 - 📲 **Navigazione mobile** — Tasto indietro del dispositivo gestito correttamente
 
@@ -30,8 +31,8 @@
 | Ruolo | Descrizione |
 |-------|-------------|
 | 🎮 **Giocatore** | Sceglie il proprio nickname, registra le proprie pizze, vota quelle degli altri su 5 categorie (Aspetto, Gusto, Impasto, Farcitura, Tony Factor) |
-| 👑 **Admin** | Gestisce la competizione: controlla giocatori, pizze, comanda la TV e conduce il reveal della classifica |
-| 📺 **TV** | Schermo da proiettare: mostra QR per unirsi, statistiche live, classifica animata e celebrazione del vincitore |
+| 👑 **Admin** | **Il Regista**: gestisce la competizione tramite il telecomando "Regia TV". Può mettere in stop il televoto, mandare la pubblicità, e condurre il reveal finale con precisione millimetrica. |
+| 📺 **TV** | Lo schermo principale: intrattiene nell'attesa con citazioni e meme, mostra lo stop al televoto, e celebra il vincitore con un reveal emozionante. |
 
 ---
 
@@ -98,12 +99,16 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 
 ## 🎬 Come Funziona una Gara
 
-1. **Preparazione** — L'admin accede e prepara la sessione
-2. **Registrazione** — I giocatori scansionano il QR sulla TV e registrano le loro pizze
-3. **Degustazione** — Si assaggiano le pizze (anonimamente numerate)
-4. **Votazione** — Ogni giocatore vota le pizze degli altri
-5. **Reveal** — L'admin avvia la classifica: dal peggiore al vincitore, una pizza alla volta
-6. **Celebrazione** — Il vincitore viene celebrato con confetti e animazioni! 🎉
+## 🎬 Come Funziona una Gara
+
+1. **Preparazione** — L'admin accede e prepara la sessione.
+2. **Registrazione** — I giocatori scansionano il QR sulla TV e registrano le loro pizze.
+3. **Degustazione** — Si assaggiano le pizze (anonimamente numerate).
+4. **Votazione** — Ogni giocatore vota le pizze degli altri.
+5. **Regia Studio** — L'admin può dichiarare lo **STOP AL TELEVOTO** o mandare la **PAUSA PUBBLICITÀ** per gestire i ritmi della serata.
+6. **Reveal** — L'admin avvia la classifica: si parte dal basso, salendo verso il podio.
+7. **Suspense Finale** — Prima del vincitore, un momento di tensione con "And the winner is...".
+8. **Celebrazione** — Il vincitore viene svelato con gloria, confetti e musica virtuale! 🎉
 
 ---
 
@@ -112,9 +117,9 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 src/
 ├── components/
-│   ├── admin/       # Dashboard e controlli admin
+│   ├── admin/       # Dashboard e Regia TV
 │   ├── player/      # Registrazione pizza e votazione
-│   ├── tv/          # Schermate TV (waiting, reveal, winner)
+│   ├── tv/          # Schermate TV (Waiting, Reveal, Winner, Pause, Stop)
 │   ├── effects/     # Confetti e animazioni
 │   └── ui/          # Componenti shadcn/ui
 ├── hooks/           # Custom hooks (usePizzas, useVotes, useTVCommands...)
@@ -136,11 +141,12 @@ src/
 
 ## 📺 Ottimizzazione TV
 
-L'interfaccia TV è ottimizzata per display **16:9** e include:
-- Anti burn-in con animazioni di sfondo
-- Modalità fullscreen
-- Tasto ESC per uscire
-- 📱 Pulsante TV nascosto su mobile (visibile solo su tablet/desktop)
+L'interfaccia TV è il cuore dello show, ottimizzata per display **16:9**:
+- **Attesa Intelligente**: Sfondo "Space Drift" anti burn-in con emoji fluttuanti.
+- **Intrattenimento**: Carosello di citazioni divertenti (e inventate) per ingannare l'attesa.
+- **Focus Visivo**: Testi grandi, contrasto elevato per leggibilità a distanza.
+- **Modalità Fullscreen**: Tasto ESC per uscire.
+- **Responsive**: Pulsante TV nascosto su mobile per evitare click accidentali.
 
 ---
 

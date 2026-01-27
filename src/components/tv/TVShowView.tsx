@@ -7,6 +7,9 @@ import { useCurrentSession } from '@/hooks/useLocalStorage';
 import { WaitingMode } from './WaitingMode';
 import { RevealMode } from './RevealMode';
 import { WinnerCelebration } from './WinnerCelebration';
+import { StopTelevotoMode } from './StopTelevotoMode';
+import { PauseMode } from './PauseMode';
+import { PreWinnerMode } from './PreWinnerMode';
 import { AnimatedBackground } from './AnimatedBackground';
 import { Maximize, Minimize } from 'lucide-react';
 
@@ -62,6 +65,12 @@ export const TVShowView: React.FC = () => {
 
   const renderContent = () => {
     switch (currentCommand) {
+      case 'stop_televote':
+        return <StopTelevotoMode />;
+      case 'pause':
+        return <PauseMode />;
+      case 'pre_winner':
+        return <PreWinnerMode />;
       case 'reveal':
       case 'next':
         return <RevealMode />;
@@ -74,11 +83,26 @@ export const TVShowView: React.FC = () => {
     }
   };
 
+  const getBackgroundVariant = (): 'default' | 'winner' | 'pre_winner' | 'stop' | 'pause' => {
+    switch (currentCommand) {
+      case 'winner':
+        return 'winner';
+      case 'pre_winner':
+        return 'pre_winner';
+      case 'stop_televote':
+        return 'stop';
+      case 'pause':
+        return 'pause';
+      default:
+        return 'default';
+    }
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Animated background for burn-in protection */}
-      <AnimatedBackground />
-      
+      <AnimatedBackground variant={getBackgroundVariant()} />
+
       <Button
         onClick={toggleFullscreen}
         className="fixed top-4 right-4 z-50 bg-muted/50 hover:bg-muted text-foreground"

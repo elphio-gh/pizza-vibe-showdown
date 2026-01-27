@@ -6,7 +6,7 @@ import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { PizzaManager } from '@/components/admin/PizzaManager';
 import { PlayerManager } from '@/components/admin/PlayerManager';
 import { VoteManager } from '@/components/admin/VoteManager';
-import { AdvancedTVController } from '@/components/admin/AdvancedTVController';
+import { TVDirectorRemote } from '@/components/admin/TVDirectorRemote';
 import { ResetGameButton } from '@/components/admin/ResetGameButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Settings } from 'lucide-react';
@@ -35,7 +35,7 @@ const AdminPage: React.FC = () => {
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-6">
-            <AdvancedTVController />
+            <TVDirectorRemote />
             <Card className="bg-card border-2 border-destructive/50">
               <CardHeader>
                 <CardTitle className="font-display text-xl text-destructive flex items-center gap-3">

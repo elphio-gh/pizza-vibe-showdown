@@ -66,7 +66,7 @@ export const RevealMode: React.FC = () => {
       const groupEnd = positionCounter + group.length;
 
       if (currentPosition > positionCounter && currentPosition <= groupEnd) {
-        return rank;
+        return rank - group.length + 1;
       }
       positionCounter = groupEnd;
       rank -= group.length;
@@ -141,13 +141,14 @@ export const RevealMode: React.FC = () => {
         className={`
           p-6 rounded-3xl transition-all duration-500 w-full
           flex flex-row gap-8 items-center
+          backdrop-blur-md shadow-xl
           ${isWinner
-            ? 'bg-gradient-to-br from-yellow-500/40 to-amber-500/40 border-4 border-yellow-400 box-glow-yellow'
+            ? 'bg-card/90 border-4 border-yellow-400/80 box-glow-yellow'
             : isSecond
-              ? 'bg-gradient-to-br from-gray-400/30 to-gray-500/30 border-3 border-gray-300'
+              ? 'bg-card/80 border-3 border-gray-300/50'
               : isThird
-                ? 'bg-gradient-to-br from-amber-700/30 to-orange-700/30 border-3 border-amber-600'
-                : 'bg-muted/40 border-2 border-border'
+                ? 'bg-card/80 border-3 border-amber-600/50'
+                : 'bg-card/80 border-2 border-border/50'
           }
         `}
       >
@@ -168,7 +169,7 @@ export const RevealMode: React.FC = () => {
           )}
 
           {/* Score */}
-          <div className={`font-display text-8xl mb-2 ${pizza.averageScore >= 8 ? 'text-accent text-glow-yellow' :
+          <div className={`font-display text-8xl mb-2 drop-shadow-md ${pizza.averageScore >= 8 ? 'text-white' :
             pizza.averageScore >= 6 ? 'text-secondary' :
               pizza.averageScore >= 4 ? 'text-primary' :
                 'text-destructive'
@@ -216,22 +217,30 @@ export const RevealMode: React.FC = () => {
         <div className="flex flex-col items-end justify-center gap-3 min-w-[280px]">
           {/* Owner */}
           {pizza.registeredByPlayer && (
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 rounded-full border border-secondary/40">
-              <span className="text-2xl">🧑‍🍳</span>
-              <span className="font-russo text-lg text-secondary">
-                <span className="font-bold">{pizza.registeredByPlayer.username}</span>
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-xs uppercase tracking-widest text-muted-foreground font-russo">
+                🧑‍🍳 Portata da:
               </span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 rounded-full border border-secondary/40">
+                <span className="font-russo text-lg text-secondary">
+                  <span className="font-bold">{pizza.registeredByPlayer.username}</span>
+                </span>
+              </div>
             </div>
           )}
 
           {/* Top Fan */}
           {details.topFan && (
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 rounded-full border border-primary/40">
-              <span className="text-xl">⭐</span>
-              <span className="font-russo text-base text-primary">
-                <span className="font-bold">{details.topFan.username}</span>
-                <span className="text-sm ml-2 opacity-70">({details.topScore.toFixed(1)})</span>
+            <div className="flex flex-col items-end gap-1 mt-2">
+              <span className="text-xs uppercase tracking-widest text-muted-foreground font-russo">
+                ⭐ Top Fan:
               </span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 rounded-full border border-primary/40">
+                <span className="font-russo text-base text-primary">
+                  <span className="font-bold">{details.topFan.username}</span>
+                  <span className="text-sm ml-2 opacity-70">({details.topScore.toFixed(1)})</span>
+                </span>
+              </div>
             </div>
           )}
         </div>
@@ -241,9 +250,28 @@ export const RevealMode: React.FC = () => {
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center p-6 overflow-hidden">
-      <h1 className="font-display text-5xl md:text-7xl text-primary text-glow-orange mb-6">
-        🏆 CLASSIFICA 🏆
-      </h1>
+      {/* Position Title - Show explicit position number with Fun Emojis */}
+      {currentPosition > 0 && currentGroup.length > 0 && (
+        <motion.div
+          key={`pos-${currentRank}`}
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-4"
+        >
+          <h1 className="font-display text-4xl md:text-6xl text-primary text-glow-orange flex items-center justify-center gap-4">
+            <span>{['🍕', '🎪', '🎲', '🎯', '🎷', '🎸', '🧨', '🎈', '🎉', '🔥', '🌶️', '👾', '🚀'][currentRank % 13]}</span>
+            <span>POSIZIONE N. {currentRank}</span>
+            <span>{['🍕', '🎪', '🎲', '🎯', '🎷', '🎸', '🧨', '🎈', '🎉', '🔥', '🌶️', '👾', '🚀'][(currentRank + 7) % 13]}</span>
+          </h1>
+        </motion.div>
+      )}
+
+      {/* Fallback title when no position selected */}
+      {currentPosition === 0 && (
+        <h1 className="font-display text-5xl md:text-7xl text-primary text-glow-orange mb-6">
+          🏆 CLASSIFICA 🏆
+        </h1>
+      )}
 
       {remainingCount > 0 && currentPosition > 0 && (
         <div className="mb-4 font-russo text-2xl text-muted-foreground animate-pulse-glow">

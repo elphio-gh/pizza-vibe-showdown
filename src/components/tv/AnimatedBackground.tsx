@@ -1,8 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-export const AnimatedBackground: React.FC = () => {
+export type BackgroundVariant = 'default' | 'winner' | 'pre_winner' | 'stop' | 'pause';
+
+interface AnimatedBackgroundProps {
+  variant?: BackgroundVariant;
+}
+
+export const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({ variant = 'default' }) => {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  // Define colors based on variant
+  const getVariantColors = () => {
+    switch (variant) {
+      case 'winner':
+        return {
+          c1: 'hsl(45, 90%, 50%)', // Gold
+          c2: 'hsl(35, 90%, 50%)', // Amber
+          c3: 'hsl(50, 100%, 60%)', // Yellow
+        };
+      case 'stop':
+        return {
+          c1: 'hsl(0, 80%, 50%)', // Red
+          c2: 'hsl(10, 80%, 50%)', // Red-Orange
+          c3: 'hsl(350, 80%, 50%)', // Deep Red
+        };
+      case 'pause':
+        return {
+          c1: 'hsl(45, 90%, 50%)', // Yellow
+          c2: 'hsl(30, 90%, 50%)', // Orange
+          c3: 'hsl(60, 90%, 50%)', // Light Yellow
+        };
+      case 'pre_winner':
+        return {
+          c1: 'hsl(260, 60%, 40%)', // Purple
+          c2: 'hsl(280, 60%, 40%)', // Deep Purple
+          c3: 'hsl(240, 60%, 40%)', // Blue-Purple
+        };
+      default:
+        return {
+          c1: 'hsl(var(--primary))',
+          c2: 'hsl(var(--secondary))',
+          c3: 'hsl(var(--accent))',
+        };
+    }
+  };
+
+  const colors = getVariantColors();
 
   // Periodic movement to prevent burn-in
   useEffect(() => {
@@ -22,7 +66,7 @@ export const AnimatedBackground: React.FC = () => {
       <motion.div
         className="absolute w-[600px] h-[600px] rounded-full opacity-20"
         style={{
-          background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)',
+          background: `radial-gradient(circle, ${colors.c1} 0%, transparent 70%)`,
           filter: 'blur(80px)',
         }}
         animate={{
@@ -36,11 +80,11 @@ export const AnimatedBackground: React.FC = () => {
         }}
         initial={{ left: '10%', top: '20%' }}
       />
-      
+
       <motion.div
         className="absolute w-[500px] h-[500px] rounded-full opacity-15"
         style={{
-          background: 'radial-gradient(circle, hsl(var(--secondary)) 0%, transparent 70%)',
+          background: `radial-gradient(circle, ${colors.c2} 0%, transparent 70%)`,
           filter: 'blur(80px)',
         }}
         animate={{
@@ -58,7 +102,7 @@ export const AnimatedBackground: React.FC = () => {
       <motion.div
         className="absolute w-[400px] h-[400px] rounded-full opacity-10"
         style={{
-          background: 'radial-gradient(circle, hsl(var(--accent)) 0%, transparent 70%)',
+          background: `radial-gradient(circle, ${colors.c3} 0%, transparent 70%)`,
           filter: 'blur(60px)',
         }}
         animate={{
@@ -74,48 +118,36 @@ export const AnimatedBackground: React.FC = () => {
       />
 
       {/* Floating emojis with burn-in protection */}
-      {['🍕', '🎸', '🕶️', '🎤', '🎵', '🏆'].map((emoji, i) => (
-        <motion.div
-          key={i}
-          className="absolute text-4xl opacity-10"
-          style={{
-            left: `${15 + (i * 15)}%`,
-            top: `${20 + ((i % 3) * 25)}%`,
-          }}
-          animate={{
-            x: [offset.x * (i + 1) * 0.5, offset.x * (i + 1) * -0.5],
-            y: [offset.y * (i + 1) * 0.5, offset.y * (i + 1) * -0.5],
-            rotate: [0, 360],
-          }}
-          transition={{
-            x: { duration: 30 + i * 5, repeat: Infinity, repeatType: 'reverse' },
-            y: { duration: 25 + i * 5, repeat: Infinity, repeatType: 'reverse' },
-            rotate: { duration: 60, repeat: Infinity, ease: 'linear' },
-          }}
-        >
-          {emoji}
-        </motion.div>
-      ))}
+      {/* Floating emojis with burn-in protection */}
+      {Array.from({ length: 15 }).map((_, i) => {
+        const emojis = ['🍕', '🎸', '🕶️', '🎤', '🎵', '🏆', '🔥', '✨', '💿', '🌭', '🕺', '🎪', '🎲', '🎯', '🚀'];
+        const emoji = emojis[i % emojis.length];
 
-      {/* Subtle grid pattern with movement */}
-      <motion.div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `
-            linear-gradient(hsl(var(--primary)/0.3) 1px, transparent 1px),
-            linear-gradient(90deg, hsl(var(--primary)/0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: '50px 50px',
-        }}
-        animate={{
-          backgroundPosition: ['0px 0px', '50px 50px'],
-        }}
-        transition={{
-          duration: 120,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-      />
+        return (
+          <motion.div
+            key={i}
+            className="absolute text-4xl opacity-10"
+            style={{
+              left: `${(i * 7) % 100}%`,
+              top: `${(i * 13) % 100}%`,
+            }}
+            animate={{
+              x: [offset.x * (i + 1) * 0.3, offset.x * (i + 1) * -0.3],
+              y: [offset.y * (i + 1) * 0.3, offset.y * (i + 1) * -0.3],
+              rotate: [0, 360],
+            }}
+            transition={{
+              x: { duration: 25 + i * 2, repeat: Infinity, repeatType: 'reverse' },
+              y: { duration: 20 + i * 2, repeat: Infinity, repeatType: 'reverse' },
+              rotate: { duration: 50 + i * 5, repeat: Infinity, ease: 'linear' },
+            }}
+          >
+            {emoji}
+          </motion.div>
+        );
+      })}
+
+
     </div>
   );
 };

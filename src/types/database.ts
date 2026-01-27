@@ -30,7 +30,7 @@ export interface Vote {
 
 export interface TVCommand {
   id: string;
-  command: 'waiting' | 'reveal' | 'winner' | 'next' | 'reset';
+  command: 'waiting' | 'reveal' | 'winner' | 'next' | 'reset' | 'stop_televote' | 'pause' | 'pre_winner';
   current_position: number;
   created_at: string;
   updated_at: string;
