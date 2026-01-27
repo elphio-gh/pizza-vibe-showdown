@@ -75,7 +75,7 @@ export const calculatePizzaScore = (votes: Vote[]): number => {
 // Get ranked pizzas with tie handling
 export const getRankedPizzas = (pizzasWithScores: PizzaWithScore[]): PizzaWithScore[][] => {
   if (pizzasWithScores.length === 0) return [];
-  
+
   // Sort by score descending, then by vote count descending (secondary criteria)
   const sorted = [...pizzasWithScores].sort((a, b) => {
     if (b.averageScore !== a.averageScore) {
@@ -108,26 +108,6 @@ export const getRankedPizzas = (pizzasWithScores: PizzaWithScore[]): PizzaWithSc
   return groups;
 };
 
-// Random nickname generator
-const adjectives = [
-  'Super', 'Mega', 'Ultra', 'Turbo', 'Hyper', 'Epic', 'Cosmic', 'Atomic',
-  'Funky', 'Groovy', 'Radical', 'Gnarly', 'Bodacious', 'Tubular', 'Stellar',
-  'Blazing', 'Flying', 'Dancing', 'Jumping', 'Rolling', 'Spinning', 'Zooming'
-];
-
-const nouns = [
-  'Pizza', 'Slice', 'Cheese', 'Pepperoni', 'Mozzarella', 'Dough', 'Crust',
-  'Tomato', 'Basil', 'Olive', 'Mushroom', 'Pepper', 'Onion', 'Anchovy',
-  'Elvis', 'Tony', 'Buitony', 'Champion', 'Master', 'Legend', 'Ninja'
-];
-
-export const generateRandomNickname = (): string => {
-  const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-  const noun = nouns[Math.floor(Math.random() * nouns.length)];
-  const num = Math.floor(Math.random() * 99) + 1;
-  return `${adj}${noun}${num}`;
-};
-
 // Generate session token
 export const generateSessionToken = (): string => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -137,3 +117,4 @@ export const generateSessionToken = (): string => {
   }
   return token;
 };
+

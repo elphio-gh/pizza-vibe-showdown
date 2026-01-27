@@ -11,27 +11,22 @@ import {
 import { useRole } from '@/contexts/RoleContext';
 import { useRecentProfiles, useCurrentSession } from '@/hooks/useLocalStorage';
 import { usePlayers } from '@/hooks/usePlayers';
-import { generateRandomNickname } from '@/types/database';
-import { User, RefreshCw, History, Plus, Edit2 } from 'lucide-react';
+import { User, History, Plus, Edit2 } from 'lucide-react';
 
 export const ProfileSwitcher: React.FC = () => {
   const { playerId, playerName, setPlayerId, setPlayerName } = useRole();
   const { profiles, addProfile, removeProfile } = useRecentProfiles();
   const { setCurrentPlayerId, setCurrentPlayerName } = useCurrentSession();
   const { createPlayer } = usePlayers();
-  
+
   const [isOpen, setIsOpen] = useState(false);
   const [newNickname, setNewNickname] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [mode, setMode] = useState<'view' | 'edit' | 'create'>('view');
 
-  const handleRandomNickname = () => {
-    setNewNickname(generateRandomNickname());
-  };
-
   const handleCreateProfile = async () => {
     if (!newNickname.trim()) return;
-    
+
     setIsCreating(true);
     try {
       const player = await createPlayer.mutateAsync(newNickname.trim());
@@ -62,8 +57,8 @@ export const ProfileSwitcher: React.FC = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           className="flex items-center gap-2 text-primary hover:text-primary/80"
         >
@@ -72,7 +67,7 @@ export const ProfileSwitcher: React.FC = () => {
           <Edit2 className="w-3 h-3" />
         </Button>
       </DialogTrigger>
-      
+
       <DialogContent className="bg-card border-2 border-primary/50">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl text-primary flex items-center gap-2">
@@ -141,23 +136,14 @@ export const ProfileSwitcher: React.FC = () => {
 
           {(mode === 'create' || mode === 'edit') && (
             <div className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  value={newNickname}
-                  onChange={(e) => setNewNickname(e.target.value)}
-                  placeholder="Inserisci nickname..."
-                  className="flex-1 font-russo"
-                  maxLength={30}
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleRandomNickname}
-                  title="Genera nickname casuale"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                </Button>
-              </div>
+              <Input
+                value={newNickname}
+                onChange={(e) => setNewNickname(e.target.value)}
+                placeholder="Inserisci nickname..."
+                className="font-russo"
+                maxLength={30}
+                autoFocus
+              />
 
               <div className="flex gap-2">
                 <Button
@@ -185,3 +171,4 @@ export const ProfileSwitcher: React.FC = () => {
     </Dialog>
   );
 };
+

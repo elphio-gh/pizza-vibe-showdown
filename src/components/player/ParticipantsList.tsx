@@ -4,7 +4,7 @@ import { useRole } from '@/contexts/RoleContext';
 import { usePlayerPresence } from '@/hooks/usePlayerPresence';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, CheckCircle, Circle, Wifi, WifiOff } from 'lucide-react';
+import { Users, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ParticipantsListProps {
@@ -24,7 +24,6 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ onConfirmPre
     onConfirmPresence();
   };
 
-  const onlinePlayers = players.filter(p => p.is_online);
   const confirmedPlayers = players.filter(p => p.is_confirmed);
 
   if (isLoading) {
@@ -71,10 +70,6 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ onConfirmPre
 
         {/* Stats */}
         <div className="flex gap-4 justify-center">
-          <div className="flex items-center gap-2 text-accent">
-            <Wifi className="w-4 h-4" />
-            <span className="font-russo text-sm">{onlinePlayers.length} online</span>
-          </div>
           <div className="flex items-center gap-2 text-primary">
             <CheckCircle className="w-4 h-4" />
             <span className="font-russo text-sm">{confirmedPlayers.length} confermati</span>
@@ -97,12 +92,7 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ onConfirmPre
                   ${player.is_confirmed ? 'border-accent' : ''}
                 `}
               >
-                {player.is_online ? (
-                  <Wifi className="w-4 h-4 text-accent flex-shrink-0" />
-                ) : (
-                  <WifiOff className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                )}
-                <span className={`font-russo text-sm truncate ${player.is_online ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <span className="font-russo text-sm truncate">
                   {player.username}
                 </span>
                 {player.is_confirmed && (
@@ -125,3 +115,4 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ onConfirmPre
     </Card>
   );
 };
+

@@ -6,8 +6,7 @@ import { useCurrentSession, useRecentProfiles } from '@/hooks/useLocalStorage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, User, Plus, RefreshCw } from 'lucide-react';
-import { generateRandomNickname } from '@/types/database';
+import { ArrowLeft, User, Plus } from 'lucide-react';
 
 const PlayerSelectPage: React.FC = () => {
     const navigate = useNavigate();
@@ -28,10 +27,6 @@ const PlayerSelectPage: React.FC = () => {
         addProfile({ id: player.id, username: player.username });
         setRole('player');
         navigate('/player');
-    };
-
-    const handleRandomNickname = () => {
-        setNewNickname(generateRandomNickname());
     };
 
     const handleCreatePlayer = async () => {
@@ -79,10 +74,7 @@ const PlayerSelectPage: React.FC = () => {
                     {/* Create New Profile Button/Form */}
                     {!showCreateForm ? (
                         <Button
-                            onClick={() => {
-                                setShowCreateForm(true);
-                                handleRandomNickname();
-                            }}
+                            onClick={() => setShowCreateForm(true)}
                             className="w-full py-5 font-display text-lg gradient-pizza text-primary-foreground flex items-center justify-center gap-2"
                         >
                             <Plus className="w-5 h-5" />
@@ -90,25 +82,14 @@ const PlayerSelectPage: React.FC = () => {
                         </Button>
                     ) : (
                         <div className="space-y-3 p-4 bg-card rounded-lg border-2 border-primary/50">
-                            <div className="flex gap-2">
-                                <Input
-                                    value={newNickname}
-                                    onChange={(e) => setNewNickname(e.target.value)}
-                                    placeholder="Il tuo nome..."
-                                    className="flex-1 font-russo py-5 text-lg"
-                                    maxLength={30}
-                                    autoFocus
-                                />
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={handleRandomNickname}
-                                    title="Genera nome casuale"
-                                    className="h-auto aspect-square"
-                                >
-                                    <RefreshCw className="w-5 h-5" />
-                                </Button>
-                            </div>
+                            <Input
+                                value={newNickname}
+                                onChange={(e) => setNewNickname(e.target.value)}
+                                placeholder="Il tuo nome..."
+                                className="font-russo py-5 text-lg"
+                                maxLength={30}
+                                autoFocus
+                            />
                             <div className="flex gap-2">
                                 <Button
                                     variant="outline"
@@ -150,9 +131,6 @@ const PlayerSelectPage: React.FC = () => {
                                     <CardContent className="py-4 flex items-center gap-3">
                                         <User className="w-5 h-5 text-primary" />
                                         <span className="font-russo text-lg flex-1">{player.username}</span>
-                                        <span className="text-xl">
-                                            {player.is_online ? '🟢' : '⚪'}
-                                        </span>
                                     </CardContent>
                                 </Card>
                             ))

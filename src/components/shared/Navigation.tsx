@@ -1,23 +1,18 @@
 import React from 'react';
 import { useRole } from '@/contexts/RoleContext';
 import { Button } from '@/components/ui/button';
-import { Home, User, Shield, Tv, Pizza } from 'lucide-react';
+import { Home, User, Shield, Tv } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentSession } from '@/hooks/useLocalStorage';
-import { usePizzas } from '@/hooks/usePizzas';
 
 interface NavigationProps {
   showProfileSwitcher?: boolean;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = false }) => {
-  const { role, setRole, playerName, playerId, setPlayerId, setPlayerName } = useRole();
+  const { role, setRole, playerName, setPlayerId, setPlayerName } = useRole();
   const { clearSession } = useCurrentSession();
-  const { pizzas } = usePizzas();
   const navigate = useNavigate();
-
-  // Check if player has registered a pizza
-  const myPizza = pizzas.find(p => p.registered_by === playerId);
 
   const handleGoHome = () => {
     setRole(null);
@@ -76,19 +71,6 @@ export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = fa
         </Button>
 
         <div className="flex items-center gap-2">
-          {/* My Pizza button for players - navigates to page */}
-          {role === 'player' && playerId && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleGoToMyPizza}
-              className={`font-russo ${myPizza ? 'border-accent text-accent' : 'border-secondary text-secondary'}`}
-            >
-              <Pizza className="w-4 h-4 mr-1" />
-              {myPizza ? 'La mia Pizza' : '+ Registra Pizza'}
-            </Button>
-          )}
-
           {/* Profile - navigates to player select page instead of opening dialog */}
           {showProfileSwitcher && role === 'player' ? (
             <Button

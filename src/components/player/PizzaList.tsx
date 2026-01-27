@@ -5,6 +5,7 @@ import { usePizzas } from '@/hooks/usePizzas';
 import { useVotes } from '@/hooks/useVotes';
 import { useRole } from '@/contexts/RoleContext';
 import { Check, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface PizzaListProps {
   onSelectPizza: (pizza: Pizza, existingVote?: Vote) => void;
@@ -14,6 +15,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
   const { pizzas, isLoading } = usePizzas();
   const { votes } = useVotes();
   const { playerId } = useRole();
+  const navigate = useNavigate();
 
   const getVoteForPizza = (pizzaId: string): Vote | undefined => {
     return votes.find(v => v.pizza_id === pizzaId && v.player_id === playerId);
@@ -29,14 +31,17 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
 
   if (pizzas.length === 0) {
     return (
-      <Card className="bg-muted/30 border-dashed border-2 border-muted">
+      <Card
+        className="bg-muted/30 border-dashed border-2 border-muted cursor-pointer hover:border-secondary hover:bg-secondary/10 transition-all"
+        onClick={() => navigate('/my-pizza')}
+      >
         <CardContent className="py-12 text-center">
           <div className="text-6xl mb-4">🍕</div>
           <p className="font-russo text-muted-foreground">
             Nessuna pizza registrata ancora!
           </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Registra la prima pizza per iniziare.
+          <p className="text-sm text-secondary mt-2 font-russo">
+            Clicca qui per registrare la prima pizza 👆
           </p>
         </CardContent>
       </Card>
@@ -84,8 +89,8 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
               key={pizza.id}
               onClick={() => onSelectPizza(pizza, existingVote)}
               className={`cursor-pointer transition-all duration-200 hover:scale-[1.02] ${hasVoted
-                  ? 'bg-accent/10 border-accent/50'
-                  : 'bg-card border-accent/30 hover:border-accent'
+                ? 'bg-accent/10 border-accent/50'
+                : 'bg-card border-accent/30 hover:border-accent'
                 }`}
             >
               <CardContent className="py-4 flex items-center justify-between">

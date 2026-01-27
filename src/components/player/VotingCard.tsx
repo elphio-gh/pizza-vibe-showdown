@@ -190,9 +190,8 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
                 </div>
               </div>
 
-              {/* Meme-style warning */}
               <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
-                <p className="font-russo text-xs text-center text-destructive/90 leading-relaxed">
+                <p className="font-russo text-sm text-center text-destructive/90 leading-relaxed">
                   {warningMessage}
                 </p>
               </div>

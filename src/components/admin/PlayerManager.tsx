@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { usePlayers } from '@/hooks/usePlayers';
 import { Player } from '@/types/database';
-import { Trash2, Edit2, Check, X, Users, Plus, Circle } from 'lucide-react';
+import { Trash2, Edit2, Check, X, Users, Plus } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -59,9 +59,9 @@ export const PlayerManager: React.FC = () => {
             <Users className="w-8 h-8" />
             Gestione Giocatori ({players.length})
           </CardTitle>
-          <Button 
-            size="sm" 
-            variant="outline" 
+          <Button
+            size="sm"
+            variant="outline"
             onClick={() => setShowCreate(!showCreate)}
             className="border-accent text-accent hover:bg-accent hover:text-accent-foreground"
           >
@@ -87,7 +87,7 @@ export const PlayerManager: React.FC = () => {
               </Button>
             </div>
           )}
-          
+
           {isLoading ? (
             <div className="text-center py-8">
               <div className="text-4xl animate-spin-slow">👥</div>
@@ -100,10 +100,6 @@ export const PlayerManager: React.FC = () => {
                 key={player.id}
                 className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg"
               >
-                <Circle 
-                  className={`w-3 h-3 ${player.is_online ? 'text-green-500 fill-green-500' : 'text-muted-foreground'}`} 
-                />
-                
                 {editingId === player.id ? (
                   <>
                     <Input

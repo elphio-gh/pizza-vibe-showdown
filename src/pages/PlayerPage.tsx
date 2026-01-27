@@ -1,41 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import { useRole } from '@/contexts/RoleContext';
 import { Navigation } from '@/components/shared/Navigation';
 import { PlayerOnboarding } from '@/components/player/PlayerOnboarding';
 import { PizzaList } from '@/components/player/PizzaList';
 import { VotingCard } from '@/components/player/VotingCard';
-import { Pizza, Vote, generateRandomNickname } from '@/types/database';
+import { Pizza, Vote } from '@/types/database';
 import { useCurrentSession, useRecentProfiles } from '@/hooks/useLocalStorage';
 import { useSessions } from '@/hooks/useSessions';
 import { usePlayers } from '@/hooks/usePlayers';
 import { usePlayerPresence } from '@/hooks/usePlayerPresence';
+import { usePizzas } from '@/hooks/usePizzas';
+import { Button } from '@/components/ui/button';
+import { Pizza as PizzaIcon, Plus } from 'lucide-react';
 
 const PlayerPage: React.FC = () => {
   const { role, playerId, setPlayerId, setPlayerName, setRole } = useRole();
   const [selectedPizza, setSelectedPizza] = useState<{ pizza: Pizza; vote?: Vote } | null>(null);
   const [searchParams] = useSearchParams();
-  
+  const navigate = useNavigate();
+
   const { currentPlayerId, setCurrentPlayerId, currentPlayerName, setCurrentPlayerName, setSessionToken } = useCurrentSession();
   const { addProfile } = useRecentProfiles();
   const { getSessionByToken, linkPlayerToSession } = useSessions();
   const { createPlayer, players, updatePlayer } = usePlayers();
+  const { pizzas } = usePizzas();
 
   // Use presence tracking - auto confirms presence
   usePlayerPresence();
+
+  // Check if player has registered a pizza
+  const myPizza = pizzas.find(p => p.registered_by === playerId);
 
   // Handle QR code token on mount
   useEffect(() => {
     const handleTokenLogin = async () => {
       const token = searchParams.get('token');
-      
+
       if (token) {
         setSessionToken(token);
         setRole('player');
-        
+
         // Check if session exists and has a player
         const session = await getSessionByToken(token);
-        
+
         if (session?.player_id) {
           // Existing player in session
           const player = players.find(p => p.id === session.player_id);
@@ -51,21 +59,8 @@ const PlayerPage: React.FC = () => {
             }
           }
         } else if (session) {
-          // New session - create player with random nickname
-          const nickname = generateRandomNickname();
-          try {
-            const player = await createPlayer.mutateAsync(nickname);
-            setPlayerId(player.id);
-            setPlayerName(player.username);
-            setCurrentPlayerId(player.id);
-            setCurrentPlayerName(player.username);
-            addProfile({ id: player.id, username: player.username });
-            
-            // Link player to session
-            await linkPlayerToSession.mutateAsync({ sessionId: session.id, playerId: player.id });
-          } catch (error) {
-            console.error('Error creating player from QR:', error);
-          }
+          // New session - player will enter nickname through onboarding
+          // Don't auto-create, just set role and let onboarding handle it
         }
       } else if (currentPlayerId && currentPlayerName) {
         // Restore from localStorage
@@ -132,6 +127,29 @@ const PlayerPage: React.FC = () => {
           </p>
         </div>
 
+        {/* My Pizza Button - harmonized with app style */}
+        <div className="mb-6">
+          <Button
+            onClick={() => navigate('/my-pizza')}
+            className={`w-full py-6 font-display text-xl transition-all ${myPizza
+                ? 'bg-accent/20 border-2 border-accent text-accent hover:bg-accent/30'
+                : 'gradient-pizza text-primary-foreground box-glow-orange'
+              }`}
+          >
+            {myPizza ? (
+              <>
+                <PizzaIcon className="w-6 h-6 mr-2" />
+                La mia Pizza: {myPizza.brand} - {myPizza.flavor}
+              </>
+            ) : (
+              <>
+                <Plus className="w-6 h-6 mr-2" />
+                Registra la tua Pizza 🍕
+              </>
+            )}
+          </Button>
+        </div>
+
         <PizzaList onSelectPizza={(pizza, vote) => setSelectedPizza({ pizza, vote })} />
       </div>
     </>
@@ -139,3 +157,4 @@ const PlayerPage: React.FC = () => {
 };
 
 export default PlayerPage;
+
