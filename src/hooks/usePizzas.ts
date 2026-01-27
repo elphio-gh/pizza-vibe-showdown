@@ -13,7 +13,7 @@ export const usePizzas = () => {
         .from('pizzas')
         .select('*')
         .order('number', { ascending: true });
-      
+
       if (error) throw error;
       return data as Pizza[];
     },
@@ -23,7 +23,7 @@ export const usePizzas = () => {
   useEffect(() => {
     const channel = supabase
       .channel('pizzas-changes')
-      .on('postgres_changes', 
+      .on('postgres_changes',
         { event: '*', schema: 'public', table: 'pizzas' },
         () => {
           queryClient.invalidateQueries({ queryKey: ['pizzas'] });
@@ -38,12 +38,23 @@ export const usePizzas = () => {
 
   const createPizza = useMutation({
     mutationFn: async ({ brand, flavor, registered_by }: { brand: string; flavor: string; registered_by?: string }) => {
+      // Get the next pizza number by finding the max current number
+      // This ensures numbering starts from 1 after a game reset
+      const { data: maxData } = await supabase
+        .from('pizzas')
+        .select('number')
+        .order('number', { ascending: false })
+        .limit(1)
+        .single();
+
+      const nextNumber = (maxData?.number ?? 0) + 1;
+
       const { data, error } = await supabase
         .from('pizzas')
-        .insert([{ brand, flavor, registered_by }])
+        .insert([{ brand, flavor, registered_by, number: nextNumber }])
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -64,7 +75,7 @@ export const usePizzas = () => {
         .eq('id', id)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -82,7 +93,7 @@ export const usePizzas = () => {
         .from('pizzas')
         .delete()
         .eq('id', id);
-      
+
       if (error) throw error;
     },
     onSuccess: () => {

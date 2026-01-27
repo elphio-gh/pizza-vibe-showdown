@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTVCommands } from '@/hooks/useTVCommands';
 import { usePizzas } from '@/hooks/usePizzas';
@@ -10,17 +8,13 @@ import { useVotes } from '@/hooks/useVotes';
 import { calculatePizzaScore, getRankedPizzas, PizzaWithScore } from '@/types/database';
 import {
   Tv, Play, Trophy, RotateCcw, ChevronRight, ChevronLeft,
-  Pause, Timer, List, Eye
+  Pause, List, MapPin
 } from 'lucide-react';
 
 export const AdvancedTVController: React.FC = () => {
   const { tvCommand, setWaiting, setReveal, setWinner, nextPosition, prevPosition, setPosition, resetGame, isLoading } = useTVCommands();
   const { pizzas } = usePizzas();
   const { votes } = useVotes();
-
-  const [autoTimer, setAutoTimer] = useState(false);
-  const [timerSeconds, setTimerSeconds] = useState(10);
-  const [selectedPizzaIndex, setSelectedPizzaIndex] = useState<number | null>(null);
 
   const currentCommand = tvCommand?.command || 'waiting';
   const currentPosition = tvCommand?.current_position || 0;
@@ -38,27 +32,6 @@ export const AdvancedTVController: React.FC = () => {
 
   const rankedGroups = [...getRankedPizzas(pizzasWithScores)].reverse();
   const flatRanked = rankedGroups.flat();
-
-  // Auto-timer effect
-  useEffect(() => {
-    if (!autoTimer || currentCommand !== 'reveal') return;
-
-    const timer = setTimeout(() => {
-      if (currentPosition < flatRanked.length - 1) {
-        nextPosition();
-      } else {
-        setAutoTimer(false);
-        setWinner();
-      }
-    }, timerSeconds * 1000);
-
-    return () => clearTimeout(timer);
-  }, [autoTimer, currentCommand, currentPosition, timerSeconds, flatRanked.length, nextPosition, setWinner]);
-
-  const handleSelectPizza = (index: number) => {
-    setSelectedPizzaIndex(index);
-    setPosition(index);
-  };
 
   return (
     <Card className="bg-card border-2 border-destructive/50 box-glow-pink">
@@ -127,58 +100,29 @@ export const AdvancedTVController: React.FC = () => {
           MOSTRA VINCITORE! 🏆
         </Button>
 
-        {/* Auto Timer */}
-        <div className="p-4 bg-muted/20 rounded-lg space-y-3">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="auto-timer" className="font-russo text-sm flex items-center gap-2">
-              <Timer className="w-4 h-4" />
-              Timer Automatico
-            </Label>
-            <Switch
-              id="auto-timer"
-              checked={autoTimer}
-              onCheckedChange={setAutoTimer}
-              disabled={currentCommand !== 'reveal'}
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Input
-              type="number"
-              value={timerSeconds}
-              onChange={(e) => setTimerSeconds(Math.max(1, parseInt(e.target.value) || 10))}
-              className="w-20 font-russo"
-              min={1}
-              max={60}
-            />
-            <span className="font-russo text-sm text-muted-foreground">secondi per slide</span>
-          </div>
-        </div>
-
-        {/* Manual Pizza Selection */}
+        {/* Pizza Position Indicator (read-only) */}
         <div className="space-y-2">
           <Label className="font-russo text-sm flex items-center gap-2">
             <List className="w-4 h-4" />
-            Selezione Manuale Pizza
+            Posizione Corrente
           </Label>
           <div className="max-h-40 overflow-y-auto space-y-1">
             {flatRanked.map((pizza, index) => (
-              <Button
+              <div
                 key={pizza.id}
-                variant={selectedPizzaIndex === index ? "default" : "ghost"}
-                size="sm"
-                className="w-full justify-start font-russo text-sm"
-                onClick={() => handleSelectPizza(index)}
-                disabled={currentCommand !== 'reveal'}
+                className={`w-full flex items-center justify-start p-2 rounded font-russo text-sm ${index === currentPosition && currentCommand === 'reveal'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted/30 text-muted-foreground'
+                  }`}
               >
-                <Eye className="w-3 h-3 mr-2" />
+                <MapPin className="w-3 h-3 mr-2" />
                 #{pizza.number} {pizza.brand} - {pizza.averageScore.toFixed(1)}⭐
                 {index === currentPosition && currentCommand === 'reveal' && (
-                  <span className="ml-auto text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">
-                    LIVE
+                  <span className="ml-auto text-xs bg-background text-foreground px-2 py-0.5 rounded">
+                    📍 QUI
                   </span>
                 )}
-              </Button>
+              </div>
             ))}
           </div>
         </div>
