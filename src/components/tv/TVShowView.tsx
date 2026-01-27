@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useTVCommands } from '@/hooks/useTVCommands';
+import { useRole } from '@/contexts/RoleContext';
+import { useCurrentSession } from '@/hooks/useLocalStorage';
 import { WaitingMode } from './WaitingMode';
 import { RevealMode } from './RevealMode';
 import { WinnerCelebration } from './WinnerCelebration';
@@ -9,6 +12,9 @@ import { Maximize, Minimize } from 'lucide-react';
 
 export const TVShowView: React.FC = () => {
   const { tvCommand } = useTVCommands();
+  const { setRole, setPlayerId, setPlayerName } = useRole();
+  const { clearSession } = useCurrentSession();
+  const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const currentCommand = tvCommand?.command || 'waiting';
@@ -23,6 +29,7 @@ export const TVShowView: React.FC = () => {
     }
   };
 
+  // Handle fullscreen change
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
@@ -31,6 +38,27 @@ export const TVShowView: React.FC = () => {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
+
+  // ESC key listener to go back to landing page
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        // Exit fullscreen if active
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        }
+        // Clear session and navigate to landing
+        setRole(null);
+        setPlayerId(null);
+        setPlayerName(null);
+        clearSession();
+        navigate('/');
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [navigate, setRole, setPlayerId, setPlayerName, clearSession]);
 
   const renderContent = () => {
     switch (currentCommand) {
@@ -62,6 +90,13 @@ export const TVShowView: React.FC = () => {
           <Maximize className="w-6 h-6" />
         )}
       </Button>
+
+      {/* ESC hint */}
+      <div className="fixed bottom-4 right-4 z-50 opacity-30 hover:opacity-80 transition-opacity">
+        <span className="font-game text-xs text-muted-foreground">
+          Premi ESC per uscire
+        </span>
+      </div>
 
       <div className="relative z-10">
         {renderContent()}
