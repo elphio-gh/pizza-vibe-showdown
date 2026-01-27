@@ -18,8 +18,8 @@ interface PasswordModalProps {
 }
 
 const ROLE_PASSWORDS: Record<string, string> = {
-  admin: 'admin',
-  player: 'player',
+  admin: 'alfonso',
+  player: 'pizza',
 };
 
 export const PasswordModal: React.FC<PasswordModalProps> = ({
