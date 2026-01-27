@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
-        display: ['"Dancing Script"', 'cursive'],
-        dancing: ['"Dancing Script"', 'cursive'],
+        sans: ['Poppins', '"Noto Color Emoji"', 'sans-serif'],
+        display: ['"Dancing Script"', '"Noto Color Emoji"', 'cursive'],
+        dancing: ['"Dancing Script"', '"Noto Color Emoji"', 'cursive'],
       },
       colors: {
         border: "hsl(var(--border))",

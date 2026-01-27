@@ -63,10 +63,10 @@ export const QRCodeDisplay: React.FC = () => {
       </div>
 
       <div className="text-center">
-        <p className="font-russo text-sm text-muted-foreground">
+        <p className="font-sans text-sm text-muted-foreground">
           oppure vai su
         </p>
-        <p className="font-display text-lg text-secondary">
+        <p className="font-sans text-lg text-secondary">
           {window.location.host}/player
         </p>
       </div>
