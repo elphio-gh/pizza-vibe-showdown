@@ -62,14 +62,16 @@ const Index: React.FC = () => {
           variant="blue"
           size="small"
         />
-        <RoleButton
-          icon={Tv}
-          label="TV SHOW"
-          emoji="📺"
-          onClick={handleTVClick}
-          variant="pink"
-          size="small"
-        />
+        <div className="hidden md:block">
+          <RoleButton
+            icon={Tv}
+            label="TV SHOW"
+            emoji="📺"
+            onClick={handleTVClick}
+            variant="pink"
+            size="small"
+          />
+        </div>
       </div>
 
       <div className="mt-12 text-center">

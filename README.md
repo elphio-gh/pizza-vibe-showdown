@@ -138,6 +138,7 @@ L'interfaccia TV è ottimizzata per display **16:9** e include:
 - Anti burn-in con animazioni di sfondo
 - Modalità fullscreen
 - Tasto ESC per uscire
+- 📱 Pulsante TV nascosto su mobile (visibile solo su tablet/desktop)
 
 ---
 
