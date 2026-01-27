@@ -8,8 +8,8 @@ import { useTVCommands } from '@/hooks/useTVCommands';
 import { usePizzas } from '@/hooks/usePizzas';
 import { useVotes } from '@/hooks/useVotes';
 import { calculatePizzaScore, getRankedPizzas, PizzaWithScore } from '@/types/database';
-import { 
-  Tv, Play, Trophy, RotateCcw, ChevronRight, ChevronLeft, 
+import {
+  Tv, Play, Trophy, RotateCcw, ChevronRight, ChevronLeft,
   Pause, Timer, List, Eye
 } from 'lucide-react';
 
@@ -17,7 +17,7 @@ export const AdvancedTVController: React.FC = () => {
   const { tvCommand, setWaiting, setReveal, setWinner, nextPosition, prevPosition, setPosition, resetGame, isLoading } = useTVCommands();
   const { pizzas } = usePizzas();
   const { votes } = useVotes();
-  
+
   const [autoTimer, setAutoTimer] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(10);
   const [selectedPizzaIndex, setSelectedPizzaIndex] = useState<number | null>(null);
@@ -36,7 +36,7 @@ export const AdvancedTVController: React.FC = () => {
     };
   });
 
-  const rankedGroups = getRankedPizzas(pizzasWithScores);
+  const rankedGroups = [...getRankedPizzas(pizzasWithScores)].reverse();
   const flatRanked = rankedGroups.flat();
 
   // Auto-timer effect
@@ -73,7 +73,7 @@ export const AdvancedTVController: React.FC = () => {
         <div className="p-4 bg-muted/30 rounded-lg text-center">
           <p className="font-russo text-sm text-muted-foreground mb-2">Stato attuale:</p>
           <p className="font-display text-2xl text-foreground">
-            {currentCommand.toUpperCase()} 
+            {currentCommand.toUpperCase()}
             {currentCommand === 'reveal' && ` (${currentPosition + 1}/${flatRanked.length})`}
           </p>
         </div>
@@ -141,7 +141,7 @@ export const AdvancedTVController: React.FC = () => {
               disabled={currentCommand !== 'reveal'}
             />
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Input
               type="number"
