@@ -57,12 +57,8 @@ const Index: React.FC = () => {
   };
 
   const handleTVClick = () => {
-    if (isRoleAuthenticated('tv')) {
-      setRole('tv');
-      navigate('/tv');
-    } else {
-      setPasswordModal('tv');
-    }
+    setRole('tv');
+    navigate('/tv');
   };
 
   const handlePasswordSuccess = () => {
@@ -71,7 +67,6 @@ const Index: React.FC = () => {
       setRole('admin');
       navigate('/admin');
     } else if (passwordModal === 'tv') {
-      setRoleAuthenticated('tv');
       setRole('tv');
       navigate('/tv');
     } else if (passwordModal === 'player') {
