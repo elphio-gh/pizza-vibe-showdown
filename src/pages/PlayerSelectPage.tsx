@@ -1,0 +1,167 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useRole } from '@/contexts/RoleContext';
+import { usePlayers } from '@/hooks/usePlayers';
+import { useCurrentSession, useRecentProfiles } from '@/hooks/useLocalStorage';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { ArrowLeft, User, Plus, RefreshCw } from 'lucide-react';
+import { generateRandomNickname } from '@/types/database';
+
+const PlayerSelectPage: React.FC = () => {
+    const navigate = useNavigate();
+    const { setPlayerId, setPlayerName, setRole } = useRole();
+    const { setCurrentPlayerId, setCurrentPlayerName } = useCurrentSession();
+    const { addProfile } = useRecentProfiles();
+    const { players, createPlayer } = usePlayers();
+
+    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [newNickname, setNewNickname] = useState('');
+    const [isCreating, setIsCreating] = useState(false);
+
+    const handleSelectPlayer = (player: { id: string; username: string }) => {
+        setPlayerId(player.id);
+        setPlayerName(player.username);
+        setCurrentPlayerId(player.id);
+        setCurrentPlayerName(player.username);
+        addProfile({ id: player.id, username: player.username });
+        setRole('player');
+        navigate('/player');
+    };
+
+    const handleRandomNickname = () => {
+        setNewNickname(generateRandomNickname());
+    };
+
+    const handleCreatePlayer = async () => {
+        if (!newNickname.trim() || isCreating) return;
+
+        setIsCreating(true);
+        try {
+            const player = await createPlayer.mutateAsync(newNickname.trim());
+            handleSelectPlayer(player);
+        } catch (error) {
+            console.error('Error creating player:', error);
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex flex-col bg-background">
+            {/* Header */}
+            <div className="p-4">
+                <Button
+                    variant="ghost"
+                    onClick={() => navigate('/')}
+                    className="flex items-center gap-2 text-muted-foreground"
+                >
+                    <ArrowLeft className="w-5 h-5" />
+                    Indietro
+                </Button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 flex flex-col px-4 pb-8 overflow-hidden">
+                <div className="space-y-4 max-w-md mx-auto w-full flex flex-col h-full">
+                    {/* Title */}
+                    <div className="text-center space-y-2">
+                        <div className="text-5xl">👥</div>
+                        <h1 className="font-display text-3xl text-primary">
+                            Chi sei?
+                        </h1>
+                        <p className="font-russo text-sm text-muted-foreground">
+                            Seleziona il tuo profilo o creane uno nuovo
+                        </p>
+                    </div>
+
+                    {/* Create New Profile Button/Form */}
+                    {!showCreateForm ? (
+                        <Button
+                            onClick={() => {
+                                setShowCreateForm(true);
+                                handleRandomNickname();
+                            }}
+                            className="w-full py-5 font-display text-lg gradient-pizza text-primary-foreground flex items-center justify-center gap-2"
+                        >
+                            <Plus className="w-5 h-5" />
+                            Crea Nuovo Profilo
+                        </Button>
+                    ) : (
+                        <div className="space-y-3 p-4 bg-card rounded-lg border-2 border-primary/50">
+                            <div className="flex gap-2">
+                                <Input
+                                    value={newNickname}
+                                    onChange={(e) => setNewNickname(e.target.value)}
+                                    placeholder="Il tuo nome..."
+                                    className="flex-1 font-russo py-5 text-lg"
+                                    maxLength={30}
+                                    autoFocus
+                                />
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={handleRandomNickname}
+                                    title="Genera nome casuale"
+                                    className="h-auto aspect-square"
+                                >
+                                    <RefreshCw className="w-5 h-5" />
+                                </Button>
+                            </div>
+                            <div className="flex gap-2">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setShowCreateForm(false);
+                                        setNewNickname('');
+                                    }}
+                                    className="flex-1 font-russo"
+                                >
+                                    Annulla
+                                </Button>
+                                <Button
+                                    onClick={handleCreatePlayer}
+                                    disabled={!newNickname.trim() || isCreating}
+                                    className="flex-1 font-display gradient-pizza text-primary-foreground"
+                                >
+                                    {isCreating ? 'Creazione...' : 'CREA 🚀'}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Player List */}
+                    <div className="flex-1 overflow-y-auto space-y-2 pb-4">
+                        <p className="font-russo text-xs text-muted-foreground text-center sticky top-0 bg-background py-2">
+                            Oppure seleziona un profilo esistente:
+                        </p>
+                        {players.length === 0 ? (
+                            <p className="text-center text-muted-foreground font-russo py-8">
+                                Nessun giocatore registrato
+                            </p>
+                        ) : (
+                            players.map((player) => (
+                                <Card
+                                    key={player.id}
+                                    onClick={() => handleSelectPlayer(player)}
+                                    className="cursor-pointer hover:border-primary transition-colors active:scale-[0.98]"
+                                >
+                                    <CardContent className="py-4 flex items-center gap-3">
+                                        <User className="w-5 h-5 text-primary" />
+                                        <span className="font-russo text-lg flex-1">{player.username}</span>
+                                        <span className="text-xl">
+                                            {player.is_online ? '🟢' : '⚪'}
+                                        </span>
+                                    </CardContent>
+                                </Card>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default PlayerSelectPage;

@@ -1,49 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRole } from '@/contexts/RoleContext';
 import { RoleButton } from '@/components/landing/RoleButton';
-import { PasswordModal } from '@/components/landing/PasswordModal';
-import { useRoleAuth, useCurrentSession } from '@/hooks/useLocalStorage';
-import { usePlayers } from '@/hooks/usePlayers';
+import { useRoleAuth } from '@/hooks/useLocalStorage';
 import { User, Shield, Tv } from 'lucide-react';
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 
 const Index: React.FC = () => {
   const navigate = useNavigate();
-  const { setRole, setPlayerId, setPlayerName } = useRole();
-  const { isRoleAuthenticated, setRoleAuthenticated } = useRoleAuth();
-  const { currentPlayerId, currentPlayerName, setCurrentPlayerId, setCurrentPlayerName, clearSession } = useCurrentSession();
-  const { players } = usePlayers();
-  
-  const [passwordModal, setPasswordModal] = useState<'admin' | 'tv' | 'player' | null>(null);
-  const [showRejoinDialog, setShowRejoinDialog] = useState(false);
-  const [showPlayerList, setShowPlayerList] = useState(false);
-
-  // Check for existing session on mount
-  useEffect(() => {
-    if (currentPlayerId && currentPlayerName) {
-      // User has a saved session
-      setShowRejoinDialog(true);
-    }
-  }, []);
+  const { setRole } = useRole();
+  const { isRoleAuthenticated } = useRoleAuth();
 
   const handlePlayerClick = () => {
-    // If already authenticated as player
     if (isRoleAuthenticated('player')) {
-      if (currentPlayerId && currentPlayerName) {
-        setShowRejoinDialog(true);
-      } else {
-        setShowPlayerList(true);
-      }
+      // Already authenticated, go to player select/rejoin flow
+      navigate('/player-rejoin');
     } else {
-      setPasswordModal('player');
+      // Need to authenticate first
+      navigate('/player-login');
     }
   };
 
@@ -52,62 +25,13 @@ const Index: React.FC = () => {
       setRole('admin');
       navigate('/admin');
     } else {
-      setPasswordModal('admin');
+      navigate('/admin-login');
     }
   };
 
   const handleTVClick = () => {
     setRole('tv');
     navigate('/tv');
-  };
-
-  const handlePasswordSuccess = () => {
-    if (passwordModal === 'admin') {
-      setRoleAuthenticated('admin');
-      setRole('admin');
-      navigate('/admin');
-    } else if (passwordModal === 'tv') {
-      setRole('tv');
-      navigate('/tv');
-    } else if (passwordModal === 'player') {
-      setRoleAuthenticated('player');
-      if (currentPlayerId && currentPlayerName) {
-        setShowRejoinDialog(true);
-      } else {
-        setShowPlayerList(true);
-      }
-    }
-    setPasswordModal(null);
-  };
-
-  const handleRejoinConfirm = () => {
-    setPlayerId(currentPlayerId);
-    setPlayerName(currentPlayerName);
-    setRole('player');
-    setShowRejoinDialog(false);
-    navigate('/player');
-  };
-
-  const handleRejoinDecline = () => {
-    clearSession();
-    setShowRejoinDialog(false);
-    setShowPlayerList(true);
-  };
-
-  const handleSelectPlayer = (player: { id: string; username: string }) => {
-    setPlayerId(player.id);
-    setPlayerName(player.username);
-    setCurrentPlayerId(player.id);
-    setCurrentPlayerName(player.username);
-    setRole('player');
-    setShowPlayerList(false);
-    navigate('/player');
-  };
-
-  const handleCreateNewPlayer = () => {
-    setShowPlayerList(false);
-    setRole('player');
-    navigate('/player');
   };
 
   return (
@@ -153,91 +77,6 @@ const Index: React.FC = () => {
           Vota le migliori pizze surgelate con stile! 😎🎸
         </p>
       </div>
-
-      <PasswordModal
-        isOpen={!!passwordModal}
-        onClose={() => setPasswordModal(null)}
-        onSuccess={handlePasswordSuccess}
-        title={
-          passwordModal === 'admin' 
-            ? 'Accesso Admin' 
-            : passwordModal === 'tv' 
-            ? 'Accesso TV Show' 
-            : 'Accesso Giocatore'
-        }
-        role={passwordModal || 'player'}
-      />
-
-      {/* Rejoin Dialog */}
-      <Dialog open={showRejoinDialog} onOpenChange={setShowRejoinDialog}>
-        <DialogContent className="bg-card border-border max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="font-display text-2xl text-center">
-              🍕 Bentornato!
-            </DialogTitle>
-          </DialogHeader>
-          <div className="text-center space-y-4">
-            <p className="font-russo text-lg">
-              Sei tu <span className="text-primary font-bold">{currentPlayerName}</span>?
-            </p>
-            <div className="flex gap-4">
-              <Button
-                onClick={handleRejoinConfirm}
-                className="flex-1 font-russo gradient-pizza text-primary-foreground"
-              >
-                Sì, sono io! ✓
-              </Button>
-              <Button
-                onClick={handleRejoinDecline}
-                variant="outline"
-                className="flex-1 font-russo"
-              >
-                No, cambia
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Player Selection Dialog */}
-      <Dialog open={showPlayerList} onOpenChange={setShowPlayerList}>
-        <DialogContent className="bg-card border-border max-w-md max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="font-display text-2xl text-center">
-              👥 Chi sei?
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <p className="font-russo text-sm text-muted-foreground text-center">
-              Seleziona il tuo profilo o creane uno nuovo
-            </p>
-            
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {players.map((player) => (
-                <Card
-                  key={player.id}
-                  onClick={() => handleSelectPlayer(player)}
-                  className="cursor-pointer hover:border-primary transition-colors"
-                >
-                  <CardContent className="py-3 flex items-center gap-3">
-                    <div className="text-2xl">
-                      {player.is_online ? '🟢' : '⚪'}
-                    </div>
-                    <span className="font-russo text-lg">{player.username}</span>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            <Button
-              onClick={handleCreateNewPlayer}
-              className="w-full font-russo gradient-pizza text-primary-foreground"
-            >
-              ➕ Crea Nuovo Profilo
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

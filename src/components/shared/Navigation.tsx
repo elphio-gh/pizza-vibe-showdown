@@ -1,11 +1,10 @@
 import React from 'react';
 import { useRole } from '@/contexts/RoleContext';
 import { Button } from '@/components/ui/button';
-import { Home, User, Shield, Tv } from 'lucide-react';
+import { Home, User, Shield, Tv, Pizza } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ProfileSwitcher } from '@/components/player/ProfileSwitcher';
-import { MyPizzaDialog } from '@/components/player/MyPizzaDialog';
 import { useCurrentSession } from '@/hooks/useLocalStorage';
+import { usePizzas } from '@/hooks/usePizzas';
 
 interface NavigationProps {
   showProfileSwitcher?: boolean;
@@ -14,7 +13,11 @@ interface NavigationProps {
 export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = false }) => {
   const { role, setRole, playerName, playerId, setPlayerId, setPlayerName } = useRole();
   const { clearSession } = useCurrentSession();
+  const { pizzas } = usePizzas();
   const navigate = useNavigate();
+
+  // Check if player has registered a pizza
+  const myPizza = pizzas.find(p => p.registered_by === playerId);
 
   const handleGoHome = () => {
     setRole(null);
@@ -22,6 +25,14 @@ export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = fa
     setPlayerName(null);
     clearSession();
     navigate('/');
+  };
+
+  const handleGoToMyPizza = () => {
+    navigate('/my-pizza');
+  };
+
+  const handleGoToProfileSelect = () => {
+    navigate('/player-select');
   };
 
   const getRoleIcon = () => {
@@ -65,13 +76,30 @@ export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = fa
         </Button>
 
         <div className="flex items-center gap-2">
-          {/* My Pizza button for players */}
+          {/* My Pizza button for players - navigates to page */}
           {role === 'player' && playerId && (
-            <MyPizzaDialog />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleGoToMyPizza}
+              className={`font-russo ${myPizza ? 'border-accent text-accent' : 'border-secondary text-secondary'}`}
+            >
+              <Pizza className="w-4 h-4 mr-1" />
+              {myPizza ? 'La mia Pizza' : '+ Registra Pizza'}
+            </Button>
           )}
-          
+
+          {/* Profile - navigates to player select page instead of opening dialog */}
           {showProfileSwitcher && role === 'player' ? (
-            <ProfileSwitcher />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleGoToProfileSelect}
+              className="flex items-center gap-2 text-primary hover:text-primary/80"
+            >
+              <User className="w-4 h-4" />
+              <span className="font-russo text-sm">{playerName || 'Profilo'}</span>
+            </Button>
           ) : (
             <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
               {getRoleIcon()}

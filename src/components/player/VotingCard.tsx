@@ -5,7 +5,7 @@ import { Pizza, Vote } from '@/types/database';
 import { VoteSlider } from './VoteSlider';
 import { useVotes } from '@/hooks/useVotes';
 import { useRole } from '@/contexts/RoleContext';
-import { ArrowLeft, Send, Check } from 'lucide-react';
+import { ArrowLeft, Send, Check, AlertTriangle } from 'lucide-react';
 import { VoteFeedback } from '@/components/effects/VoteFeedback';
 
 interface VotingCardProps {
@@ -14,12 +14,49 @@ interface VotingCardProps {
   onBack: () => void;
 }
 
+// Meme-style warning messages
+const WARNING_MESSAGES = [
+  "⚠️ ATTENZIONE: Il voto è definitivo come la carbonara con la panna... irreversibile! 🍝",
+  "🚨 Una volta votato, non si torna indietro. Come l'ananas sulla pizza, è una scelta di vita! 🍍",
+  "⚡ Voto permanente! Pensa bene, non puoi fare CTRL+Z come con gli screenshot cringe 😬",
+  "🔒 Il voto è per sempre, come il tatuaggio del delfino che volevi a 18 anni 🐬",
+  "💀 No take-backsies! Questo voto è più definitivo di un messaggio su WhatsApp con le spunte blu ✓✓",
+];
+
+const getScoreEmoji = (score: number): string => {
+  if (score <= 3) return '💩';
+  if (score <= 4) return '😬';
+  if (score <= 5) return '😐';
+  if (score <= 6) return '🤔';
+  if (score <= 7) return '😊';
+  if (score <= 8) return '😍';
+  if (score <= 9) return '🔥';
+  return '🏆';
+};
+
+const getScoreLabel = (score: number): string => {
+  if (score <= 2) return 'Tragica';
+  if (score <= 3) return 'Scarsa';
+  if (score <= 4) return 'Meh...';
+  if (score <= 5) return 'Nella media';
+  if (score <= 6) return 'Discreta';
+  if (score <= 7) return 'Buona!';
+  if (score <= 8) return 'Ottima!';
+  if (score <= 9) return 'TOP!';
+  return 'LEGGENDARIA!';
+};
+
 export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onBack }) => {
   const { playerId } = useRole();
   const { createVote } = useVotes();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
+
+  // Random warning message (stays the same during component lifecycle)
+  const [warningMessage] = useState(() =>
+    WARNING_MESSAGES[Math.floor(Math.random() * WARNING_MESSAGES.length)]
+  );
 
   const [votes, setVotes] = useState({
     aspetto: existingVote?.aspetto ?? 5,
@@ -41,6 +78,8 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
     );
   };
 
+  const currentScore = calculateScore();
+
   const handleSubmit = async () => {
     if (!playerId || isSubmitting || isReadOnly) return;
 
@@ -51,8 +90,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
         player_id: playerId,
         ...votes,
       });
-      const score = calculateScore();
-      setFinalScore(score);
+      setFinalScore(currentScore);
       setShowFeedback(true);
     } catch (error) {
       console.error('Error submitting vote:', error);
@@ -80,10 +118,10 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
         <CardHeader className="text-center pb-2">
           <div className="text-6xl mb-2">🍕</div>
           <CardTitle className="font-display text-3xl text-primary">
-            Pizza #{pizza.number}
-          </CardTitle>
-          <p className="font-russo text-lg text-muted-foreground">
             {pizza.brand} - {pizza.flavor}
+          </CardTitle>
+          <p className="font-russo text-sm text-muted-foreground">
+            Pizza #{pizza.number}
           </p>
           {isReadOnly && (
             <div className="flex items-center justify-center gap-2 mt-2 px-4 py-2 bg-green-500/20 rounded-lg">
@@ -131,19 +169,48 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
           />
 
           {!isReadOnly && (
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="w-full py-6 font-display text-xl gradient-pizza text-primary-foreground box-glow-orange"
-            >
-              {isSubmitting ? (
-                'Invio...'
-              ) : (
-                <>
-                  INVIA VOTO <Send className="ml-2 w-5 h-5" />
-                </>
-              )}
-            </Button>
+            <>
+              {/* Score Preview */}
+              <div className="p-4 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl border-2 border-primary/30">
+                <div className="text-center space-y-2">
+                  <p className="font-russo text-sm text-muted-foreground uppercase tracking-wide">
+                    Voto che stai per dare
+                  </p>
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="text-5xl">{getScoreEmoji(currentScore)}</span>
+                    <div className="text-left">
+                      <p className="font-display text-4xl text-primary text-glow-orange">
+                        {currentScore.toFixed(1)}
+                      </p>
+                      <p className="font-russo text-sm text-foreground">
+                        {getScoreLabel(currentScore)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Meme-style warning */}
+              <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
+                <p className="font-russo text-xs text-center text-destructive/90 leading-relaxed">
+                  {warningMessage}
+                </p>
+              </div>
+
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="w-full py-6 font-display text-xl gradient-pizza text-primary-foreground box-glow-orange"
+              >
+                {isSubmitting ? (
+                  'Invio...'
+                ) : (
+                  <>
+                    INVIA VOTO <Send className="ml-2 w-5 h-5" />
+                  </>
+                )}
+              </Button>
+            </>
           )}
         </CardContent>
       </Card>

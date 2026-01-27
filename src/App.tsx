@@ -9,6 +9,11 @@ import PlayerPage from "./pages/PlayerPage";
 import AdminPage from "./pages/AdminPage";
 import TVShowPage from "./pages/TVShowPage";
 import NotFound from "./pages/NotFound";
+import PlayerLoginPage from "./pages/PlayerLoginPage";
+import AdminLoginPage from "./pages/AdminLoginPage";
+import PlayerRejoinPage from "./pages/PlayerRejoinPage";
+import PlayerSelectPage from "./pages/PlayerSelectPage";
+import MyPizzaPage from "./pages/MyPizzaPage";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +29,11 @@ const App = () => (
             <Route path="/player" element={<PlayerPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/tv" element={<TVShowPage />} />
+            <Route path="/player-login" element={<PlayerLoginPage />} />
+            <Route path="/admin-login" element={<AdminLoginPage />} />
+            <Route path="/player-rejoin" element={<PlayerRejoinPage />} />
+            <Route path="/player-select" element={<PlayerSelectPage />} />
+            <Route path="/my-pizza" element={<MyPizzaPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
@@ -33,3 +43,4 @@ const App = () => (
 );
 
 export default App;
+

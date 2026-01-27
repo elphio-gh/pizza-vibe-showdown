@@ -54,14 +54,14 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
       <h2 className="font-display text-2xl text-accent">
         Pizze da Votare ({votablePizzas.length})
       </h2>
-      
+
       {userPizza && (
         <div className="p-3 bg-primary/10 rounded-lg border border-primary/30 mb-4">
           <p className="font-russo text-sm text-primary">
-            🍕 La tua pizza: <strong>#{userPizza.number}</strong> - {userPizza.brand} ({userPizza.flavor})
+            🍕 La tua pizza: <strong>{userPizza.brand} - {userPizza.flavor}</strong>
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            Non puoi votare la tua pizza
+            Pizza #{userPizza.number} • Non puoi votare la tua pizza
           </p>
         </div>
       )}
@@ -83,25 +83,24 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
             <Card
               key={pizza.id}
               onClick={() => onSelectPizza(pizza, existingVote)}
-              className={`cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
-                hasVoted 
-                  ? 'bg-accent/10 border-accent/50' 
+              className={`cursor-pointer transition-all duration-200 hover:scale-[1.02] ${hasVoted
+                  ? 'bg-accent/10 border-accent/50'
                   : 'bg-card border-accent/30 hover:border-accent'
-              }`}
+                }`}
             >
               <CardContent className="py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="text-3xl">🍕</div>
                   <div>
-                    <div className="font-display text-xl">
-                      Pizza #{pizza.number}
-                    </div>
-                    <div className="font-russo text-sm text-muted-foreground">
+                    <div className="font-display text-lg leading-tight">
                       {pizza.brand} - {pizza.flavor}
+                    </div>
+                    <div className="font-russo text-xs text-muted-foreground">
+                      Pizza #{pizza.number}
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   {hasVoted ? (
                     <div className="flex items-center gap-1 px-3 py-1 bg-accent/20 rounded-full">
