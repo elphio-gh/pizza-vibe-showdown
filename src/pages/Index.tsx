@@ -123,7 +123,7 @@ const Index: React.FC = () => {
           TONY BUITONY CUP
         </h1>
         <p className="font-russo text-xl md:text-2xl text-muted-foreground">
-          La sfida delle pizze surgelate! 🏆
+          🏆 La sfida delle pizze surgelate! 🏆
         </p>
       </div>
 

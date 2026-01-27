@@ -15,8 +15,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Poppins', 'sans-serif'],
-        display: ['Bangers', 'cursive'],
-        russo: ['"Russo One"', 'sans-serif'],
+        display: ['"Dancing Script"', 'cursive'],
+        dancing: ['"Dancing Script"', 'cursive'],
       },
       colors: {
         border: "hsl(var(--border))",
