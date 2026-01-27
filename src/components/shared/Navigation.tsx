@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Home, User, Shield, Tv } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProfileSwitcher } from '@/components/player/ProfileSwitcher';
+import { MyPizzaDialog } from '@/components/player/MyPizzaDialog';
 import { useCurrentSession } from '@/hooks/useLocalStorage';
 
 interface NavigationProps {
@@ -11,7 +12,7 @@ interface NavigationProps {
 }
 
 export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = false }) => {
-  const { role, setRole, playerName, setPlayerId, setPlayerName } = useRole();
+  const { role, setRole, playerName, playerId, setPlayerId, setPlayerName } = useRole();
   const { clearSession } = useCurrentSession();
   const navigate = useNavigate();
 
@@ -60,10 +61,15 @@ export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = fa
           className="flex items-center gap-2 text-primary hover:text-primary/80"
         >
           <Home className="w-5 h-5" />
-          <span className="font-display text-lg">Tony Buitony Cup</span>
+          <span className="font-display text-lg hidden sm:inline">Tony Buitony Cup</span>
         </Button>
 
         <div className="flex items-center gap-2">
+          {/* My Pizza button for players */}
+          {role === 'player' && playerId && (
+            <MyPizzaDialog />
+          )}
+          
           {showProfileSwitcher && role === 'player' ? (
             <ProfileSwitcher />
           ) : (

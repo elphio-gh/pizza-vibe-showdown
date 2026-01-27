@@ -3,36 +3,26 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 import { useRole } from '@/contexts/RoleContext';
 import { Navigation } from '@/components/shared/Navigation';
 import { PlayerOnboarding } from '@/components/player/PlayerOnboarding';
-import { PizzaRegistration } from '@/components/player/PizzaRegistration';
 import { PizzaList } from '@/components/player/PizzaList';
 import { VotingCard } from '@/components/player/VotingCard';
-import { ParticipantsList } from '@/components/player/ParticipantsList';
-import { ProfileSwitcher } from '@/components/player/ProfileSwitcher';
 import { Pizza, Vote, generateRandomNickname } from '@/types/database';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCurrentSession, useRecentProfiles } from '@/hooks/useLocalStorage';
 import { useSessions } from '@/hooks/useSessions';
 import { usePlayers } from '@/hooks/usePlayers';
-import { usePizzas } from '@/hooks/usePizzas';
 import { usePlayerPresence } from '@/hooks/usePlayerPresence';
 
 const PlayerPage: React.FC = () => {
   const { role, playerId, setPlayerId, setPlayerName, setRole } = useRole();
   const [selectedPizza, setSelectedPizza] = useState<{ pizza: Pizza; vote?: Vote } | null>(null);
-  const [showParticipants, setShowParticipants] = useState(true);
   const [searchParams] = useSearchParams();
   
   const { currentPlayerId, setCurrentPlayerId, currentPlayerName, setCurrentPlayerName, setSessionToken } = useCurrentSession();
   const { addProfile } = useRecentProfiles();
   const { getSessionByToken, linkPlayerToSession } = useSessions();
-  const { createPlayer, players } = usePlayers();
-  const { pizzas } = usePizzas();
+  const { createPlayer, players, updatePlayer } = usePlayers();
 
-  // Use presence tracking
+  // Use presence tracking - auto confirms presence
   usePlayerPresence();
-
-  // Check if player already has a pizza registered
-  const playerHasPizza = pizzas.some(p => p.registered_by === playerId);
 
   // Handle QR code token on mount
   useEffect(() => {
@@ -55,6 +45,10 @@ const PlayerPage: React.FC = () => {
             setCurrentPlayerId(player.id);
             setCurrentPlayerName(player.username);
             addProfile({ id: player.id, username: player.username });
+            // Auto-confirm presence
+            if (!player.is_confirmed) {
+              updatePlayer.mutate({ id: player.id, is_confirmed: true });
+            }
           }
         } else if (session) {
           // New session - create player with random nickname
@@ -106,27 +100,7 @@ const PlayerPage: React.FC = () => {
     );
   }
 
-  // Show participants list first for presence confirmation
-  const currentPlayer = players.find(p => p.id === playerId);
-  if (showParticipants && currentPlayer && !currentPlayer.is_confirmed) {
-    return (
-      <>
-        <Navigation showProfileSwitcher />
-        <div className="container mx-auto px-4 pt-20 pb-8">
-          <div className="mb-6 text-center">
-            <h1 className="font-display text-4xl text-primary text-glow-orange">
-              Ciao {currentPlayer.username}! 🍕
-            </h1>
-            <p className="font-game text-muted-foreground">
-              Conferma la tua presenza per iniziare
-            </p>
-          </div>
-          <ParticipantsList onConfirmPresence={() => setShowParticipants(false)} />
-        </div>
-      </>
-    );
-  }
-
+  // Show voting card if pizza selected
   if (selectedPizza) {
     return (
       <>
@@ -142,52 +116,23 @@ const PlayerPage: React.FC = () => {
     );
   }
 
+  // Default: Show pizza list for voting (no tabs, no presence confirmation)
+  const currentPlayer = players.find(p => p.id === playerId);
+
   return (
     <>
       <Navigation showProfileSwitcher />
       <div className="container mx-auto px-4 pt-20 pb-8">
         <div className="mb-6">
           <h1 className="font-display text-4xl text-primary text-glow-orange">
-            Ciao! 🍕
+            Ciao {currentPlayer?.username || ''}! 🍕
           </h1>
           <p className="font-game text-muted-foreground">
-            {playerHasPizza 
-              ? 'Hai già registrato la tua pizza! Ora puoi votare le altre.' 
-              : 'Registra la tua pizza o vota quelle esistenti'}
+            Vota le pizze dei tuoi amici!
           </p>
         </div>
 
-        <Tabs defaultValue="vote" className="w-full">
-          <TabsList className="w-full mb-6 bg-muted">
-            <TabsTrigger value="vote" className="flex-1 font-game">
-              🗳️ Vota
-            </TabsTrigger>
-            <TabsTrigger 
-              value="register" 
-              className="flex-1 font-game"
-              disabled={playerHasPizza}
-            >
-              {playerHasPizza ? '✅ Pizza Registrata' : '➕ Registra'}
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="vote">
-            <PizzaList onSelectPizza={(pizza, vote) => setSelectedPizza({ pizza, vote })} />
-          </TabsContent>
-
-          <TabsContent value="register">
-            {playerHasPizza ? (
-              <div className="text-center p-8 bg-accent/10 rounded-lg border border-accent/30">
-                <p className="font-display text-2xl text-accent mb-2">✅ Hai già registrato la tua pizza!</p>
-                <p className="font-game text-muted-foreground">
-                  Puoi registrare solo una pizza per questa competizione.
-                </p>
-              </div>
-            ) : (
-              <PizzaRegistration />
-            )}
-          </TabsContent>
-        </Tabs>
+        <PizzaList onSelectPizza={(pizza, vote) => setSelectedPizza({ pizza, vote })} />
       </div>
     </>
   );

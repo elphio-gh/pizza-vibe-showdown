@@ -53,10 +53,15 @@ export const usePlayers = () => {
   });
 
   const updatePlayer = useMutation({
-    mutationFn: async ({ id, username }: { id: string; username: string }) => {
+    mutationFn: async ({ id, username, is_confirmed, is_online }: { id: string; username?: string; is_confirmed?: boolean; is_online?: boolean }) => {
+      const updateData: Partial<Pick<Player, 'username' | 'is_confirmed' | 'is_online'>> = {};
+      if (username !== undefined) updateData.username = username;
+      if (is_confirmed !== undefined) updateData.is_confirmed = is_confirmed;
+      if (is_online !== undefined) updateData.is_online = is_online;
+      
       const { data, error } = await supabase
         .from('players')
-        .update({ username })
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();
