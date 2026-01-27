@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import { useRole } from '@/contexts/RoleContext';
 import { Navigation } from '@/components/shared/Navigation';
@@ -31,6 +31,31 @@ const PlayerPage: React.FC = () => {
 
   // Check if player has registered a pizza
   const myPizza = pizzas.find(p => p.registered_by === playerId);
+
+  // Handle selecting a pizza - push state to browser history
+  const handleSelectPizza = useCallback((pizza: Pizza, vote?: Vote) => {
+    setSelectedPizza({ pizza, vote });
+    // Push a state to browser history so back button works
+    window.history.pushState({ voting: true }, '', window.location.href);
+  }, []);
+
+  // Handle going back from voting
+  const handleBackFromVoting = useCallback(() => {
+    setSelectedPizza(null);
+  }, []);
+
+  // Handle browser back button
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (selectedPizza) {
+        // If we're in voting mode, go back to list
+        setSelectedPizza(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [selectedPizza]);
 
   // Handle QR code token on mount
   useEffect(() => {
@@ -104,7 +129,7 @@ const PlayerPage: React.FC = () => {
           <VotingCard
             pizza={selectedPizza.pizza}
             existingVote={selectedPizza.vote}
-            onBack={() => setSelectedPizza(null)}
+            onBack={handleBackFromVoting}
           />
         </div>
       </>
@@ -132,8 +157,8 @@ const PlayerPage: React.FC = () => {
           <Button
             onClick={() => navigate('/my-pizza')}
             className={`w-full py-6 font-display text-xl transition-all ${myPizza
-                ? 'bg-accent/20 border-2 border-accent text-accent hover:bg-accent/30'
-                : 'gradient-pizza text-primary-foreground box-glow-orange'
+              ? 'bg-accent/20 border-2 border-accent text-accent hover:bg-accent/30'
+              : 'gradient-pizza text-primary-foreground box-glow-orange'
               }`}
           >
             {myPizza ? (
@@ -150,11 +175,12 @@ const PlayerPage: React.FC = () => {
           </Button>
         </div>
 
-        <PizzaList onSelectPizza={(pizza, vote) => setSelectedPizza({ pizza, vote })} />
+        <PizzaList onSelectPizza={handleSelectPizza} />
       </div>
     </>
   );
 };
 
 export default PlayerPage;
+
 

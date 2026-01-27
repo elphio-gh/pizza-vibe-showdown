@@ -20,6 +20,8 @@
 - 📱 **QR Code** — I giocatori si uniscono scansionando un codice
 - 🏆 **Reveal cinematografico** — Classifica dal peggiore al vincitore con animazioni
 - 🎸 **Stile rockettaro** — Design dark con neon, emoji e tanta ironia
+- 👤 **Proprietario visibile** — Ogni pizza mostra chi l'ha registrata
+- 📲 **Navigazione mobile** — Tasto indietro del dispositivo gestito correttamente
 
 ---
 
@@ -27,7 +29,7 @@
 
 | Ruolo | Descrizione |
 |-------|-------------|
-| 🎮 **Giocatore** | Si unisce con username e password, registra le proprie pizze, vota quelle degli altri su 5 categorie (Aspetto, Gusto, Impasto, Farcitura, Tony Factor) |
+| 🎮 **Giocatore** | Sceglie il proprio nickname, registra le proprie pizze, vota quelle degli altri su 5 categorie (Aspetto, Gusto, Impasto, Farcitura, Tony Factor) |
 | 👑 **Admin** | Gestisce la competizione: controlla giocatori, pizze, comanda la TV e conduce il reveal della classifica |
 | 📺 **TV** | Schermo da proiettare: mostra QR per unirsi, statistiche live, classifica animata e celebrazione del vincitore |
 

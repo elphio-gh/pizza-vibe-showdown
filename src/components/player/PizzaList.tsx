@@ -4,6 +4,7 @@ import { Pizza, Vote } from '@/types/database';
 import { usePizzas } from '@/hooks/usePizzas';
 import { useVotes } from '@/hooks/useVotes';
 import { useRole } from '@/contexts/RoleContext';
+import { usePlayers } from '@/hooks/usePlayers';
 import { Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,10 +16,17 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
   const { pizzas, isLoading } = usePizzas();
   const { votes } = useVotes();
   const { playerId } = useRole();
+  const { players } = usePlayers();
   const navigate = useNavigate();
 
   const getVoteForPizza = (pizzaId: string): Vote | undefined => {
     return votes.find(v => v.pizza_id === pizzaId && v.player_id === playerId);
+  };
+
+  const getPlayerName = (playerId: string | null): string => {
+    if (!playerId) return 'Anonimo';
+    const player = players.find(p => p.id === playerId);
+    return player?.username || 'Anonimo';
   };
 
   if (isLoading) {
@@ -83,6 +91,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
         votablePizzas.map((pizza) => {
           const existingVote = getVoteForPizza(pizza.id);
           const hasVoted = !!existingVote;
+          const ownerName = getPlayerName(pizza.registered_by);
 
           return (
             <Card
@@ -101,7 +110,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
                       {pizza.brand} - {pizza.flavor}
                     </div>
                     <div className="font-russo text-xs text-muted-foreground">
-                      Pizza #{pizza.number}
+                      di {ownerName} • Pizza #{pizza.number}
                     </div>
                   </div>
                 </div>
@@ -124,3 +133,4 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
     </div>
   );
 };
+
