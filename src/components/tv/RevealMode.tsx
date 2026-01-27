@@ -138,7 +138,8 @@ export const RevealMode: React.FC = () => {
           stiffness: 100
         }}
         className={`
-          p-6 md:p-8 rounded-3xl transition-all duration-500 w-full max-w-2xl
+          p-6 md:p-8 rounded-3xl transition-all duration-500 w-full max-w-4xl
+          flex flex-col md:flex-row gap-6 md:gap-8 items-center
           ${isWinner
             ? 'bg-gradient-to-br from-yellow-500/40 to-amber-500/40 border-4 border-yellow-400 box-glow-yellow'
             : isSecond
@@ -149,84 +150,86 @@ export const RevealMode: React.FC = () => {
           }
         `}
       >
-        {/* Position Badge */}
-        <div className="text-center mb-6">
-          <div className={`inline-block font-display text-6xl md:text-8xl ${
-            isWinner ? 'text-yellow-400 text-glow-yellow' : 
-            isSecond ? 'text-gray-300' : 
-            isThird ? 'text-amber-500' : 
-            'text-muted-foreground'
-          }`}>
-            {isWinner ? '🥇' : isSecond ? '🥈' : isThird ? '🥉' : `#${currentRank}`}
-          </div>
-          {isExAequo && (
-            <div className="mt-2 inline-block px-4 py-1 bg-accent/30 rounded-full">
-              <span className="font-russo text-accent text-lg">🤝 EX AEQUO</span>
-            </div>
-          )}
-        </div>
-
-        {/* Pizza Info */}
-        <div className="text-center mb-6">
-          <h2 className="font-display text-4xl md:text-5xl text-foreground mb-2">
-            Pizza #{pizza.number}
-          </h2>
-          <p className="font-russo text-xl md:text-2xl text-muted-foreground">
-            {pizza.brand} - {pizza.flavor}
-          </p>
-        </div>
-
-        {/* Score */}
-        <div className="text-center mb-6">
-          <div className={`font-display text-7xl md:text-9xl ${
-            pizza.averageScore >= 8 ? 'text-accent text-glow-yellow' :
-            pizza.averageScore >= 6 ? 'text-secondary' :
-            pizza.averageScore >= 4 ? 'text-primary' :
-            'text-destructive'
-          }`}>
-            {pizza.averageScore.toFixed(1)}
-          </div>
-          <p className="font-russo text-lg text-muted-foreground">
-            {pizza.voteCount} {pizza.voteCount === 1 ? 'voto' : 'voti'}
-          </p>
-        </div>
-
-        {/* Owner */}
-        {pizza.registeredByPlayer && (
+        {/* Left Column */}
+        <div className="flex-1 flex flex-col justify-center text-center">
+          {/* Position Badge */}
           <div className="text-center mb-6">
+            <div className={`inline-block font-display text-6xl md:text-8xl ${
+              isWinner ? 'text-yellow-400 text-glow-yellow' : 
+              isSecond ? 'text-gray-300' : 
+              isThird ? 'text-amber-500' : 
+              'text-muted-foreground'
+            }`}>
+              {isWinner ? '🥇' : isSecond ? '🥈' : isThird ? '🥉' : `#${currentRank}`}
+            </div>
+            {isExAequo && (
+              <div className="mt-2 inline-block px-4 py-1 bg-accent/30 rounded-full">
+                <span className="font-russo text-accent text-lg">🤝 EX AEQUO</span>
+              </div>
+            )}
+          </div>
+
+          {/* Pizza Info */}
+          <div className="text-center mb-6">
+            <h2 className="font-display text-4xl md:text-5xl text-foreground mb-2">
+              Pizza #{pizza.number}
+            </h2>
+            <p className="font-russo text-xl md:text-2xl text-muted-foreground">
+              {pizza.brand} - {pizza.flavor}
+            </p>
+          </div>
+
+          {/* Score */}
+          <div className="text-center mb-6">
+            <div className={`font-display text-7xl md:text-9xl ${
+              pizza.averageScore >= 8 ? 'text-accent text-glow-yellow' :
+              pizza.averageScore >= 6 ? 'text-secondary' :
+              pizza.averageScore >= 4 ? 'text-primary' :
+              'text-destructive'
+            }`}>
+              {pizza.averageScore.toFixed(1)}
+            </div>
+            <p className="font-russo text-lg text-muted-foreground">
+              {pizza.voteCount} {pizza.voteCount === 1 ? 'voto' : 'voti'}
+            </p>
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="flex-1 flex flex-col items-center md:items-start justify-center gap-4">
+          {/* Owner */}
+          {pizza.registeredByPlayer && (
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 rounded-full">
               <span className="text-2xl">🧑‍🍳</span>
               <span className="font-russo text-lg text-secondary">
                 Portata da: <span className="font-bold">{pizza.registeredByPlayer.username}</span>
               </span>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Category Averages */}
-        {details.averages && (
-          <div className="flex flex-wrap justify-center gap-2 mb-6">
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
-              👀 {details.averages.aspetto.toFixed(1)}
-            </span>
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
-              😋 {details.averages.gusto.toFixed(1)}
-            </span>
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
-              🫓 {details.averages.impasto.toFixed(1)}
-            </span>
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
-              🧀 {details.averages.farcitura.toFixed(1)}
-            </span>
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
-              🎸 {details.averages.tony_factor.toFixed(1)}
-            </span>
-          </div>
-        )}
+          {/* Category Averages */}
+          {details.averages && (
+            <div className="flex flex-wrap justify-center md:justify-start gap-2">
+              <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
+                👀 {details.averages.aspetto.toFixed(1)}
+              </span>
+              <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
+                😋 {details.averages.gusto.toFixed(1)}
+              </span>
+              <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
+                🫓 {details.averages.impasto.toFixed(1)}
+              </span>
+              <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
+                🧀 {details.averages.farcitura.toFixed(1)}
+              </span>
+              <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
+                🎸 {details.averages.tony_factor.toFixed(1)}
+              </span>
+            </div>
+          )}
 
-        {/* Top Fan */}
-        {details.topFan && (
-          <div className="text-center">
+          {/* Top Fan */}
+          {details.topFan && (
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 rounded-full">
               <span className="text-xl">⭐</span>
               <span className="font-russo text-primary">
@@ -234,8 +237,8 @@ export const RevealMode: React.FC = () => {
                 <span className="text-xs ml-2 opacity-70">({details.topScore.toFixed(1)})</span>
               </span>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </motion.div>
     );
   };
