@@ -96,7 +96,7 @@ export const MyPizzaDialog: React.FC = () => {
           <Button 
             variant="outline" 
             size="sm"
-            className={`font-game ${myPizza ? 'border-accent text-accent' : 'border-secondary text-secondary'}`}
+            className={`font-russo ${myPizza ? 'border-accent text-accent' : 'border-secondary text-secondary'}`}
           >
             <PizzaIcon className="w-4 h-4 mr-1" />
             {myPizza ? 'La mia Pizza' : '+ Registra Pizza'}
@@ -113,7 +113,7 @@ export const MyPizzaDialog: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="font-game text-sm text-muted-foreground">Marca</Label>
+              <Label className="font-russo text-sm text-muted-foreground">Marca</Label>
               <div className="relative">
                 <Package className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
                 <Input
@@ -121,14 +121,14 @@ export const MyPizzaDialog: React.FC = () => {
                   placeholder="Es. Dr. Oetker, Buitoni..."
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                  className="pl-12 font-game"
+                  className="pl-12 font-russo"
                   maxLength={50}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label className="font-game text-sm text-muted-foreground">Gusto</Label>
+              <Label className="font-russo text-sm text-muted-foreground">Gusto</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl">🍕</span>
                 <Input
@@ -136,7 +136,7 @@ export const MyPizzaDialog: React.FC = () => {
                   placeholder="Es. Margherita, 4 Formaggi..."
                   value={flavor}
                   onChange={(e) => setFlavor(e.target.value)}
-                  className="pl-12 font-game"
+                  className="pl-12 font-russo"
                   maxLength={50}
                 />
               </div>
@@ -144,7 +144,7 @@ export const MyPizzaDialog: React.FC = () => {
 
             {myPizza && (
               <div className="p-3 bg-muted/30 rounded-lg">
-                <p className="font-game text-xs text-muted-foreground">
+                <p className="font-russo text-xs text-muted-foreground">
                   Pizza #{myPizza.number} registrata
                 </p>
               </div>

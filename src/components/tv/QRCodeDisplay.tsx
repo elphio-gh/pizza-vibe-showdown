@@ -43,7 +43,7 @@ export const QRCodeDisplay: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center gap-4 p-6 bg-card/80 backdrop-blur-sm rounded-2xl border-2 border-primary/30 box-glow-orange">
-      <p className="font-game text-lg text-primary animate-pulse-glow">
+      <p className="font-russo text-lg text-primary animate-pulse-glow">
         📱 Scansiona per partecipare!
       </p>
       
@@ -63,7 +63,7 @@ export const QRCodeDisplay: React.FC = () => {
       </div>
 
       <div className="text-center">
-        <p className="font-game text-sm text-muted-foreground">
+        <p className="font-russo text-sm text-muted-foreground">
           oppure vai su
         </p>
         <p className="font-display text-lg text-secondary">

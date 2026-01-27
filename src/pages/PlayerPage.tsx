@@ -127,7 +127,7 @@ const PlayerPage: React.FC = () => {
           <h1 className="font-display text-4xl text-primary text-glow-orange">
             Ciao {currentPlayer?.username || ''}! 🍕
           </h1>
-          <p className="font-game text-muted-foreground">
+          <p className="font-russo text-muted-foreground">
             Vota le pizze dei tuoi amici!
           </p>
         </div>

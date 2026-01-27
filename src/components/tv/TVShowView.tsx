@@ -75,7 +75,7 @@ export const TVShowView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
       {/* Animated background for burn-in protection */}
       <AnimatedBackground />
       
@@ -93,7 +93,7 @@ export const TVShowView: React.FC = () => {
 
       {/* ESC hint */}
       <div className="fixed bottom-4 right-4 z-50 opacity-30 hover:opacity-80 transition-opacity">
-        <span className="font-game text-xs text-muted-foreground">
+        <span className="font-russo text-xs text-muted-foreground">
           Premi ESC per uscire
         </span>
       </div>

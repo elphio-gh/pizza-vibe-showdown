@@ -23,7 +23,7 @@ export const LiveStats: React.FC = () => {
           <div className={`font-display text-5xl md:text-7xl ${color} text-glow-orange`}>
             {value}
           </div>
-          <div className="font-game text-lg md:text-xl text-muted-foreground mt-2">
+          <div className="font-russo text-lg md:text-xl text-muted-foreground mt-2">
             {label}
           </div>
         </div>

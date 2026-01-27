@@ -123,7 +123,7 @@ export const PlayerManager: React.FC = () => {
                 ) : (
                   <>
                     <div className="flex-1">
-                      <span className="font-game">{player.username}</span>
+                      <span className="font-russo">{player.username}</span>
                       {player.is_confirmed && (
                         <span className="ml-2 text-xs text-green-500">✓ Confermato</span>
                       )}

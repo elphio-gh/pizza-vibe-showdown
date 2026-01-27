@@ -40,7 +40,7 @@ export const WinnerCelebration: React.FC = () => {
   if (winners.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="font-game text-2xl text-muted-foreground">
+        <p className="font-russo text-2xl text-muted-foreground">
           Nessuna pizza da premiare...
         </p>
       </div>
@@ -85,14 +85,14 @@ export const WinnerCelebration: React.FC = () => {
                 Pizza #{winner.number}
               </div>
               
-              <div className="font-game text-xl md:text-2xl text-muted-foreground mb-4">
+              <div className="font-russo text-xl md:text-2xl text-muted-foreground mb-4">
                 {winner.brand} - {winner.flavor}
               </div>
 
               {/* Winner's username */}
               {winner.registeredByPlayer && (
                 <div className="p-3 bg-primary/20 rounded-lg border border-primary/50 mb-4">
-                  <p className="font-game text-sm text-muted-foreground">Registrata da:</p>
+                  <p className="font-russo text-sm text-muted-foreground">Registrata da:</p>
                   <p className="font-display text-2xl md:text-3xl text-primary">
                     🎉 {winner.registeredByPlayer.username} 🎉
                   </p>
@@ -103,7 +103,7 @@ export const WinnerCelebration: React.FC = () => {
                 {winner.averageScore.toFixed(1)}
               </div>
               
-              <div className="font-game text-lg text-muted-foreground mt-2">
+              <div className="font-russo text-lg text-muted-foreground mt-2">
                 con {winner.voteCount} voti
               </div>
             </motion.div>

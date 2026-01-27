@@ -32,7 +32,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
       <Card className="bg-muted/30 border-dashed border-2 border-muted">
         <CardContent className="py-12 text-center">
           <div className="text-6xl mb-4">🍕</div>
-          <p className="font-game text-muted-foreground">
+          <p className="font-russo text-muted-foreground">
             Nessuna pizza registrata ancora!
           </p>
           <p className="text-sm text-muted-foreground mt-2">
@@ -57,7 +57,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
       
       {userPizza && (
         <div className="p-3 bg-primary/10 rounded-lg border border-primary/30 mb-4">
-          <p className="font-game text-sm text-primary">
+          <p className="font-russo text-sm text-primary">
             🍕 La tua pizza: <strong>#{userPizza.number}</strong> - {userPizza.brand} ({userPizza.flavor})
           </p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -69,7 +69,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
       {votablePizzas.length === 0 ? (
         <Card className="bg-muted/30 border-dashed border-2 border-muted">
           <CardContent className="py-8 text-center">
-            <p className="font-game text-muted-foreground">
+            <p className="font-russo text-muted-foreground">
               Non ci sono altre pizze da votare al momento.
             </p>
           </CardContent>
@@ -96,7 +96,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
                     <div className="font-display text-xl">
                       Pizza #{pizza.number}
                     </div>
-                    <div className="font-game text-sm text-muted-foreground">
+                    <div className="font-russo text-sm text-muted-foreground">
                       {pizza.brand} - {pizza.flavor}
                     </div>
                   </div>
@@ -106,7 +106,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
                   {hasVoted ? (
                     <div className="flex items-center gap-1 px-3 py-1 bg-accent/20 rounded-full">
                       <Check className="w-4 h-4 text-accent" />
-                      <span className="font-game text-sm text-accent">Votata</span>
+                      <span className="font-russo text-sm text-accent">Votata</span>
                     </div>
                   ) : (
                     <ChevronRight className="w-6 h-6 text-accent" />

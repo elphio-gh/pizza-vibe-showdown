@@ -119,10 +119,10 @@ const Index: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
       <div className="text-center mb-12 animate-bounce-in">
         <div className="text-[100px] md:text-[150px] mb-4 animate-float">🍕</div>
-        <h1 className="font-display text-5xl md:text-7xl gradient-pizza bg-clip-text text-transparent mb-4">
+        <h1 className="font-display text-5xl md:text-7xl bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent mb-4">
           TONY BUITONY CUP
         </h1>
-        <p className="font-game text-xl md:text-2xl text-muted-foreground">
+        <p className="font-russo text-xl md:text-2xl text-muted-foreground">
           La sfida delle pizze surgelate! 🏆
         </p>
       </div>
@@ -154,7 +154,7 @@ const Index: React.FC = () => {
       </div>
 
       <div className="mt-12 text-center">
-        <p className="font-game text-sm text-muted-foreground">
+        <p className="font-russo text-sm text-muted-foreground">
           Vota le migliori pizze surgelate con stile! 😎🎸
         </p>
       </div>
@@ -182,20 +182,20 @@ const Index: React.FC = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="text-center space-y-4">
-            <p className="font-game text-lg">
+            <p className="font-russo text-lg">
               Sei tu <span className="text-primary font-bold">{currentPlayerName}</span>?
             </p>
             <div className="flex gap-4">
               <Button
                 onClick={handleRejoinConfirm}
-                className="flex-1 font-game gradient-pizza text-primary-foreground"
+                className="flex-1 font-russo gradient-pizza text-primary-foreground"
               >
                 Sì, sono io! ✓
               </Button>
               <Button
                 onClick={handleRejoinDecline}
                 variant="outline"
-                className="flex-1 font-game"
+                className="flex-1 font-russo"
               >
                 No, cambia
               </Button>
@@ -213,7 +213,7 @@ const Index: React.FC = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <p className="font-game text-sm text-muted-foreground text-center">
+            <p className="font-russo text-sm text-muted-foreground text-center">
               Seleziona il tuo profilo o creane uno nuovo
             </p>
             
@@ -228,7 +228,7 @@ const Index: React.FC = () => {
                     <div className="text-2xl">
                       {player.is_online ? '🟢' : '⚪'}
                     </div>
-                    <span className="font-game text-lg">{player.username}</span>
+                    <span className="font-russo text-lg">{player.username}</span>
                   </CardContent>
                 </Card>
               ))}
@@ -236,7 +236,7 @@ const Index: React.FC = () => {
 
             <Button
               onClick={handleCreateNewPlayer}
-              className="w-full font-game gradient-pizza text-primary-foreground"
+              className="w-full font-russo gradient-pizza text-primary-foreground"
             >
               ➕ Crea Nuovo Profilo
             </Button>

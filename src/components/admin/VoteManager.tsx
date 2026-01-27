@@ -63,7 +63,7 @@ export const VoteManager: React.FC = () => {
                 className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
               >
                 <div className="flex-1">
-                  <div className="font-game text-sm">
+                  <div className="font-russo text-sm">
                     <span className="text-primary">{getPizzaName(vote.pizza_id)}</span>
                     <span className="text-muted-foreground mx-2">da</span>
                     <span className="text-accent">{getPlayerName(vote.player_id)}</span>

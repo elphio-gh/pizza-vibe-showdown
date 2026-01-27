@@ -26,7 +26,7 @@ const AdminPage: React.FC = () => {
           <h1 className="font-display text-4xl text-accent text-glow-blue">
             Admin Dashboard 👑
           </h1>
-          <p className="font-game text-muted-foreground">
+          <p className="font-russo text-muted-foreground">
             Gestisci la competizione Tony Buitony Cup
           </p>
         </div>

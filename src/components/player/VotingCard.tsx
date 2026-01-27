@@ -82,13 +82,13 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
           <CardTitle className="font-display text-3xl text-primary">
             Pizza #{pizza.number}
           </CardTitle>
-          <p className="font-game text-lg text-muted-foreground">
+          <p className="font-russo text-lg text-muted-foreground">
             {pizza.brand} - {pizza.flavor}
           </p>
           {isReadOnly && (
             <div className="flex items-center justify-center gap-2 mt-2 px-4 py-2 bg-green-500/20 rounded-lg">
               <Check className="w-5 h-5 text-green-500" />
-              <span className="font-game text-green-500">Già votata!</span>
+              <span className="font-russo text-green-500">Già votata!</span>
             </div>
           )}
         </CardHeader>

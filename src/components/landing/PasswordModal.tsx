@@ -72,7 +72,7 @@ export const PasswordModal: React.FC<PasswordModalProps> = ({
                 setPassword(e.target.value);
                 setError(false);
               }}
-              className={`pr-10 font-game text-lg ${error ? 'border-destructive' : ''}`}
+              className={`pr-10 font-russo text-lg ${error ? 'border-destructive' : ''}`}
               autoFocus
             />
             <button

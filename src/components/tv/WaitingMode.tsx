@@ -22,11 +22,11 @@ export const WaitingMode: React.FC = () => {
           🍕
         </motion.div>
         
-        <h1 className="font-display text-6xl md:text-8xl gradient-pizza bg-clip-text text-transparent">
+        <h1 className="font-display text-6xl md:text-8xl bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
           TONY BUITONY CUP
         </h1>
         
-        <p className="font-game text-2xl md:text-3xl text-muted-foreground animate-pulse-glow">
+        <p className="font-russo text-2xl md:text-3xl text-muted-foreground animate-pulse-glow">
           La competizione sta per iniziare...
         </p>
 

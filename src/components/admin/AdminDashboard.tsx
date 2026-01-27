@@ -27,7 +27,7 @@ export const AdminDashboard: React.FC = () => {
       {stats.map(({ icon: Icon, label, value, color }) => (
         <Card key={label} className="bg-card border-border">
           <CardHeader className="pb-2">
-            <CardTitle className={`font-game text-sm ${color} flex items-center gap-2`}>
+            <CardTitle className={`font-russo text-sm ${color} flex items-center gap-2`}>
               <Icon className="w-4 h-4" />
               {label}
             </CardTitle>

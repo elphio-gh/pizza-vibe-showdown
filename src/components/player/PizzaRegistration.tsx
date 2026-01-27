@@ -49,7 +49,7 @@ export const PizzaRegistration: React.FC<PizzaRegistrationProps> = ({ onSuccess 
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="font-game text-sm text-muted-foreground">Marca</label>
+            <label className="font-russo text-sm text-muted-foreground">Marca</label>
             <div className="relative">
               <Package className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
               <Input
@@ -57,14 +57,14 @@ export const PizzaRegistration: React.FC<PizzaRegistrationProps> = ({ onSuccess 
                 placeholder="Es. Dr. Oetker, Buitoni..."
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
-                className="pl-12 font-game"
+                className="pl-12 font-russo"
                 maxLength={50}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="font-game text-sm text-muted-foreground">Gusto</label>
+            <label className="font-russo text-sm text-muted-foreground">Gusto</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl">🍕</span>
               <Input
@@ -72,7 +72,7 @@ export const PizzaRegistration: React.FC<PizzaRegistrationProps> = ({ onSuccess 
                 placeholder="Es. Margherita, 4 Formaggi..."
                 value={flavor}
                 onChange={(e) => setFlavor(e.target.value)}
-                className="pl-12 font-game"
+                className="pl-12 font-russo"
                 maxLength={50}
               />
             </div>

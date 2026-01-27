@@ -62,7 +62,7 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ onConfirmPre
 
         {isConfirmed && (
           <div className="p-4 bg-accent/20 rounded-lg border border-accent/50 text-center">
-            <p className="font-game text-accent flex items-center justify-center gap-2">
+            <p className="font-russo text-accent flex items-center justify-center gap-2">
               <CheckCircle className="w-5 h-5" />
               Presenza confermata! Sei pronto a votare 🎉
             </p>
@@ -73,11 +73,11 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ onConfirmPre
         <div className="flex gap-4 justify-center">
           <div className="flex items-center gap-2 text-accent">
             <Wifi className="w-4 h-4" />
-            <span className="font-game text-sm">{onlinePlayers.length} online</span>
+            <span className="font-russo text-sm">{onlinePlayers.length} online</span>
           </div>
           <div className="flex items-center gap-2 text-primary">
             <CheckCircle className="w-4 h-4" />
-            <span className="font-game text-sm">{confirmedPlayers.length} confermati</span>
+            <span className="font-russo text-sm">{confirmedPlayers.length} confermati</span>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ onConfirmPre
                 ) : (
                   <WifiOff className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 )}
-                <span className={`font-game text-sm truncate ${player.is_online ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <span className={`font-russo text-sm truncate ${player.is_online ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {player.username}
                 </span>
                 {player.is_confirmed && (
@@ -117,7 +117,7 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({ onConfirmPre
         </div>
 
         {players.length === 0 && (
-          <p className="text-center text-muted-foreground font-game py-4">
+          <p className="text-center text-muted-foreground font-russo py-4">
             Nessun partecipante ancora... Sii il primo! 🎉
           </p>
         )}

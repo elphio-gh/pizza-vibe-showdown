@@ -161,7 +161,7 @@ export const RevealMode: React.FC = () => {
           </div>
           {isExAequo && (
             <div className="mt-2 inline-block px-4 py-1 bg-accent/30 rounded-full">
-              <span className="font-game text-accent text-lg">🤝 EX AEQUO</span>
+              <span className="font-russo text-accent text-lg">🤝 EX AEQUO</span>
             </div>
           )}
         </div>
@@ -171,7 +171,7 @@ export const RevealMode: React.FC = () => {
           <h2 className="font-display text-4xl md:text-5xl text-foreground mb-2">
             Pizza #{pizza.number}
           </h2>
-          <p className="font-game text-xl md:text-2xl text-muted-foreground">
+          <p className="font-russo text-xl md:text-2xl text-muted-foreground">
             {pizza.brand} - {pizza.flavor}
           </p>
         </div>
@@ -186,7 +186,7 @@ export const RevealMode: React.FC = () => {
           }`}>
             {pizza.averageScore.toFixed(1)}
           </div>
-          <p className="font-game text-lg text-muted-foreground">
+          <p className="font-russo text-lg text-muted-foreground">
             {pizza.voteCount} {pizza.voteCount === 1 ? 'voto' : 'voti'}
           </p>
         </div>
@@ -196,7 +196,7 @@ export const RevealMode: React.FC = () => {
           <div className="text-center mb-6">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 rounded-full">
               <span className="text-2xl">🧑‍🍳</span>
-              <span className="font-game text-lg text-secondary">
+              <span className="font-russo text-lg text-secondary">
                 Portata da: <span className="font-bold">{pizza.registeredByPlayer.username}</span>
               </span>
             </div>
@@ -206,19 +206,19 @@ export const RevealMode: React.FC = () => {
         {/* Category Averages */}
         {details.averages && (
           <div className="flex flex-wrap justify-center gap-2 mb-6">
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-game">
+            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
               👀 {details.averages.aspetto.toFixed(1)}
             </span>
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-game">
+            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
               😋 {details.averages.gusto.toFixed(1)}
             </span>
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-game">
+            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
               🫓 {details.averages.impasto.toFixed(1)}
             </span>
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-game">
+            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
               🧀 {details.averages.farcitura.toFixed(1)}
             </span>
-            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-game">
+            <span className="px-3 py-1 bg-background/50 rounded-lg text-sm font-russo">
               🎸 {details.averages.tony_factor.toFixed(1)}
             </span>
           </div>
@@ -229,7 +229,7 @@ export const RevealMode: React.FC = () => {
           <div className="text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 rounded-full">
               <span className="text-xl">⭐</span>
-              <span className="font-game text-primary">
+              <span className="font-russo text-primary">
                 Top Fan: <span className="font-bold">{details.topFan.username}</span>
                 <span className="text-xs ml-2 opacity-70">({details.topScore.toFixed(1)})</span>
               </span>
@@ -247,7 +247,7 @@ export const RevealMode: React.FC = () => {
       </h1>
 
       {remainingCount > 0 && currentPosition > 0 && (
-        <div className="mb-6 font-game text-xl text-muted-foreground animate-pulse-glow">
+        <div className="mb-6 font-russo text-xl text-muted-foreground animate-pulse-glow">
           {remainingCount} {remainingCount === 1 ? 'pizza ancora da svelare' : 'pizze ancora da svelare'}...
         </div>
       )}
@@ -278,10 +278,10 @@ export const RevealMode: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="text-9xl mb-6 animate-bounce">🎬</div>
-          <p className="font-game text-2xl text-muted-foreground animate-pulse-glow">
+          <p className="font-russo text-2xl text-muted-foreground animate-pulse-glow">
             In attesa del reveal...
           </p>
-          <p className="font-game text-lg text-muted-foreground/60 mt-2">
+          <p className="font-russo text-lg text-muted-foreground/60 mt-2">
             {flatRanked.length} pizze in gara
           </p>
         </motion.div>

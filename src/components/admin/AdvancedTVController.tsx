@@ -71,7 +71,7 @@ export const AdvancedTVController: React.FC = () => {
       <CardContent className="space-y-6">
         {/* Current Status */}
         <div className="p-4 bg-muted/30 rounded-lg text-center">
-          <p className="font-game text-sm text-muted-foreground mb-2">Stato attuale:</p>
+          <p className="font-russo text-sm text-muted-foreground mb-2">Stato attuale:</p>
           <p className="font-display text-2xl text-foreground">
             {currentCommand.toUpperCase()} 
             {currentCommand === 'reveal' && ` (${currentPosition + 1}/${flatRanked.length})`}
@@ -130,7 +130,7 @@ export const AdvancedTVController: React.FC = () => {
         {/* Auto Timer */}
         <div className="p-4 bg-muted/20 rounded-lg space-y-3">
           <div className="flex items-center justify-between">
-            <Label htmlFor="auto-timer" className="font-game text-sm flex items-center gap-2">
+            <Label htmlFor="auto-timer" className="font-russo text-sm flex items-center gap-2">
               <Timer className="w-4 h-4" />
               Timer Automatico
             </Label>
@@ -147,17 +147,17 @@ export const AdvancedTVController: React.FC = () => {
               type="number"
               value={timerSeconds}
               onChange={(e) => setTimerSeconds(Math.max(1, parseInt(e.target.value) || 10))}
-              className="w-20 font-game"
+              className="w-20 font-russo"
               min={1}
               max={60}
             />
-            <span className="font-game text-sm text-muted-foreground">secondi per slide</span>
+            <span className="font-russo text-sm text-muted-foreground">secondi per slide</span>
           </div>
         </div>
 
         {/* Manual Pizza Selection */}
         <div className="space-y-2">
-          <Label className="font-game text-sm flex items-center gap-2">
+          <Label className="font-russo text-sm flex items-center gap-2">
             <List className="w-4 h-4" />
             Selezione Manuale Pizza
           </Label>
@@ -167,7 +167,7 @@ export const AdvancedTVController: React.FC = () => {
                 key={pizza.id}
                 variant={selectedPizzaIndex === index ? "default" : "ghost"}
                 size="sm"
-                className="w-full justify-start font-game text-sm"
+                className="w-full justify-start font-russo text-sm"
                 onClick={() => handleSelectPizza(index)}
                 disabled={currentCommand !== 'reveal'}
               >

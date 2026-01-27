@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Bangers", "cursive"],
-        game: ["Russo One", "sans-serif"],
-        body: ["Poppins", "sans-serif"],
+        sans: ['Poppins', 'sans-serif'],
+        display: ['Bangers', 'cursive'],
+        russo: ['"Russo One"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

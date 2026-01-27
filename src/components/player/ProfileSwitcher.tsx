@@ -68,7 +68,7 @@ export const ProfileSwitcher: React.FC = () => {
           className="flex items-center gap-2 text-primary hover:text-primary/80"
         >
           <User className="w-4 h-4" />
-          <span className="font-game text-sm">{playerName || 'Profilo'}</span>
+          <span className="font-russo text-sm">{playerName || 'Profilo'}</span>
           <Edit2 className="w-3 h-3" />
         </Button>
       </DialogTrigger>
@@ -87,7 +87,7 @@ export const ProfileSwitcher: React.FC = () => {
               {/* Current Profile */}
               {playerName && (
                 <div className="p-4 bg-primary/10 rounded-lg border border-primary/30">
-                  <p className="font-game text-sm text-muted-foreground">Profilo attuale:</p>
+                  <p className="font-russo text-sm text-muted-foreground">Profilo attuale:</p>
                   <p className="font-display text-xl text-primary">{playerName}</p>
                 </div>
               )}
@@ -114,7 +114,7 @@ export const ProfileSwitcher: React.FC = () => {
               {/* Recent Profiles */}
               {profiles.length > 0 && (
                 <div className="space-y-2">
-                  <p className="font-game text-sm text-muted-foreground flex items-center gap-2">
+                  <p className="font-russo text-sm text-muted-foreground flex items-center gap-2">
                     <History className="w-4 h-4" />
                     Profili recenti:
                   </p>
@@ -123,7 +123,7 @@ export const ProfileSwitcher: React.FC = () => {
                       <Button
                         key={profile.id}
                         variant="ghost"
-                        className="w-full justify-start font-game"
+                        className="w-full justify-start font-russo"
                         onClick={() => handleSwitchProfile(profile)}
                         disabled={profile.id === playerId}
                       >
@@ -146,7 +146,7 @@ export const ProfileSwitcher: React.FC = () => {
                   value={newNickname}
                   onChange={(e) => setNewNickname(e.target.value)}
                   placeholder="Inserisci nickname..."
-                  className="flex-1 font-game"
+                  className="flex-1 font-russo"
                   maxLength={30}
                 />
                 <Button

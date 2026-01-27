@@ -59,7 +59,7 @@ export const VoteFeedback: React.FC<VoteFeedbackProps> = ({ score, onComplete })
           </>
         )}
 
-        <div className="font-game text-2xl text-muted-foreground">
+        <div className="font-russo text-2xl text-muted-foreground">
           Punteggio: <span className="text-foreground font-display text-3xl">{score.toFixed(1)}</span>
         </div>
       </div>

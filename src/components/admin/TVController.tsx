@@ -20,7 +20,7 @@ export const TVController: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="p-4 bg-muted/30 rounded-lg text-center">
-          <p className="font-game text-sm text-muted-foreground mb-2">Stato attuale:</p>
+          <p className="font-russo text-sm text-muted-foreground mb-2">Stato attuale:</p>
           <p className="font-display text-2xl text-foreground">
             {currentCommand.toUpperCase()} 
             {currentCommand === 'reveal' && ` (Pos: ${currentPosition})`}

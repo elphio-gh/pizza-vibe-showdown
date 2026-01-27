@@ -132,7 +132,7 @@ export const PizzaManager: React.FC = () => {
               >
                 <span className="font-display text-lg text-primary">#{pizza.number}</span>
                 <div className="flex-1">
-                  <div className="font-game">{pizza.brand} - {pizza.flavor}</div>
+                  <div className="font-russo">{pizza.brand} - {pizza.flavor}</div>
                   <div className="text-xs text-muted-foreground flex items-center gap-1">
                     <UserCheck className="w-3 h-3" />
                     Portata da: {getPlayerName(pizza.registered_by)}
@@ -161,27 +161,27 @@ export const PizzaManager: React.FC = () => {
           
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="font-game text-sm">Marca</Label>
+              <Label className="font-russo text-sm">Marca</Label>
               <Input
                 value={formData.brand}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                 placeholder="Es. Dr. Oetker, Buitoni..."
-                className="font-game"
+                className="font-russo"
               />
             </div>
             
             <div className="space-y-2">
-              <Label className="font-game text-sm">Gusto</Label>
+              <Label className="font-russo text-sm">Gusto</Label>
               <Input
                 value={formData.flavor}
                 onChange={(e) => setFormData({ ...formData, flavor: e.target.value })}
                 placeholder="Es. Margherita, 4 Formaggi..."
-                className="font-game"
+                className="font-russo"
               />
             </div>
             
             <div className="space-y-2">
-              <Label className="font-game text-sm flex items-center gap-2">
+              <Label className="font-russo text-sm flex items-center gap-2">
                 <UserCheck className="w-4 h-4" />
                 Portata da
               </Label>

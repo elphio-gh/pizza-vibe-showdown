@@ -75,7 +75,7 @@ export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = fa
           ) : (
             <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
               {getRoleIcon()}
-              <span className="font-game text-sm">{getRoleLabel()}</span>
+              <span className="font-russo text-sm">{getRoleLabel()}</span>
             </div>
           )}
         </div>

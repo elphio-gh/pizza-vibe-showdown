@@ -48,7 +48,7 @@ export const PlayerOnboarding: React.FC = () => {
               placeholder="Il tuo nome..."
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="pl-14 py-6 text-xl font-game bg-card border-2 border-primary/50 focus:border-primary"
+              className="pl-14 py-6 text-xl font-russo bg-card border-2 border-primary/50 focus:border-primary"
               maxLength={30}
               autoFocus
             />

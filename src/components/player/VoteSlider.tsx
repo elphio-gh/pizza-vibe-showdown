@@ -36,7 +36,7 @@ export const VoteSlider: React.FC<VoteSliderProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-2xl">{emoji}</span>
-          <span className="font-game text-sm">{label}</span>
+          <span className="font-russo text-sm">{label}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className={`font-display text-3xl ${getValueColor(value)} animate-count-up`}>
@@ -56,7 +56,7 @@ export const VoteSlider: React.FC<VoteSliderProps> = ({
         className="py-2"
       />
       
-      <div className="flex justify-between text-xs text-muted-foreground font-game">
+      <div className="flex justify-between text-xs text-muted-foreground font-russo">
         <span>1</span>
         <span>5</span>
         <span>10</span>
