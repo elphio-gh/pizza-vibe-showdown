@@ -84,8 +84,8 @@ export const WinnerCelebration: React.FC = () => {
       <PizzaConfetti />
 
       <div className={`
-        text-center z-10 w-full max-w-7xl flex flex-col items-center h-full
-        ${isTie ? 'justify-start pt-10 overflow-y-auto no-scrollbar pb-20' : 'justify-center'}
+        text-center z-10 w-full flex flex-col items-center h-full
+        ${isTie ? 'max-w-[95vw] justify-start pt-10 overflow-y-auto no-scrollbar pb-20' : 'max-w-[85vw] justify-center'}
       `}>
         <motion.h1
           initial={{ y: -50, opacity: 0 }}
@@ -153,21 +153,26 @@ export const WinnerCelebration: React.FC = () => {
 
                   {/* Category Averages */}
                   {details.averages && (
-                    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
-                        👀 {details.averages.aspetto.toFixed(1)}
+                    <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                      <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                        <span className="text-xl font-russo">🧀 {details.averages.farcitura.toFixed(1)}</span>
+                        <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Farcitura</span>
                       </div>
-                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
-                        😋 {details.averages.gusto.toFixed(1)}
+                      <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                        <span className="text-xl font-russo">😋 {details.averages.gusto.toFixed(1)}</span>
+                        <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Gusto</span>
                       </div>
-                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
-                        🫓 {details.averages.impasto.toFixed(1)}
+                      <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                        <span className="text-xl font-russo">🥖 {details.averages.impasto.toFixed(1)}</span>
+                        <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Impasto</span>
                       </div>
-                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
-                        🧀 {details.averages.farcitura.toFixed(1)}
+                      <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                        <span className="text-xl font-russo">📸 {details.averages.aspetto.toFixed(1)}</span>
+                        <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Aspetto</span>
                       </div>
-                      <div className="px-3 py-1 bg-background/50 rounded-xl text-base font-russo border border-border/50">
-                        🎸 {details.averages.tony_factor.toFixed(1)}
+                      <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                        <span className="text-xl font-russo">🕶️ {details.averages.tony_factor.toFixed(1)}</span>
+                        <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Tony F.</span>
                       </div>
                     </div>
                   )}
