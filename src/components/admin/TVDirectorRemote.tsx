@@ -20,6 +20,7 @@ export const TVDirectorRemote: React.FC = () => {
         setWinner,
         nextPosition,
         prevPosition,
+        setPosition,
         resetGame,
         isPending
     } = useTVCommands();
@@ -30,7 +31,7 @@ export const TVDirectorRemote: React.FC = () => {
     const currentPosition = tvCommand?.current_position || 0;
 
     // Calculate ranked pizzas (from worst to best)
-    const { flatRanked, totalPositions, currentPizzaInfo, currentRank, isAtLastBeforeWinner, canShowWinner, topGroupSize } = useMemo(() => {
+    const { flatRanked, totalPositions, currentPizzaInfo, currentRank, isAtLastBeforeWinner, canShowWinner, topGroupSize, rankedGroups } = useMemo(() => {
         const pizzasWithScores: PizzaWithScore[] = pizzas.map((pizza) => {
             const pizzaVotes = votes.filter((v) => v.pizza_id === pizza.id);
             return {
@@ -83,26 +84,72 @@ export const TVDirectorRemote: React.FC = () => {
             isAtLastBeforeWinner: atLastBeforeWinner,
             canShowWinner: canWinner,
             topGroupSize,
+            rankedGroups,
         };
     }, [pizzas, votes, currentPosition, currentCommand]);
+
+    // Calculate next position considering ex-aequo groups
+    // This function finds the start of the next group in the ranking
+    const getNextGroupPosition = (): number => {
+        if (currentPosition <= 0) return 1;
+
+        let positionCounter = 0;
+        for (const group of rankedGroups) {
+            const groupEnd = positionCounter + group.length;
+
+            // If current position is within this group, return the next group's start
+            if (currentPosition > positionCounter && currentPosition <= groupEnd) {
+                return groupEnd + 1;
+            }
+            positionCounter = groupEnd;
+        }
+        return currentPosition + 1;
+    };
+
+    // Calculate previous position considering ex-aequo groups
+    // This function finds the start of the previous group in the ranking
+    const getPrevGroupPosition = (): number => {
+        if (currentPosition <= 1) return 1;
+
+        let positionCounter = 0;
+        let prevGroupStart = 1;
+
+        for (const group of rankedGroups) {
+            const groupStart = positionCounter + 1;
+            const groupEnd = positionCounter + group.length;
+
+            // If current position is within this group, go back to previous group's start
+            if (currentPosition > positionCounter && currentPosition <= groupEnd) {
+                return prevGroupStart;
+            }
+
+            prevGroupStart = groupStart;
+            positionCounter = groupEnd;
+        }
+        return 1;
+    };
 
     // Determine if we should transition to pre_winner on next
     const handleNext = () => {
         if (isAtLastBeforeWinner && currentCommand === 'reveal') {
             // At last position, next goes to pre-winner state
             setPreWinner();
-        } else if (currentPosition < totalPositions - (topGroupSize || 1)) {
-            // Still have positions to show before the threshold
-            nextPosition();
+        } else {
+            const nextPos = getNextGroupPosition();
+            // Only proceed if we're still before the winner threshold
+            if (nextPos <= totalPositions - (topGroupSize || 1)) {
+                setPosition(nextPos);
+            }
         }
     };
 
     const handlePrev = () => {
         if (currentCommand === 'pre_winner') {
-            // Go back from pre-winner to position 2
-            setReveal();
+            // Go back from pre-winner to last non-winner position
+            setPosition(totalPositions - topGroupSize);
         } else {
-            prevPosition();
+            const prevPos = getPrevGroupPosition();
+            setPosition(prevPos);
         }
     };
 
