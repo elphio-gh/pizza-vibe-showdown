@@ -8,7 +8,7 @@ import { usePlayers } from '@/hooks/usePlayers';
 import { Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getPizzaEmoji } from '@/lib/pizzaUtils';
-import { formatPizzaText } from '@/lib/stringUtils';
+import { formatPizzaText, formatTitleCase } from '@/lib/stringUtils';
 
 interface PizzaListProps {
   onSelectPizza: (pizza: Pizza, existingVote?: Vote) => void;

@@ -12,7 +12,7 @@ import { ArrowLeft, Send, Check } from 'lucide-react';
 import { VoteFeedback } from '@/components/effects/VoteFeedback';
 import { getPizzaEmoji } from '@/lib/pizzaUtils';
 import { getFeedbackMessage } from '@/lib/feedbackUtils';
-import { formatPizzaText } from '@/lib/stringUtils';
+import { formatPizzaText, formatTitleCase } from '@/lib/stringUtils';
 
 interface VotingCardProps {
   pizza: Pizza;
@@ -166,55 +166,62 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
       )}
 
       {/* Pulsante per tornare indietro alla lista delle pizze */}
-      <Button
-        variant="ghost"
-        onClick={onBack}
-        className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="w-5 h-5" />
-        Torna alla lista
-      </Button>
+      <div className="flex items-center justify-between px-1">
+        <Button
+          variant="ghost"
+          onClick={onBack}
+          className="flex items-center gap-2 text-muted-foreground hover:text-foreground pl-0"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Torna alla lista
+        </Button>
+        <div className="bg-primary/5 border border-primary/20 px-3 py-1 rounded-full">
+          <span className="text-xs font-bold text-primary flex items-center gap-1.5">
+            ℹ️ I voti vanno da 1 a 10
+          </span>
+        </div>
+      </div>
 
-      <Card className="bg-card border-2 border-primary/50">
-        <CardHeader className="text-center py-3 pb-2">
-          <div className="flex items-center justify-center gap-3">
-            <span className="text-4xl">{getPizzaEmoji(pizza.flavor, pizza.number, pizza.emoji)}</span>
-            <div>
-              <CardTitle className="font-schoolbell text-2xl text-primary">
+      <Card className="bg-card border-2 border-primary/50 overflow-hidden">
+        <CardHeader className="py-3 px-4 bg-muted/20">
+          <div className="flex items-start gap-4">
+            {/* Left: Emoji + Number */}
+            <div className="flex flex-col items-center gap-1 shrink-0">
+              <span className="text-4xl leading-none filter drop-shadow-md">
+                {getPizzaEmoji(pizza.flavor, pizza.number, pizza.emoji)}
+              </span>
+              <span className="font-russo text-xs bg-background/80 px-2 py-0.5 rounded-full border border-border shadow-sm">
+                #{pizza.number}
+              </span>
+            </div>
+
+            {/* Right: Info + Owner */}
+            <div className="flex-1 min-w-0 pt-0.5">
+              <CardTitle className="font-schoolbell text-xl text-primary leading-tight mb-2">
                 {formatPizzaText(pizza.brand)} - {formatPizzaText(pizza.flavor)}
               </CardTitle>
-              <p className="font-sans text-xs text-muted-foreground">
-                Pizza #{pizza.number}
-              </p>
+
+              {/* Compact Owner Box */}
+              <div className="bg-secondary/10 rounded-lg p-2 border border-secondary/20 -ml-1">
+                <p className="font-russo text-[9px] text-muted-foreground uppercase tracking-wider mb-0.5 leading-none">
+                  {ownerTitle}
+                </p>
+                <p className="font-schoolbell text-lg text-secondary leading-none flex items-center gap-1.5 font-bold">
+                  🛍️ <span className="truncate">{formatTitleCase(players.find(p => p.id === pizza.registered_by)?.username || 'Anonimo')}</span>
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Chef/Owner Display */}
-          <div className="mt-4 mb-2 p-3 bg-secondary/10 border-2 border-secondary/30 rounded-xl relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 text-6xl opacity-10 rotate-12">🛒</div>
-            <p className="font-russo text-xs text-secondary/80 uppercase tracking-widest mb-1 pl-1">
-              {ownerTitle}
-            </p>
-            <p className="font-display text-3xl text-secondary flex items-center justify-center gap-2">
-              <span className="text-2xl">🛍️</span>
-              {players.find(p => p.id === pizza.registered_by)?.username || 'Anonimo'}
-            </p>
-          </div>
-
           {isReadOnly && (
-            <div className="flex items-center justify-center gap-2 mt-2 px-3 py-1 bg-green-500/20 rounded-lg">
-              <Check className="w-4 h-4 text-green-500" />
-              <span className="font-sans font-bold text-sm text-green-500">Già votata!</span>
+            <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 bg-green-500 text-white rounded-full shadow-sm animate-in fade-in zoom-in">
+              <Check className="w-3 h-3" />
+              <span className="font-sans font-bold text-[10px] uppercase">Votata</span>
             </div>
           )}
         </CardHeader>
 
-        <CardContent className="space-y-2">
-          <div className="text-center pb-2">
-            <p className="font-sans text-sm text-muted-foreground uppercase tracking-widest">
-              Voto da 1 a 10
-            </p>
-          </div>
+        <CardContent className="space-y-3 pt-4">
 
           {/* Slider compatti per ogni categoria */}
           <CompactVoteRow

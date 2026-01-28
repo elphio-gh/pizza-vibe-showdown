@@ -12,6 +12,7 @@ import { usePlayers } from '@/hooks/usePlayers';
 import { usePizzas } from '@/hooks/usePizzas';
 import { Button } from '@/components/ui/button';
 import { Plus, Pencil } from 'lucide-react';
+import { formatTitleCase } from '@/lib/stringUtils';
 
 const PlayerPage: React.FC = () => {
   const { role, playerId, setPlayerId, setPlayerName, setRole } = useRole();
@@ -157,7 +158,7 @@ const PlayerPage: React.FC = () => {
       <div className="container mx-auto px-4 pt-20 pb-8">
         <div className="mb-6">
           <h1 className="font-display text-4xl text-primary text-glow-orange">
-            Ciao {currentPlayer?.username || ''}! 🍕
+            Ciao {formatTitleCase(currentPlayer?.username) || ''}! 🍕
           </h1>
           <p className="font-sans text-muted-foreground">
             Vota le pizze dei tuoi amici!

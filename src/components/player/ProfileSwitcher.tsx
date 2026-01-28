@@ -12,6 +12,7 @@ import { useRole } from '@/contexts/RoleContext';
 import { useRecentProfiles, useCurrentSession } from '@/hooks/useLocalStorage';
 import { usePlayers } from '@/hooks/usePlayers';
 import { User, History, Plus, Edit2 } from 'lucide-react';
+import { formatTitleCase } from '@/lib/stringUtils';
 
 export const ProfileSwitcher: React.FC = () => {
   const { playerId, playerName, setPlayerId, setPlayerName } = useRole();
@@ -84,7 +85,7 @@ export const ProfileSwitcher: React.FC = () => {
               {playerName && (
                 <div className="p-4 bg-primary/10 rounded-lg border border-primary/30">
                   <p className="font-russo text-sm text-muted-foreground">Profilo attuale:</p>
-                  <p className="font-display text-xl text-primary">{playerName}</p>
+                  <p className="font-display text-xl text-primary">{formatTitleCase(playerName)}</p>
                 </div>
               )}
 
@@ -123,7 +124,7 @@ export const ProfileSwitcher: React.FC = () => {
                         onClick={() => handleSwitchProfile(profile)}
                         disabled={profile.id === playerId}
                       >
-                        {profile.username}
+                        {formatTitleCase(profile.username)}
                         {profile.id === playerId && (
                           <span className="ml-2 text-xs text-primary">(attuale)</span>
                         )}

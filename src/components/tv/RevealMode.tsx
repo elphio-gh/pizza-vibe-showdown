@@ -5,7 +5,7 @@ import { usePlayers } from '@/hooks/usePlayers';
 import { useTVCommands } from '@/hooks/useTVCommands';
 import { PizzaWithScore, calculatePizzaScore, calculateVoteScore, getRankedPizzas } from '@/types/database';
 import { motion, AnimatePresence } from 'framer-motion';
-import { formatPizzaText } from '@/lib/stringUtils';
+import { formatPizzaText, formatTitleCase } from '@/lib/stringUtils';
 
 export const RevealMode: React.FC = () => {
   const { pizzas } = usePizzas();

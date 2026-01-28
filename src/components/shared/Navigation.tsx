@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Home, User, Shield, Tv } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentSession } from '@/hooks/useLocalStorage';
+import { formatTitleCase } from '@/lib/stringUtils';
 
 interface NavigationProps {
   showProfileSwitcher?: boolean;
@@ -81,7 +82,7 @@ export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = fa
             >
               <div className="flex flex-col items-end leading-none mr-1">
                 <span className="text-[10px] uppercase font-bold opacity-70">Tu</span>
-                <span className="font-russo text-sm">{playerName || 'Profilo'}</span>
+                <span className="font-russo text-sm">{formatTitleCase(playerName) || 'Profilo'}</span>
               </div>
               <User className="w-5 h-5" />
             </Button>

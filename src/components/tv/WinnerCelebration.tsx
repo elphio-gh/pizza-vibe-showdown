@@ -6,7 +6,7 @@ import { PizzaConfetti } from '@/components/effects/PizzaConfetti';
 import { ThugLifeGlasses } from '@/components/effects/ThugLifeGlasses';
 import { PizzaWithScore, calculatePizzaScore, getRankedPizzas, calculateVoteScore } from '@/types/database';
 import { motion } from 'framer-motion';
-import { formatPizzaText } from '@/lib/stringUtils';
+import { formatPizzaText, formatTitleCase } from '@/lib/stringUtils';
 
 export const WinnerCelebration: React.FC = () => {
   const { pizzas } = usePizzas();

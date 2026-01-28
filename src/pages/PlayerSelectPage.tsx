@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, User, Plus } from 'lucide-react';
+import { formatTitleCase } from '@/lib/stringUtils';
 
 const PlayerSelectPage: React.FC = () => {
     const navigate = useNavigate();
@@ -144,7 +145,7 @@ const PlayerSelectPage: React.FC = () => {
                                 >
                                     <CardContent className="py-4 flex items-center gap-3">
                                         <User className="w-5 h-5 text-primary" />
-                                        <span className="font-sans font-bold text-lg flex-1">{player.username}</span>
+                                        <span className="font-sans font-bold text-lg flex-1">{formatTitleCase(player.username)}</span>
                                     </CardContent>
                                 </Card>
                             ))

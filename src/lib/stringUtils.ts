@@ -6,7 +6,7 @@
  * @param text The text to format
  * @returns The formatted text
  */
-export const formatPizzaText = (text: string | null | undefined): string => {
+export const formatTitleCase = (text: string | null | undefined): string => {
     if (!text) return '';
     return text
         .toLowerCase()
@@ -14,3 +14,5 @@ export const formatPizzaText = (text: string | null | undefined): string => {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
 };
+
+export const formatPizzaText = formatTitleCase;
