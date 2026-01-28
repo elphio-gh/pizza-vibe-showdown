@@ -74,13 +74,16 @@ export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = fa
           {/* Profile - navigates to player select page instead of opening dialog */}
           {showProfileSwitcher && role === 'player' ? (
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleGoToProfileSelect}
-              className="flex items-center gap-2 text-primary hover:text-primary/80"
+              className="flex items-center gap-2 border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary transition-all px-3"
             >
-              <User className="w-4 h-4" />
-              <span className="font-russo text-sm">{playerName || 'Profilo'}</span>
+              <div className="flex flex-col items-end leading-none mr-1">
+                <span className="text-[10px] uppercase font-bold opacity-70">Tu</span>
+                <span className="font-russo text-sm">{playerName || 'Profilo'}</span>
+              </div>
+              <User className="w-5 h-5" />
             </Button>
           ) : (
             <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">

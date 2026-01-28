@@ -61,7 +61,7 @@ const PlayerRejoinPage: React.FC = () => {
                     <div className="space-y-4">
                         <Button
                             onClick={handleRejoinConfirm}
-                            className="w-full py-6 font-display text-xl gradient-pizza text-primary-foreground box-glow-orange flex items-center justify-center gap-2"
+                            className="w-full py-6 font-sans font-bold text-xl gradient-pizza text-primary-foreground box-glow-orange flex items-center justify-center gap-2"
                         >
                             <User className="w-6 h-6" />
                             Sì, sono io! ✓
