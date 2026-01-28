@@ -1,5 +1,6 @@
+// VoteSlider - Slider per votare le pizze
+// Usa input type="range" nativo invece di Radix Slider per compatibilità iOS Safari
 import React from 'react';
-import { Slider } from '@/components/ui/slider';
 
 interface VoteSliderProps {
   label: string;
@@ -9,6 +10,7 @@ interface VoteSliderProps {
   disabled?: boolean;
 }
 
+// Colore del valore in base al punteggio
 const getValueColor = (value: number): string => {
   if (value <= 3) return 'text-destructive';
   if (value <= 5) return 'text-secondary';
@@ -16,6 +18,7 @@ const getValueColor = (value: number): string => {
   return 'text-green-500';
 };
 
+// Emoji in base al punteggio
 const getValueEmoji = (value: number): string => {
   if (value <= 2) return '😢';
   if (value <= 4) return '😕';
@@ -46,14 +49,20 @@ export const VoteSlider: React.FC<VoteSliderProps> = ({
         </div>
       </div>
 
-      <Slider
-        value={[value]}
-        onValueChange={([newValue]) => onChange(newValue)}
+      {/* Input range nativo - funziona correttamente su iOS Safari */}
+      <input
+        type="range"
         min={1}
         max={10}
         step={1}
+        value={value}
+        onChange={(e) => onChange(parseInt(e.target.value, 10))}
         disabled={disabled}
-        className="py-4"
+        className="native-slider w-full h-3 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{
+          // Permette scroll verticale mentre si usa lo slider
+          touchAction: 'pan-y',
+        }}
       />
 
       <div className="flex justify-between text-xs text-muted-foreground font-russo">

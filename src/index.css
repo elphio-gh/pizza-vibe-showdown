@@ -317,3 +317,88 @@
     opacity: 1;
   }
 }
+
+/* ============================================
+   Native Slider Styles (input[type="range"])
+   Usato al posto di Radix Slider per compatibilità iOS Safari
+   ============================================ */
+
+/* Reset stili default del browser */
+.native-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Track (la barra su cui scorre il thumb) - WebKit (Chrome, Safari, Edge) */
+.native-slider::-webkit-slider-runnable-track {
+  height: 0.75rem;
+  border-radius: 9999px;
+  background: hsl(var(--secondary));
+}
+
+/* Track - Firefox */
+.native-slider::-moz-range-track {
+  height: 0.75rem;
+  border-radius: 9999px;
+  background: hsl(var(--secondary));
+}
+
+/* Thumb (il cerchio che si trascina) - WebKit */
+.native-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: hsl(var(--background));
+  border: 4px solid hsl(var(--primary));
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  margin-top: -0.875rem;
+  /* Centra il thumb sulla track */
+  cursor: grab;
+}
+
+.native-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* Thumb - Firefox */
+.native-slider::-moz-range-thumb {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: hsl(var(--background));
+  border: 4px solid hsl(var(--primary));
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  cursor: grab;
+}
+
+.native-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* Focus visible (accessibilità) */
+.native-slider:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+.native-slider:focus-visible::-moz-range-thumb {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Disabled state */
+.native-slider:disabled::-webkit-slider-thumb {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.native-slider:disabled::-moz-range-thumb {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
