@@ -13,8 +13,8 @@ const PlayerSelectPage: React.FC = () => {
     const { setPlayerId, setPlayerName, setRole } = useRole();
     const { setCurrentPlayerId, setCurrentPlayerName } = useCurrentSession();
     const { addProfile } = useRecentProfiles();
-    // Disabilita realtime per evitare crash su iOS Safari
-    const { players, createPlayer } = usePlayers({ disableRealtime: true });
+    // Disabilita realtime per evitare crash su iOS Safari, ma attiva polling ogni 60s
+    const { players, createPlayer } = usePlayers({ disableRealtime: true, pollingInterval: 60000 });
 
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newNickname, setNewNickname] = useState('');
@@ -30,8 +30,14 @@ const PlayerSelectPage: React.FC = () => {
         navigate('/player');
     };
 
+    const isDuplicate = React.useMemo(() => {
+        if (!newNickname.trim()) return false;
+        const normalizedNickname = newNickname.trim().toLowerCase();
+        return players.some(p => p.username.toLowerCase() === normalizedNickname);
+    }, [newNickname, players]);
+
     const handleCreatePlayer = async () => {
-        if (!newNickname.trim() || isCreating) return;
+        if (!newNickname.trim() || isCreating || isDuplicate) return;
 
         setIsCreating(true);
         try {
@@ -104,10 +110,10 @@ const PlayerSelectPage: React.FC = () => {
                                 </Button>
                                 <Button
                                     onClick={handleCreatePlayer}
-                                    disabled={!newNickname.trim() || isCreating}
+                                    disabled={!newNickname.trim() || isCreating || isDuplicate}
                                     className="flex-1 font-sans font-bold gradient-pizza text-primary-foreground"
                                 >
-                                    {isCreating ? 'Creazione...' : 'CREA 🚀'}
+                                    {isCreating ? 'Creazione...' : isDuplicate ? 'Già Esistente' : 'CREA 🚀'}
                                 </Button>
                             </div>
                         </div>

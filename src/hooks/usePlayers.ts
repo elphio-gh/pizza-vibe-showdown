@@ -9,6 +9,8 @@ import { useEffect } from 'react';
 interface UsePlayersOptions {
   // Se true, disabilita la subscription realtime (utile per iOS Safari che ha problemi di memoria)
   disableRealtime?: boolean;
+  // Intervallo di polling in millisecondi (opzionale)
+  pollingInterval?: number;
 }
 
 export const usePlayers = (options?: UsePlayersOptions) => {
@@ -26,6 +28,7 @@ export const usePlayers = (options?: UsePlayersOptions) => {
       if (error) throw error;
       return data as Player[];
     },
+    refetchInterval: options?.pollingInterval,
   });
 
   // Aggiorna la lista dei giocatori se qualcuno si aggiunge o cambia nome (può essere disabilitato per iOS)
