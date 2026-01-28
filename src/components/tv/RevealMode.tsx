@@ -141,7 +141,7 @@ export const RevealMode: React.FC = () => {
         className={`
           p-6 rounded-3xl transition-all duration-500 w-full
           flex flex-row gap-8 items-center
-          backdrop-blur-md shadow-xl
+          backdrop-blur-md shadow-xl animate-float
           ${isWinner
             ? 'bg-card/90 border-4 border-yellow-400/80 box-glow-yellow'
             : isSecond

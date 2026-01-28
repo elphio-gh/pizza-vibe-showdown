@@ -13,6 +13,7 @@ import { StopTelevotoMode } from './StopTelevotoMode';
 import { PauseMode } from './PauseMode';
 import { PreWinnerMode } from './PreWinnerMode';
 import { AnimatedBackground } from './AnimatedBackground';
+import { QRCodeDisplay } from './QRCodeDisplay';
 import { Maximize, Minimize } from 'lucide-react';
 
 export const TVShowView: React.FC = () => {
@@ -59,6 +60,10 @@ export const TVShowView: React.FC = () => {
         setPlayerName(null);
         clearSession();
         navigate('/');
+      }
+      // 'F' key shortcut to toggle fullscreen mode quickly
+      if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
       }
     };
 
@@ -121,9 +126,10 @@ export const TVShowView: React.FC = () => {
         )}
       </Button>
 
-      <div className="fixed bottom-4 right-4 z-50 opacity-30 hover:opacity-80 transition-opacity">
-        <span className="font-russo text-xs text-muted-foreground">
-          Premi ESC per uscire
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2 animate-float">
+        <QRCodeDisplay />
+        <span className="font-russo text-xs text-muted-foreground whitespace-nowrap bg-background/80 px-2 py-1 rounded-md border border-border/50">
+          ESC per uscire • F per Schermo Intero
         </span>
       </div>
 

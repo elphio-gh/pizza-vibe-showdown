@@ -16,7 +16,7 @@ export const LiveStats: React.FC = () => {
   ];
 
   return (
-    <div className="flex justify-center gap-8 md:gap-16">
+    <div className="flex justify-center gap-8 md:gap-16 animate-float">
       {stats.map(({ icon: Icon, label, value, color }) => (
         <div key={label} className="text-center">
           <Icon className={`w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 ${color}`} />

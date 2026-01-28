@@ -11,12 +11,12 @@ export const QRCodeDisplay: React.FC = () => {
   useEffect(() => {
     const createNewSession = async () => {
       const token = generateSessionToken();
-      
+
       // Insert session to DB
       const { error } = await supabase
         .from('sessions')
         .insert([{ token, is_active: true }]);
-      
+
       if (!error) {
         setSessionToken(token);
         // Build URL with token parameter
@@ -42,34 +42,19 @@ export const QRCodeDisplay: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 p-6 bg-card/80 backdrop-blur-sm rounded-2xl border-2 border-primary/30 box-glow-orange">
-      <p className="font-russo text-lg text-primary animate-pulse-glow">
-        📱 Scansiona per partecipare!
-      </p>
-      
-      <div className="p-4 bg-white rounded-xl">
-        <QRCodeSVG 
-          value={qrUrl} 
-          size={180}
-          level="H"
-          includeMargin
-          imageSettings={{
-            src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>",
-            height: 30,
-            width: 30,
-            excavate: true,
-          }}
-        />
-      </div>
-
-      <div className="text-center">
-        <p className="font-sans text-sm text-muted-foreground">
-          oppure vai su
-        </p>
-        <p className="font-sans text-lg text-secondary">
-          {window.location.host}/player
-        </p>
-      </div>
+    <div className="p-2 bg-white rounded-xl shadow-2xl border-2 border-primary/20">
+      <QRCodeSVG
+        value={qrUrl}
+        size={140}
+        level="H"
+        includeMargin
+        imageSettings={{
+          src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>",
+          height: 25,
+          width: 25,
+          excavate: true,
+        }}
+      />
     </div>
   );
 };

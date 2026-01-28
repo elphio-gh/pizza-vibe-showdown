@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { LiveStats } from './LiveStats';
-import { QRCodeDisplay } from './QRCodeDisplay';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tvQuotes } from '@/data/tvQuotes';
 
@@ -35,15 +34,6 @@ export const WaitingMode: React.FC = () => {
   return (
     <div className="h-screen w-screen relative overflow-hidden flex flex-col items-center justify-between p-8">
 
-      {/* Absolute QR Code - Top Left */}
-      <div className="absolute top-6 left-6 z-50 transform scale-75 origin-top-left">
-        <div className="bg-card/80 backdrop-blur-md p-4 rounded-xl border border-border shadow-2xl">
-          <QRCodeDisplay />
-          <p className="mt-2 text-center font-russo text-sm text-muted-foreground">
-            Scansiona per votare!
-          </p>
-        </div>
-      </div>
 
       {/* Top Header - Matched to Index.tsx style */}
       <div className="w-full text-center mt-4 mb-8 z-10 animate-bounce-in">

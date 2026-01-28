@@ -39,6 +39,21 @@ const Index: React.FC = () => {
     navigate('/tv');
   };
 
+  // Listener per la scorciatoia da tastiera 'T'
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignora se l'utente sta scrivendo in un input
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
+
+      if (e.key.toLowerCase() === 't') {
+        handleTVClick();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
       {/* Intestazione con animazioni CSS */}
@@ -52,31 +67,46 @@ const Index: React.FC = () => {
         </p>
       </div>
 
-      {/* Pulsanti per scegliere il ruolo */}
-      <div className="flex flex-col md:flex-row gap-6 md:gap-8 w-full max-w-4xl justify-center items-center">
-        <RoleButton
-          icon={User}
-          label="GIOCATORE"
-          emoji="🎮"
-          onClick={handlePlayerClick}
-          variant="orange"
-        />
-        <RoleButton
-          icon={Shield}
-          label="ADMIN"
-          emoji="👑"
-          onClick={handleAdminClick}
-          variant="blue"
-          size="small"
-        />
-        <div className="hidden md:block">
+      <div className="flex flex-col gap-6 w-full max-w-4xl items-center">
+
+        {/* 
+            TV SHOW BUTTON
+            Desktop: Top Position, Full Width, Flatter Aspect Ratio (5:1)
+            Layout: Row (Inline content)
+        */}
+        <div className="hidden md:flex w-full">
           <RoleButton
             icon={Tv}
             label="TV SHOW"
             emoji="📺"
             onClick={handleTVClick}
             variant="pink"
-            size="small"
+            className="w-full max-w-none aspect-[5/1] text-5xl shadow-2xl border-4 gap-6 hover:gap-8 transition-all"
+            layout="row"
+            size="default"
+            shortcut="T"
+          />
+        </div>
+
+        {/* Player & Admin Row */}
+        <div className="flex flex-col md:flex-row gap-6 w-full">
+          <RoleButton
+            icon={User}
+            label="GIOCATORE"
+            emoji="🎮"
+            onClick={handlePlayerClick}
+            variant="orange"
+            className="w-full max-w-none md:aspect-[7/1] aspect-square flex-col md:flex-row p-4 md:gap-4 [&_span]:text-xl md:[&_span]:text-2xl [&_svg]:w-10 [&_svg]:h-10 md:[&_svg]:w-12 md:[&_svg]:h-12"
+            layout="col" /* Default for mobile */
+          />
+          <RoleButton
+            icon={Shield}
+            label="ADMIN"
+            emoji="👑"
+            onClick={handleAdminClick}
+            variant="blue"
+            className="w-full max-w-none md:aspect-[7/1] aspect-square flex-col md:flex-row p-4 md:gap-4 [&_span]:text-xl md:[&_span]:text-2xl [&_svg]:w-10 [&_svg]:h-10 md:[&_svg]:w-12 md:[&_svg]:h-12"
+            layout="col"
           />
         </div>
       </div>
