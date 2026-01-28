@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { getPizzaEmoji, getAvailableEmojis } from "@/lib/pizzaUtils";
+import { formatPizzaText } from '@/lib/stringUtils';
 
 export const PizzaManager: React.FC = () => {
   const { pizzas, createPizza, updatePizza, deletePizza, isLoading } = usePizzas();
@@ -167,7 +168,7 @@ export const PizzaManager: React.FC = () => {
                     {getPizzaEmoji(pizza.flavor, pizza.number, pizza.emoji)}
                   </button>
                   <div className="flex-1">
-                    <div className="font-russo">{pizza.brand} - {pizza.flavor}</div>
+                    <div className="font-russo">{formatPizzaText(pizza.brand)} - {formatPizzaText(pizza.flavor)}</div>
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
                       <UserCheck className="w-3 h-3" />
                       Portata da: {getPlayerName(pizza.registered_by)}
@@ -277,7 +278,7 @@ export const PizzaManager: React.FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Eliminare questa pizza?</AlertDialogTitle>
             <AlertDialogDescription>
-              Stai per eliminare Pizza #{deleteConfirm?.number} ({deleteConfirm?.brand} - {deleteConfirm?.flavor}).
+              Stai per eliminare Pizza #{deleteConfirm?.number} ({formatPizzaText(deleteConfirm?.brand)} - {formatPizzaText(deleteConfirm?.flavor)}).
               <br /><br />
               ⚠️ Verranno eliminati anche tutti i voti associati a questa pizza.
               <br /><br />

@@ -9,6 +9,7 @@ import {
     Tv, Trophy, RotateCcw, ChevronRight, ChevronLeft,
     Pause, StopCircle, Loader2
 } from 'lucide-react';
+import { formatPizzaText } from '@/lib/stringUtils';
 
 export const TVDirectorRemote: React.FC = () => {
     const {
@@ -315,7 +316,7 @@ export const TVDirectorRemote: React.FC = () => {
                                             {isWinner ? '🏆' : `#${rank}`}
                                         </span>
                                         <span className="truncate max-w-[120px]">
-                                            {pizza.brand} - {pizza.flavor}
+                                            {formatPizzaText(pizza.brand)} - {formatPizzaText(pizza.flavor)}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2">

@@ -6,6 +6,7 @@ import { PizzaConfetti } from '@/components/effects/PizzaConfetti';
 import { ThugLifeGlasses } from '@/components/effects/ThugLifeGlasses';
 import { PizzaWithScore, calculatePizzaScore, getRankedPizzas, calculateVoteScore } from '@/types/database';
 import { motion } from 'framer-motion';
+import { formatPizzaText } from '@/lib/stringUtils';
 
 export const WinnerCelebration: React.FC = () => {
   const { pizzas } = usePizzas();
@@ -143,9 +144,9 @@ export const WinnerCelebration: React.FC = () => {
 
                 {/* Middle Column - Pizza Info */}
                 <div className="flex-1 flex flex-col justify-center">
-                  <h2 className={`font-display text-foreground mb-2 flex flex-col gap-1 ${isTie ? 'text-4xl' : 'text-6xl'}`}>
-                    <span>{winner.brand}</span>
-                    <span>{winner.flavor}</span>
+                  <h2 className={`font-schoolbell text-foreground mb-2 flex flex-col gap-1 ${isTie ? 'text-4xl' : 'text-6xl'}`}>
+                    <span>{formatPizzaText(winner.brand)}</span>
+                    <span>{formatPizzaText(winner.flavor)}</span>
                   </h2>
                   <p className={`font-russo text-muted-foreground/80 mb-4 ${isTie ? 'text-2xl' : 'text-3xl'}`}>
                     Pizza #{winner.number}
@@ -184,7 +185,7 @@ export const WinnerCelebration: React.FC = () => {
                   {winner.registeredByPlayer && (
                     <div className={`w-full bg-secondary/20 rounded-2xl border border-secondary/40 text-center ${isTie ? 'p-2' : 'p-4'}`}>
                       <p className="font-russo text-sm text-secondary/70 mb-1">🧑‍🍳 Portata da:</p>
-                      <p className={`font-display text-secondary ${isTie ? 'text-2xl' : 'text-3xl'}`}>
+                      <p className={`font-russo font-bold text-secondary ${isTie ? 'text-2xl' : 'text-3xl'}`}>
                         {winner.registeredByPlayer.username}
                       </p>
                     </div>

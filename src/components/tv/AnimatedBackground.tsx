@@ -118,7 +118,6 @@ export const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({ variant 
       />
 
       {/* Floating emojis with burn-in protection */}
-      {/* Floating emojis with burn-in protection */}
       {Array.from({ length: 15 }).map((_, i) => {
         const emojis = ['🍕', '🎸', '🕶️', '🎤', '🎵', '🏆', '🔥', '✨', '💿', '🌭', '🕺', '🎪', '🎲', '🎯', '🚀'];
         const emoji = emojis[i % emojis.length];
@@ -128,8 +127,8 @@ export const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({ variant 
             key={i}
             className="absolute text-4xl opacity-10"
             style={{
-              left: `${(i * 7) % 100}%`,
-              top: `${(i * 13) % 100}%`,
+              left: `${((i * 13.7) % 80) + 10}%`,
+              top: `${((i * 19.3) % 80) + 10}%`,
             }}
             animate={{
               x: [offset.x * (i + 1) * 0.3, offset.x * (i + 1) * -0.3],

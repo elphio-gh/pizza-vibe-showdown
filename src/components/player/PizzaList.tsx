@@ -8,6 +8,7 @@ import { usePlayers } from '@/hooks/usePlayers';
 import { Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getPizzaEmoji } from '@/lib/pizzaUtils';
+import { formatPizzaText } from '@/lib/stringUtils';
 
 interface PizzaListProps {
   onSelectPizza: (pizza: Pizza, existingVote?: Vote) => void;
@@ -86,7 +87,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
       {userPizza && (
         <div className="p-3 bg-primary/10 rounded-lg border border-primary/30 mb-4">
           <p className="font-sans text-sm text-primary">
-            {getPizzaEmoji(userPizza.flavor, userPizza.number, userPizza.emoji)} La tua pizza: <strong>{userPizza.brand} - {userPizza.flavor}</strong>
+            {getPizzaEmoji(userPizza.flavor, userPizza.number, userPizza.emoji)} La tua pizza: <strong>{formatPizzaText(userPizza.brand)} - {formatPizzaText(userPizza.flavor)}</strong>
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             Pizza #{userPizza.number} • Non puoi votare la tua pizza
@@ -122,7 +123,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
                   <div className="text-3xl">{getPizzaEmoji(pizza.flavor, pizza.number, pizza.emoji)}</div>
                   <div>
                     <div className="font-schoolbell text-lg leading-tight">
-                      {pizza.brand} - {pizza.flavor}
+                      {formatPizzaText(pizza.brand)} - {formatPizzaText(pizza.flavor)}
                     </div>
                     <div className="font-sans text-xs text-muted-foreground">
                       di {ownerName} • Pizza #{pizza.number}

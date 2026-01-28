@@ -5,6 +5,7 @@ import { usePlayers } from '@/hooks/usePlayers';
 import { useTVCommands } from '@/hooks/useTVCommands';
 import { PizzaWithScore, calculatePizzaScore, calculateVoteScore, getRankedPizzas } from '@/types/database';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatPizzaText } from '@/lib/stringUtils';
 
 export const RevealMode: React.FC = () => {
   const { pizzas } = usePizzas();
@@ -183,9 +184,9 @@ export const RevealMode: React.FC = () => {
 
         {/* Middle Column - Pizza Info */}
         <div className="flex-1 flex flex-col justify-center">
-          <h2 className="font-display text-5xl text-foreground mb-2 flex flex-col gap-1">
-            <span>{pizza.brand}</span>
-            <span>{pizza.flavor}</span>
+          <h2 className="font-schoolbell text-5xl text-foreground mb-2 flex flex-col gap-1">
+            <span>{formatPizzaText(pizza.brand)}</span>
+            <span>{formatPizzaText(pizza.flavor)}</span>
           </h2>
           <p className="font-russo text-2xl text-muted-foreground mb-4">
             Pizza #{pizza.number}
