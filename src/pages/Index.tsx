@@ -89,15 +89,15 @@ const Index: React.FC = () => {
         </div>
 
         {/* Player & Admin Row */}
-        <div className="flex flex-col md:flex-row gap-6 w-full">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 w-full">
           <RoleButton
             icon={User}
             label="GIOCATORE"
             emoji="🎮"
             onClick={handlePlayerClick}
             variant="orange"
-            className="w-full max-w-none md:aspect-[7/1] aspect-square flex-col md:flex-row p-4 md:gap-4 [&_span]:text-xl md:[&_span]:text-2xl [&_svg]:w-10 [&_svg]:h-10 md:[&_svg]:w-12 md:[&_svg]:h-12"
-            layout="col" /* Default for mobile */
+            className="w-full max-w-none aspect-[3/1] md:aspect-[7/1] flex-row p-4 gap-3 md:gap-4 [&_span]:text-lg md:[&_span]:text-2xl [&_svg]:w-8 [&_svg]:h-8 md:[&_svg]:w-12 md:[&_svg]:h-12"
+            layout="row"
           />
           <RoleButton
             icon={Shield}
@@ -105,8 +105,8 @@ const Index: React.FC = () => {
             emoji="👑"
             onClick={handleAdminClick}
             variant="blue"
-            className="w-full max-w-none md:aspect-[7/1] aspect-square flex-col md:flex-row p-4 md:gap-4 [&_span]:text-xl md:[&_span]:text-2xl [&_svg]:w-10 [&_svg]:h-10 md:[&_svg]:w-12 md:[&_svg]:h-12"
-            layout="col"
+            className="w-full max-w-none aspect-[6/1] md:aspect-[7/1] flex-row p-4 gap-3 md:gap-4 [&_span]:text-base md:[&_span]:text-2xl [&_svg]:w-6 [&_svg]:h-6 md:[&_svg]:w-12 md:[&_svg]:h-12"
+            layout="row"
           />
         </div>
       </div>
