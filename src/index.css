@@ -139,6 +139,20 @@
 
 /* Disabilita TUTTE le animazioni su mobile (iOS e Android).
    Le animazioni sono attive solo su desktop (> 768px) */
+@media (max-width: 768px) {
+  /* Disabilita selezione testo globale su mobile */
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* Riabilita per input */
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
 @media (max-width: 768px),
 (prefers-reduced-motion: reduce) {
 

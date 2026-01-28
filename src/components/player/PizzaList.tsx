@@ -74,10 +74,13 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
   // Check if user has their own pizza registered
   const userPizza = pizzas.find(p => p.registered_by === playerId);
 
+  const remainingCount = votablePizzas.filter(p => !getVoteForPizza(p.id)).length;
+
   return (
     <div className="space-y-3">
-      <h2 className="font-display text-2xl text-accent">
-        Pizze da Votare ({votablePizzas.length})
+      <h2 className="font-display text-2xl text-accent flex justify-between items-center">
+        <span>Pizze da Votare</span>
+        <span className="text-lg opacity-80">{remainingCount} di {votablePizzas.length}</span>
       </h2>
 
       {userPizza && (

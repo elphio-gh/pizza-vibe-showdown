@@ -1,6 +1,6 @@
 // Questo componente gestisce la scheda di votazione per una singola pizza.
 // Include gli slider per i vari criteri e messaggi divertenti (meme) per l'utente.
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pizza, Vote } from '@/types/database';
@@ -10,6 +10,7 @@ import { useRole } from '@/contexts/RoleContext';
 import { ArrowLeft, Send, Check } from 'lucide-react';
 import { VoteFeedback } from '@/components/effects/VoteFeedback';
 import { getPizzaEmoji } from '@/lib/pizzaUtils';
+import { getFeedbackMessage } from '@/lib/feedbackUtils';
 
 interface VotingCardProps {
   pizza: Pizza;
@@ -80,12 +81,7 @@ const getScoreEmoji = (score: number): string => {
   return '🏆';
 };
 
-const getScoreLabel = (score: number): string => {
-  if (score <= 2) return 'Tragica';
-  if (score <= 5) return 'Nella media';
-  if (score <= 8) return 'Ottima!';
-  return 'LEGGENDARIA!';
-};
+
 
 export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onBack }) => {
   const { playerId } = useRole();
@@ -182,6 +178,12 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
         </CardHeader>
 
         <CardContent className="space-y-2">
+          <div className="text-center pb-2">
+            <p className="font-sans text-sm text-muted-foreground uppercase tracking-widest">
+              Voto da 1 a 10
+            </p>
+          </div>
+
           {/* Slider compatti per ogni categoria */}
           <CompactVoteRow
             label="Ricchezza farcitura"
@@ -229,7 +231,11 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
                     {currentScore.toFixed(1)}
                   </p>
                   <p className="font-sans font-bold text-sm text-foreground">
-                    {getScoreLabel(currentScore)}
+                    {useMemo(() => {
+                      // Arrotonda al 0.5 più vicino per cambiare messaggio meno frequentemente
+                      const steppedScore = Math.floor(currentScore * 2) / 2;
+                      return getFeedbackMessage(steppedScore);
+                    }, [Math.floor(currentScore * 2) / 2])}
                   </p>
                 </div>
               </div>
@@ -239,7 +245,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
                 <p className="font-russo text-xs text-center text-destructive uppercase tracking-widest animate-pulse">
                   ⚠️ Attenzione: Voto Definitivo! ⚠️
                 </p>
-                <p className="font-sans text-xs text-center text-foreground/90 italic leading-snug">
+                <p className="font-sans text-xs text-center text-foreground/90 leading-snug">
                   "{warningMessage}"
                 </p>
               </div>
