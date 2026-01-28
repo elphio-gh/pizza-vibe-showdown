@@ -1,6 +1,8 @@
-// VoteSlider - Slider per votare le pizze
-// Usa input type="range" nativo invece di Radix Slider per compatibilità iOS Safari
+// VoteSlider - Componente per votare le pizze con tasti + e -
+// Sostituisce lo slider per massima compatibilità iOS/Android
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Minus, Plus } from 'lucide-react';
 
 interface VoteSliderProps {
   label: string;
@@ -34,41 +36,69 @@ export const VoteSlider: React.FC<VoteSliderProps> = ({
   onChange,
   disabled = false,
 }) => {
+  // Decrementa il valore (minimo 1)
+  const handleDecrement = () => {
+    if (value > 1 && !disabled) {
+      onChange(value - 1);
+    }
+  };
+
+  // Incrementa il valore (massimo 10)
+  const handleIncrement = () => {
+    if (value < 10 && !disabled) {
+      onChange(value + 1);
+    }
+  };
+
   return (
-    <div className="space-y-3 p-4 bg-muted/30 rounded-xl">
-      <div className="flex items-center justify-between">
+    <div className="p-4 bg-muted/30 rounded-xl">
+      {/* Header con label ed emoji */}
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-2xl">{emoji}</span>
           <span className="font-russo text-sm">{label}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className={`font-display text-3xl ${getValueColor(value)} animate-count-up`}>
-            {value}
-          </span>
-          <span className="text-2xl">{getValueEmoji(value)}</span>
-        </div>
+        <span className="text-2xl">{getValueEmoji(value)}</span>
       </div>
 
-      {/* Input range nativo - funziona correttamente su iOS Safari */}
-      <input
-        type="range"
-        min={1}
-        max={10}
-        step={1}
-        value={value}
-        onChange={(e) => onChange(parseInt(e.target.value, 10))}
-        disabled={disabled}
-        className="native-slider w-full h-3 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-        style={{
-          // Permette scroll verticale mentre si usa lo slider
-          touchAction: 'pan-y',
-        }}
-      />
+      {/* Controlli + e - con valore al centro */}
+      <div className="flex items-center justify-center gap-3">
+        {/* Tasto - */}
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={handleDecrement}
+          disabled={disabled || value <= 1}
+          className="h-14 w-14 rounded-full border-2 border-primary/50 hover:border-primary hover:bg-primary/10 active:scale-95 transition-all touch-manipulation"
+        >
+          <Minus className="h-6 w-6" />
+        </Button>
 
-      <div className="flex justify-between text-xs text-muted-foreground font-russo">
-        <span>1</span>
-        <span>5</span>
-        <span>10</span>
+        {/* Valore numerico centrale */}
+        <div className="min-w-[5rem] text-center">
+          <span className={`font-display text-5xl ${getValueColor(value)}`}>
+            {value}
+          </span>
+        </div>
+
+        {/* Tasto + */}
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={handleIncrement}
+          disabled={disabled || value >= 10}
+          className="h-14 w-14 rounded-full border-2 border-primary/50 hover:border-primary hover:bg-primary/10 active:scale-95 transition-all touch-manipulation"
+        >
+          <Plus className="h-6 w-6" />
+        </Button>
+      </div>
+
+      {/* Indicatore scala */}
+      <div className="flex justify-between text-xs text-muted-foreground font-russo mt-2 px-2">
+        <span>Min 1</span>
+        <span>Max 10</span>
       </div>
     </div>
   );
