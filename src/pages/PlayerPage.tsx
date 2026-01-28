@@ -11,7 +11,7 @@ import { useSessions } from '@/hooks/useSessions';
 import { usePlayers } from '@/hooks/usePlayers';
 import { usePizzas } from '@/hooks/usePizzas';
 import { Button } from '@/components/ui/button';
-import { Pizza as PizzaIcon, Plus } from 'lucide-react';
+import { Plus, Pencil } from 'lucide-react';
 
 const PlayerPage: React.FC = () => {
   const { role, playerId, setPlayerId, setPlayerName, setRole } = useRole();
@@ -168,15 +168,19 @@ const PlayerPage: React.FC = () => {
         <div className="mb-6">
           <Button
             onClick={() => navigate('/my-pizza')}
-            className={`w-full py-6 font-sans font-bold text-xl transition-all ${myPizza
+            className={`w-full h-auto py-4 flex-col gap-1 font-sans font-bold text-xl transition-all ${myPizza
               ? 'bg-accent/20 border-2 border-accent text-accent hover:bg-accent/30'
               : 'gradient-pizza text-primary-foreground box-glow-orange'
               }`}
           >
             {myPizza ? (
               <>
-                <PizzaIcon className="w-6 h-6 mr-2" />
-                La mia Pizza: {myPizza.brand} - {myPizza.flavor}
+                <div className="flex items-center gap-2 text-sm uppercase opacity-90 mb-1">
+                  <Pencil className="w-4 h-4" /> Modifica la tua pizza
+                </div>
+                <div className="text-xl leading-tight text-center w-full whitespace-normal break-words px-2">
+                  {myPizza.brand} - {myPizza.flavor}
+                </div>
               </>
             ) : (
               <>
