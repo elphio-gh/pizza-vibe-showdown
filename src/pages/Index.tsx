@@ -105,7 +105,7 @@ const Index: React.FC = () => {
             emoji="👑"
             onClick={handleAdminClick}
             variant="blue"
-            className="w-full max-w-none aspect-[6/1] md:aspect-[7/1] flex-row p-4 gap-3 md:gap-4 [&_span]:text-base md:[&_span]:text-2xl [&_svg]:w-6 [&_svg]:h-6 md:[&_svg]:w-12 md:[&_svg]:h-12"
+            className="w-full max-w-none aspect-[6/1] md:aspect-[7/1] flex-row p-4 gap-3 md:gap-4 [&_span]:text-base md:[&_span]:text-2xl [&_svg]:w-5 [&_svg]:h-5 md:[&_svg]:w-12 md:[&_svg]:h-12"
             layout="row"
           />
         </div>
