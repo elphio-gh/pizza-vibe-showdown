@@ -3,7 +3,9 @@ import React from 'react';
 const colors = ['#FF6B35', '#FFD93D', '#6C63FF', '#FF1493', '#00FF88'];
 
 export const Confetti: React.FC = () => {
-  const pieces = Array.from({ length: 50 }, (_, i) => ({
+  // Riduce le particelle su mobile per non stressare la GPU su iOS
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const pieces = Array.from({ length: isMobile ? 25 : 50 }, (_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
     delay: `${Math.random() * 0.5}s`,

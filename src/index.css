@@ -96,9 +96,11 @@
     @apply border-border;
   }
 
-  /* Ottimizzazioni per Safari mobile */
+  /* Ottimizzazioni per Safari mobile - iOS Safari bug fix */
   html {
     -webkit-tap-highlight-color: transparent;
+    /* Fix per tocchi più reattivi su iOS (rimuove 300ms delay) */
+    touch-action: manipulation;
   }
 
   body {
@@ -106,20 +108,22 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
   }
-  
-  /* Ottimizza elementi scrollabili */
-  .container, main, [class*="overflow-"] {
+
+  /* Ottimizza elementi scrollabili per iOS - NOTA: rimosso transform: translateZ(0)
+     che causava overflow della memoria GPU su dispositivi iOS con risorse limitate */
+  .container,
+  main {
     -webkit-overflow-scrolling: touch;
-    transform: translateZ(0);
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     @apply font-display;
     letter-spacing: 0.05em;
   }
 
-  .font-russo {
-  }
+  .font-russo {}
 }
 
 @layer utilities {
@@ -197,46 +201,119 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 1; filter: brightness(1); }
-  50% { opacity: 0.8; filter: brightness(1.2); }
+
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    filter: brightness(1.2);
+  }
 }
 
 @keyframes bounce-in {
-  0% { transform: scale(0); opacity: 0; }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes slide-up {
-  0% { transform: translateY(20px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes confetti {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-100px) rotate(720deg);
+    opacity: 0;
+  }
 }
 
 @keyframes glasses-drop {
-  0% { transform: translateY(-100px); opacity: 0; }
-  60% { transform: translateY(10px); }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translateY(10px);
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-5px); }
-  40% { transform: translateX(5px); }
-  60% { transform: translateX(-5px); }
-  80% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-5px);
+  }
+
+  40% {
+    transform: translateX(5px);
+  }
+
+  60% {
+    transform: translateX(-5px);
+  }
+
+  80% {
+    transform: translateX(5px);
+  }
 }
 
 @keyframes count-up {
-  0% { transform: scale(1.5); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
