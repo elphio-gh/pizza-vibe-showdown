@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           brand: string
           created_at: string
+          emoji: string | null
           flavor: string
           id: string
           number: number
@@ -26,6 +27,7 @@ export type Database = {
         Insert: {
           brand: string
           created_at?: string
+          emoji?: string | null
           flavor: string
           id?: string
           number?: number
@@ -34,6 +36,7 @@ export type Database = {
         Update: {
           brand?: string
           created_at?: string
+          emoji?: string | null
           flavor?: string
           id?: string
           number?: number
