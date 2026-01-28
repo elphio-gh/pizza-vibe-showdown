@@ -64,7 +64,7 @@ const PlayerSelectPage: React.FC = () => {
                     {/* Title */}
                     <div className="text-center space-y-2">
                         <div className="text-5xl">👥</div>
-                        <h1 className="font-display text-3xl text-primary">
+                        <h1 className="font-sans font-bold text-3xl text-primary">
                             Chi sei?
                         </h1>
                         <p className="font-russo text-sm text-muted-foreground">
@@ -76,7 +76,7 @@ const PlayerSelectPage: React.FC = () => {
                     {!showCreateForm ? (
                         <Button
                             onClick={() => setShowCreateForm(true)}
-                            className="w-full py-5 font-display text-lg gradient-pizza text-primary-foreground flex items-center justify-center gap-2"
+                            className="w-full py-5 font-sans font-bold text-lg gradient-pizza text-primary-foreground flex items-center justify-center gap-2"
                         >
                             <Plus className="w-5 h-5" />
                             Crea Nuovo Profilo
@@ -105,7 +105,7 @@ const PlayerSelectPage: React.FC = () => {
                                 <Button
                                     onClick={handleCreatePlayer}
                                     disabled={!newNickname.trim() || isCreating}
-                                    className="flex-1 font-display gradient-pizza text-primary-foreground"
+                                    className="flex-1 font-sans font-bold gradient-pizza text-primary-foreground"
                                 >
                                     {isCreating ? 'Creazione...' : 'CREA 🚀'}
                                 </Button>

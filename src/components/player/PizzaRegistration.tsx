@@ -42,7 +42,7 @@ export const PizzaRegistration: React.FC<PizzaRegistrationProps> = ({ onSuccess 
   return (
     <Card className="bg-card border-2 border-secondary/50 box-glow-yellow">
       <CardHeader>
-        <CardTitle className="font-display text-2xl text-secondary flex items-center gap-3">
+        <CardTitle className="font-sans font-bold text-2xl text-secondary flex items-center gap-3">
           <Plus className="w-8 h-8" />
           Registra una Pizza
         </CardTitle>
@@ -82,7 +82,7 @@ export const PizzaRegistration: React.FC<PizzaRegistrationProps> = ({ onSuccess 
           <Button
             type="submit"
             disabled={!brand.trim() || !flavor.trim() || isSubmitting}
-            className="w-full font-display text-lg bg-secondary text-secondary-foreground hover:bg-secondary/90"
+            className="w-full font-sans font-bold text-lg bg-secondary text-secondary-foreground hover:bg-secondary/90"
           >
             {isSubmitting ? 'Registrando...' : 'REGISTRA PIZZA 🍕'}
           </Button>

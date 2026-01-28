@@ -18,6 +18,7 @@ export default {
         sans: ['Poppins', 'sans-serif'],
         display: ['"Dancing Script"', 'cursive'],
         dancing: ['"Dancing Script"', 'cursive'],
+        schoolbell: ['"Schoolbell"', 'cursive'],
       },
       colors: {
         border: "hsl(var(--border))",
