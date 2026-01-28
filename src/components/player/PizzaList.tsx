@@ -125,8 +125,13 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
                     <div className="font-schoolbell text-lg leading-tight">
                       {formatPizzaText(pizza.brand)} - {formatPizzaText(pizza.flavor)}
                     </div>
-                    <div className="font-sans text-xs text-muted-foreground">
-                      di {ownerName} • Pizza #{pizza.number}
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span className="font-russo text-xs text-secondary bg-secondary/10 px-1.5 py-0.5 rounded">
+                        👨‍🍳 {ownerName}
+                      </span>
+                      <span className="font-sans text-xs text-muted-foreground">
+                        • #{pizza.number}
+                      </span>
                     </div>
                   </div>
                 </div>

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pizza, Vote } from '@/types/database';
 import { CompactVoteRow } from './CompactVoteRow';
 import { useVotes } from '@/hooks/useVotes';
+import { usePlayers } from '@/hooks/usePlayers';
 import { useRole } from '@/contexts/RoleContext';
 import { ArrowLeft, Send, Check } from 'lucide-react';
 import { VoteFeedback } from '@/components/effects/VoteFeedback';
@@ -86,6 +87,7 @@ const getScoreEmoji = (score: number): string => {
 
 export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onBack }) => {
   const { playerId } = useRole();
+  const { players } = usePlayers();
   // Disabilita realtime per evitare crash su iOS Safari
   const { createVote } = useVotes({ disableRealtime: true });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,6 +97,22 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
   // Scegliamo un messaggio di avvertimento a caso per questa sessione.
   const [warningMessage] = useState(() =>
     WARNING_MESSAGES[Math.floor(Math.random() * WARNING_MESSAGES.length)]
+  );
+
+  const OWNER_TITLES = [
+    "Eroe del reparto surgelati ❄️",
+    "Ha sfidato la fila alla cassa 🛒",
+    "Si è immolato al supermercato 🏃",
+    "Ha domato il carrello della spesa 🛒",
+    "Cacciatore di offerte speciali 🏷️",
+    "Trasportatore di cartoni 📦",
+    "Ha salvato la cena (forse) 🦸",
+    "Esploratore del banco frigo 🐧",
+    "Buyer ufficiale della serata 🤝"
+  ];
+
+  const [ownerTitle] = useState(() =>
+    OWNER_TITLES[Math.floor(Math.random() * OWNER_TITLES.length)]
   );
 
   // Stato interno per i voti dei 5 criteri.
@@ -170,6 +188,19 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
               </p>
             </div>
           </div>
+
+          {/* Chef/Owner Display */}
+          <div className="mt-4 mb-2 p-3 bg-secondary/10 border-2 border-secondary/30 rounded-xl relative overflow-hidden">
+            <div className="absolute -right-4 -top-4 text-6xl opacity-10 rotate-12">🛒</div>
+            <p className="font-russo text-xs text-secondary/80 uppercase tracking-widest mb-1 pl-1">
+              {ownerTitle}
+            </p>
+            <p className="font-display text-3xl text-secondary flex items-center justify-center gap-2">
+              <span className="text-2xl">🛍️</span>
+              {players.find(p => p.id === pizza.registered_by)?.username || 'Anonimo'}
+            </p>
+          </div>
+
           {isReadOnly && (
             <div className="flex items-center justify-center gap-2 mt-2 px-3 py-1 bg-green-500/20 rounded-lg">
               <Check className="w-4 h-4 text-green-500" />
