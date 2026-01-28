@@ -109,6 +109,17 @@
     overscroll-behavior-y: contain;
   }
 
+  /* Previene selezione testo sui bottoni e elementi interattivi */
+  button,
+  a,
+  [role="button"],
+  .cursor-pointer {
+    -webkit-user-select: none;
+    user-select: none;
+    /* Previene che lo scroll attivi tap sui pulsanti */
+    -webkit-touch-callout: none;
+  }
+
   /* Ottimizza elementi scrollabili per iOS - NOTA: rimosso transform: translateZ(0)
      che causava overflow della memoria GPU su dispositivi iOS con risorse limitate */
   .container,

@@ -98,12 +98,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
             <Card
               key={pizza.id}
               onClick={() => onSelectPizza(pizza, existingVote)}
-              // onTouchEnd per bypassare il delay di 300ms su iOS Safari
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                onSelectPizza(pizza, existingVote);
-              }}
-              className={`cursor-pointer touch-manipulation transition-colors duration-150 active:scale-[0.98] ${hasVoted
+              className={`cursor-pointer touch-manipulation select-none active:scale-[0.98] ${hasVoted
                 ? 'bg-accent/10 border-accent/50'
                 : 'bg-card border-accent/30 hover:border-accent'
                 }`}
