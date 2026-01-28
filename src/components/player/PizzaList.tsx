@@ -83,7 +83,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
       {userPizza && (
         <div className="p-3 bg-primary/10 rounded-lg border border-primary/30 mb-4">
           <p className="font-russo text-sm text-primary">
-            {getPizzaEmoji(userPizza.number || 1)} La tua pizza: <strong>{userPizza.brand} - {userPizza.flavor}</strong>
+            {getPizzaEmoji(userPizza.flavor, userPizza.number)} La tua pizza: <strong>{userPizza.brand} - {userPizza.flavor}</strong>
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             Pizza #{userPizza.number} • Non puoi votare la tua pizza
@@ -116,7 +116,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
             >
               <CardContent className="py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="text-3xl">{getPizzaEmoji(pizza.number || 1)}</div>
+                  <div className="text-3xl">{getPizzaEmoji(pizza.flavor, pizza.number)}</div>
                   <div>
                     <div className="font-display text-lg leading-tight">
                       {pizza.brand} - {pizza.flavor}

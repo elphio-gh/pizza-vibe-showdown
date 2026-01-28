@@ -162,7 +162,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
 
       <Card className="bg-card border-2 border-primary/50">
         <CardHeader className="text-center pb-2">
-          <div className="text-6xl mb-2">{getPizzaEmoji(pizza.number || 1)}</div>
+          <div className="text-6xl mb-2">{getPizzaEmoji(pizza.flavor, pizza.number)}</div>
           <CardTitle className="font-display text-3xl text-primary">
             {pizza.brand} - {pizza.flavor}
           </CardTitle>

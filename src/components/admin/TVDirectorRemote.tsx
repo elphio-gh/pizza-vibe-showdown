@@ -313,7 +313,7 @@ export const TVDirectorRemote: React.FC = () => {
                                             {isWinner ? '🏆' : `#${rank}`}
                                         </span>
                                         <span className="truncate max-w-[120px]">
-                                            {pizza.brand}
+                                            {pizza.brand} - {pizza.flavor}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2">

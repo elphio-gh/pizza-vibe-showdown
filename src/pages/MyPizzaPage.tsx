@@ -96,7 +96,7 @@ const MyPizzaPage: React.FC = () => {
                     {/* Title */}
                     <div className="text-center space-y-2">
                         <div className="text-6xl animate-float">
-                            {myPizza ? getPizzaEmoji(myPizza.number || 1) : '🍕'}
+                            {getPizzaEmoji(flavor, myPizza?.number)}
                         </div>
                         <h1 className="font-display text-3xl text-secondary">
                             {myPizza ? 'La tua Pizza' : 'Registra Pizza'}
