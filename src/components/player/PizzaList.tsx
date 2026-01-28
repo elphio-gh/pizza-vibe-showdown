@@ -7,6 +7,7 @@ import { useRole } from '@/contexts/RoleContext';
 import { usePlayers } from '@/hooks/usePlayers';
 import { Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getPizzaEmoji } from '@/lib/pizzaUtils';
 
 interface PizzaListProps {
   onSelectPizza: (pizza: Pizza, existingVote?: Vote) => void;
@@ -58,7 +59,17 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
   }
 
   // Filter out the player's own pizza (self-voting prevention)
-  const votablePizzas = pizzas.filter(p => p.registered_by !== playerId);
+  const allVotablePizzas = pizzas.filter(p => p.registered_by !== playerId);
+
+  // Ordina le pizze: quelle non ancora votate prima, quelle già votate in fondo
+  const votablePizzas = [...allVotablePizzas].sort((a, b) => {
+    const aVoted = !!getVoteForPizza(a.id);
+    const bVoted = !!getVoteForPizza(b.id);
+    // Le pizze non votate vengono prima (false < true == -1)
+    if (aVoted !== bVoted) return aVoted ? 1 : -1;
+    // Mantieni ordinamento per numero se stesso stato di voto
+    return (a.number || 0) - (b.number || 0);
+  });
 
   // Check if user has their own pizza registered
   const userPizza = pizzas.find(p => p.registered_by === playerId);
@@ -72,7 +83,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
       {userPizza && (
         <div className="p-3 bg-primary/10 rounded-lg border border-primary/30 mb-4">
           <p className="font-russo text-sm text-primary">
-            🍕 La tua pizza: <strong>{userPizza.brand} - {userPizza.flavor}</strong>
+            {getPizzaEmoji(userPizza.number || 1)} La tua pizza: <strong>{userPizza.brand} - {userPizza.flavor}</strong>
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             Pizza #{userPizza.number} • Non puoi votare la tua pizza
@@ -105,7 +116,7 @@ export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
             >
               <CardContent className="py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="text-3xl">🍕</div>
+                  <div className="text-3xl">{getPizzaEmoji(pizza.number || 1)}</div>
                   <div>
                     <div className="font-display text-lg leading-tight">
                       {pizza.brand} - {pizza.flavor}

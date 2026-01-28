@@ -9,6 +9,7 @@ import { useVotes } from '@/hooks/useVotes';
 import { useRole } from '@/contexts/RoleContext';
 import { ArrowLeft, Send, Check } from 'lucide-react';
 import { VoteFeedback } from '@/components/effects/VoteFeedback';
+import { getPizzaEmoji } from '@/lib/pizzaUtils';
 
 interface VotingCardProps {
   pizza: Pizza;
@@ -161,7 +162,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
 
       <Card className="bg-card border-2 border-primary/50">
         <CardHeader className="text-center pb-2">
-          <div className="text-6xl mb-2">🍕</div>
+          <div className="text-6xl mb-2">{getPizzaEmoji(pizza.number || 1)}</div>
           <CardTitle className="font-display text-3xl text-primary">
             {pizza.brand} - {pizza.flavor}
           </CardTitle>

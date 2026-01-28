@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Package, Trash2, Check, AlertTriangle } from 'lucide-react';
 
+import { getPizzaEmoji } from '@/lib/pizzaUtils';
+
 const MyPizzaPage: React.FC = () => {
     const navigate = useNavigate();
     const { playerId, role } = useRole();
@@ -93,7 +95,9 @@ const MyPizzaPage: React.FC = () => {
                 <div className="space-y-6 max-w-md mx-auto w-full">
                     {/* Title */}
                     <div className="text-center space-y-2">
-                        <div className="text-6xl animate-float">🍕</div>
+                        <div className="text-6xl animate-float">
+                            {myPizza ? getPizzaEmoji(myPizza.number || 1) : '🍕'}
+                        </div>
                         <h1 className="font-display text-3xl text-secondary">
                             {myPizza ? 'La tua Pizza' : 'Registra Pizza'}
                         </h1>
