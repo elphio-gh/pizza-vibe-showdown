@@ -96,8 +96,21 @@
     @apply border-border;
   }
 
+  /* Ottimizzazioni per Safari mobile */
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+  
+  /* Ottimizza elementi scrollabili */
+  .container, main, [class*="overflow-"] {
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
   }
 
   h1, h2, h3 {

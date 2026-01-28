@@ -53,7 +53,7 @@ export const VoteSlider: React.FC<VoteSliderProps> = ({
         max={10}
         step={1}
         disabled={disabled}
-        className="py-2 touch-none"
+        className="py-4"
       />
 
       <div className="flex justify-between text-xs text-muted-foreground font-russo">
