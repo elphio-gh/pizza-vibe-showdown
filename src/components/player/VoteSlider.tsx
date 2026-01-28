@@ -45,7 +45,7 @@ export const VoteSlider: React.FC<VoteSliderProps> = ({
           <span className="text-2xl">{getValueEmoji(value)}</span>
         </div>
       </div>
-      
+
       <Slider
         value={[value]}
         onValueChange={([newValue]) => onChange(newValue)}
@@ -53,9 +53,9 @@ export const VoteSlider: React.FC<VoteSliderProps> = ({
         max={10}
         step={1}
         disabled={disabled}
-        className="py-2"
+        className="py-2 touch-none"
       />
-      
+
       <div className="flex justify-between text-xs text-muted-foreground font-russo">
         <span>1</span>
         <span>5</span>

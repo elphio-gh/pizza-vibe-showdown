@@ -104,7 +104,21 @@ const PlayerPage: React.FC = () => {
     }
   }, [role, setRole]);
 
-  if (role !== 'player') {
+  // If role is null, we are initializing. Don't redirect yet.
+  // If after init we are not player (e.g. admin logged in but went to /player?), we might redirect,
+  // but simpler to just show a loader.
+  if (role === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin text-4xl">🍕</div>
+      </div>
+    );
+  }
+
+  // Only redirect if explicitly set to another role than player (unlikely in this context but safe)
+  if (role !== 'player' && role !== null) {
+    // Actually, if we are here, we might just want to force player role?
+    // For now, let's just let it be, or redirect if it is explicitly 'admin' or 'tv'
     return <Navigate to="/" replace />;
   }
 

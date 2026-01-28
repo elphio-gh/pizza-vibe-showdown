@@ -200,7 +200,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="w-full py-6 font-display text-xl gradient-pizza text-primary-foreground box-glow-orange"
+                className="w-full py-6 font-display text-xl gradient-pizza text-primary-foreground box-glow-orange touch-manipulation"
               >
                 {isSubmitting ? (
                   'Invio...'
