@@ -102,7 +102,7 @@ const MyPizzaPage: React.FC = () => {
                             {myPizza ? 'La tua Pizza' : 'Registra Pizza'}
                         </h1>
                         {myPizza && (
-                            <p className="font-russo text-muted-foreground">
+                            <p className="font-sans font-bold text-muted-foreground">
                                 Pizza #{myPizza.number}
                             </p>
                         )}
@@ -111,7 +111,7 @@ const MyPizzaPage: React.FC = () => {
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-2">
-                            <Label className="font-russo text-sm text-muted-foreground">Marca</Label>
+                            <Label className="font-sans font-bold text-sm text-muted-foreground">Marca</Label>
                             <div className="relative">
                                 <Package className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
                                 <Input
@@ -119,7 +119,7 @@ const MyPizzaPage: React.FC = () => {
                                     placeholder="Es. Buitoni, Italpizza, Cameo..."
                                     value={brand}
                                     onChange={(e) => setBrand(e.target.value)}
-                                    className="pl-12 py-6 text-lg font-russo"
+                                    className="pl-12 py-6 text-lg font-sans font-bold"
                                     maxLength={50}
                                     autoFocus
                                 />
@@ -127,7 +127,7 @@ const MyPizzaPage: React.FC = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="font-russo text-sm text-muted-foreground">Gusto</Label>
+                            <Label className="font-sans font-bold text-sm text-muted-foreground">Gusto</Label>
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl">🍕</span>
                                 <Input
@@ -135,7 +135,7 @@ const MyPizzaPage: React.FC = () => {
                                     placeholder="Es. Margherita, 4 Formaggi..."
                                     value={flavor}
                                     onChange={(e) => setFlavor(e.target.value)}
-                                    className="pl-12 py-6 text-lg font-russo"
+                                    className="pl-12 py-6 text-lg font-sans font-bold"
                                     maxLength={50}
                                 />
                             </div>
@@ -145,7 +145,7 @@ const MyPizzaPage: React.FC = () => {
                         <Button
                             type="submit"
                             disabled={!brand.trim() || !flavor.trim() || isSubmitting}
-                            className="w-full py-6 font-display text-xl bg-secondary text-secondary-foreground hover:bg-secondary/90"
+                            className="w-full py-6 font-sans font-bold text-xl bg-secondary text-secondary-foreground hover:bg-secondary/90"
                         >
                             {isSubmitting ? 'Salvando...' : myPizza ? 'SALVA MODIFICHE ✓' : 'REGISTRA PIZZA 🍕'}
                         </Button>
@@ -157,7 +157,7 @@ const MyPizzaPage: React.FC = () => {
                             type="button"
                             variant="outline"
                             onClick={() => setShowDeleteConfirm(true)}
-                            className="w-full py-4 font-russo text-destructive border-destructive/50 hover:bg-destructive/10"
+                            className="w-full py-4 font-sans font-bold text-destructive border-destructive/50 hover:bg-destructive/10"
                         >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Elimina la mia pizza
@@ -170,7 +170,7 @@ const MyPizzaPage: React.FC = () => {
                             <div className="flex items-start gap-3">
                                 <AlertTriangle className="w-6 h-6 text-destructive flex-shrink-0 mt-0.5" />
                                 <div>
-                                    <p className="font-russo text-foreground">
+                                    <p className="font-sans font-bold text-foreground">
                                         Eliminare la pizza #{myPizza?.number}?
                                     </p>
                                     <p className="text-sm text-muted-foreground mt-1">
@@ -184,14 +184,14 @@ const MyPizzaPage: React.FC = () => {
                                 <Button
                                     variant="outline"
                                     onClick={() => setShowDeleteConfirm(false)}
-                                    className="flex-1 font-russo"
+                                    className="flex-1 font-sans font-bold"
                                 >
                                     Annulla
                                 </Button>
                                 <Button
                                     variant="destructive"
                                     onClick={handleDelete}
-                                    className="flex-1 font-russo"
+                                    className="flex-1 font-sans font-bold"
                                 >
                                     <Trash2 className="w-4 h-4 mr-1" />
                                     Elimina

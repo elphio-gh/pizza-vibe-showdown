@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         // Rimosso Noto Color Emoji - le emoji native del dispositivo sono migliori su iOS
-        sans: ['Poppins', 'sans-serif'],
+        sans: ['Poppins', 'Noto Color Emoji', 'sans-serif'],
         display: ['"Dancing Script"', 'cursive'],
         dancing: ['"Dancing Script"', 'cursive'],
         schoolbell: ['"Schoolbell"', 'cursive'],

@@ -159,7 +159,7 @@ const PlayerPage: React.FC = () => {
           <h1 className="font-display text-4xl text-primary text-glow-orange">
             Ciao {currentPlayer?.username || ''}! 🍕
           </h1>
-          <p className="font-russo text-muted-foreground">
+          <p className="font-sans text-muted-foreground">
             Vota le pizze dei tuoi amici!
           </p>
         </div>
@@ -168,7 +168,7 @@ const PlayerPage: React.FC = () => {
         <div className="mb-6">
           <Button
             onClick={() => navigate('/my-pizza')}
-            className={`w-full py-6 font-display text-xl transition-all ${myPizza
+            className={`w-full py-6 font-sans font-bold text-xl transition-all ${myPizza
               ? 'bg-accent/20 border-2 border-accent text-accent hover:bg-accent/30'
               : 'gradient-pizza text-primary-foreground box-glow-orange'
               }`}
