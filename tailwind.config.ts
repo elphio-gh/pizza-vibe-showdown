@@ -14,9 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Poppins', '"Noto Color Emoji"', 'sans-serif'],
-        display: ['"Dancing Script"', '"Noto Color Emoji"', 'cursive'],
-        dancing: ['"Dancing Script"', '"Noto Color Emoji"', 'cursive'],
+        // Rimosso Noto Color Emoji - le emoji native del dispositivo sono migliori su iOS
+        sans: ['Poppins', 'sans-serif'],
+        display: ['"Dancing Script"', 'cursive'],
+        dancing: ['"Dancing Script"', 'cursive'],
       },
       colors: {
         border: "hsl(var(--border))",

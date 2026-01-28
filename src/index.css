@@ -126,6 +126,22 @@
   .font-russo {}
 }
 
+/* Disabilita animazioni pesanti su mobile per evitare crash iOS Safari */
+@media (max-width: 768px),
+(prefers-reduced-motion: reduce) {
+
+  .animate-float,
+  .animate-bounce-in,
+  .animate-pulse-glow,
+  .animate-confetti,
+  .animate-count-up,
+  .animate-slide-up,
+  .animate-shake,
+  .animate-glasses-drop {
+    animation: none !important;
+  }
+}
+
 @layer utilities {
   .text-glow-orange {
     text-shadow: 0 0 10px hsl(18 100% 60% / 0.8), 0 0 20px hsl(18 100% 60% / 0.5), 0 0 30px hsl(18 100% 60% / 0.3);
