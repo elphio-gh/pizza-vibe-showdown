@@ -123,12 +123,8 @@ const PlayerPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  // Funzione per uscire dalla sessione
+  // Funzione per tornare alla home senza eliminare la sessione
   const handleLogout = () => {
-    clearSession();
-    setRole(null);
-    setPlayerId(null);
-    setPlayerName(null);
     navigate('/');
   };
 

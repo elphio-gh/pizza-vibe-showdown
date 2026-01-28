@@ -35,7 +35,7 @@ export const useRecentProfiles = () => {
     const updated = [
       { ...profile, lastUsed: new Date().toISOString() },
       ...profiles.filter(p => p.id !== profile.id)
-    ].slice(0, 5); // Teniamo solo i 5 più recenti
+    ].slice(0, 20); // Teniamo i 20 più recenti
     setProfiles(updated);
   };
 

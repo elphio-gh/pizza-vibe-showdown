@@ -1,8 +1,35 @@
 // Questo file gestisce lo "stato globale" relativo ai ruoli degli utenti.
 // Usiamo React Context per evitare di passare le informazioni (come il nome del giocatore)
 // manualmente tra decine di componenti diversi.
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+// I dati vengono persistiti in localStorage per sopravvivere a refresh e chiusure del browser.
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Role } from '@/types/database';
+
+// Chiavi localStorage per persistenza
+const STORAGE_KEYS = {
+  role: 'tbc_role',
+  playerId: 'tbc_player_id',
+  playerName: 'tbc_player_name'
+};
+
+// Helper per leggere da localStorage
+const getStoredValue = <T,>(key: string, defaultValue: T): T => {
+  try {
+    const item = window.localStorage.getItem(key);
+    return item ? JSON.parse(item) : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+// Helper per salvare in localStorage
+const setStoredValue = <T,>(key: string, value: T): void => {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error('Error saving to localStorage:', error);
+  }
+};
 
 // Definiamo quali dati vogliamo condividere in tutta l'app.
 interface RoleContextType {
@@ -18,10 +45,30 @@ interface RoleContextType {
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 // Il Provider è il componente che "avvolge" l'app e fornisce i dati.
+// Legge i valori iniziali da localStorage per garantire persistenza.
 export const RoleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [role, setRole] = useState<Role>(null);
-  const [playerId, setPlayerId] = useState<string | null>(null);
-  const [playerName, setPlayerName] = useState<string | null>(null);
+  // Inizializza con i valori salvati in localStorage
+  const [role, setRoleState] = useState<Role>(() => getStoredValue<Role>(STORAGE_KEYS.role, null));
+  const [playerId, setPlayerIdState] = useState<string | null>(() => getStoredValue(STORAGE_KEYS.playerId, null));
+  const [playerName, setPlayerNameState] = useState<string | null>(() => getStoredValue(STORAGE_KEYS.playerName, null));
+
+  // Wrapper per setRole che salva anche in localStorage
+  const setRole = (newRole: Role) => {
+    setRoleState(newRole);
+    setStoredValue(STORAGE_KEYS.role, newRole);
+  };
+
+  // Wrapper per setPlayerId che salva anche in localStorage
+  const setPlayerId = (id: string | null) => {
+    setPlayerIdState(id);
+    setStoredValue(STORAGE_KEYS.playerId, id);
+  };
+
+  // Wrapper per setPlayerName che salva anche in localStorage
+  const setPlayerName = (name: string | null) => {
+    setPlayerNameState(name);
+    setStoredValue(STORAGE_KEYS.playerName, name);
+  };
 
   return (
     <RoleContext.Provider value={{
