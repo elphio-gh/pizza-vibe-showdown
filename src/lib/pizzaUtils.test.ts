@@ -20,6 +20,11 @@ describe('getPizzaEmoji', () => {
         expect(getPizzaEmoji('DiAvOlA', 1)).toBe('🌶️');
     });
 
+    it('returns forced emoji if provided', () => {
+        expect(getPizzaEmoji('Margherita', 1, '🌮')).toBe('🌮');
+        expect(getPizzaEmoji(null, 1, '🌮')).toBe('🌮');
+    });
+
     it('returns consistent emoji for unknown flavor based on seed', () => {
         const flavor = 'Pizza Alieno';
         const seed1 = 1;
@@ -44,3 +49,4 @@ describe('getPizzaEmoji', () => {
         expect(getPizzaEmoji('', 1)).toBeDefined();
     });
 });
+

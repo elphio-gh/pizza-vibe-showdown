@@ -17,6 +17,7 @@ export interface Pizza {
   number: number;      // Numero assegnato per il "blind test"
   brand: string;       // Marca (es: Buitoni)
   flavor: string;      // Gusto (es: Margherita)
+  emoji: string | null; // Emoji personalizzata o assegnata
   registered_by: string | null; // ID del giocatore che l'ha portata
   created_at: string;
 }

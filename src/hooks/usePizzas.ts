@@ -46,7 +46,7 @@ export const usePizzas = (options?: UsePizzasOptions) => {
   }, [queryClient, options?.disableRealtime]);
 
   const createPizza = useMutation({
-    mutationFn: async ({ brand, flavor, registered_by }: { brand: string; flavor: string; registered_by?: string }) => {
+    mutationFn: async ({ brand, flavor, emoji, registered_by }: { brand: string; flavor: string; emoji?: string | null; registered_by?: string }) => {
       // Get the next pizza number by finding the max current number
       // This ensures numbering starts from 1 after a game reset
       const { data: maxData } = await supabase
@@ -60,7 +60,7 @@ export const usePizzas = (options?: UsePizzasOptions) => {
 
       const { data, error } = await supabase
         .from('pizzas')
-        .insert([{ brand, flavor, registered_by, number: nextNumber }])
+        .insert([{ brand, flavor, emoji, registered_by, number: nextNumber }])
         .select()
         .single();
 
@@ -73,8 +73,11 @@ export const usePizzas = (options?: UsePizzasOptions) => {
   });
 
   const updatePizza = useMutation({
-    mutationFn: async ({ id, brand, flavor, registered_by }: { id: string; brand: string; flavor: string; registered_by?: string | null }) => {
-      const updateData: { brand: string; flavor: string; registered_by?: string | null } = { brand, flavor };
+    mutationFn: async ({ id, brand, flavor, emoji, registered_by }: { id: string; brand: string; flavor: string; emoji?: string | null; registered_by?: string | null }) => {
+      const updateData: { brand: string; flavor: string; emoji?: string | null; registered_by?: string | null } = { brand, flavor };
+      if (emoji !== undefined) {
+        updateData.emoji = emoji;
+      }
       if (registered_by !== undefined) {
         updateData.registered_by = registered_by;
       }
