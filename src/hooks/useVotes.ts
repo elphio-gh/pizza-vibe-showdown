@@ -1,3 +1,5 @@
+// Questo "hook" gestisce tutto ciò che riguarda i voti nel database.
+// Utilizza React Query per recuperare i dati e Supabase per le operazioni in tempo reale.
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Vote } from '@/types/database';
@@ -6,6 +8,7 @@ import { useEffect } from 'react';
 export const useVotes = () => {
   const queryClient = useQueryClient();
 
+  // Recupera l'elenco di tutti i voti dal database.
   const { data: votes = [], isLoading, error } = useQuery({
     queryKey: ['votes'],
     queryFn: async () => {
@@ -19,13 +22,14 @@ export const useVotes = () => {
     },
   });
 
-  // Real-time subscription
+  // Iscrizione in tempo reale: se qualcuno vota, la nostra app si aggiorna da sola!
   useEffect(() => {
     const channel = supabase
       .channel('votes-changes')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'votes' },
         () => {
+          // Forza React Query a scaricare di nuovo i dati aggiornati.
           queryClient.invalidateQueries({ queryKey: ['votes'] });
         }
       )
@@ -36,6 +40,7 @@ export const useVotes = () => {
     };
   }, [queryClient]);
 
+  // Funzione per creare un nuovo voto (una "Mutation" in termini tecnici).
   const createVote = useMutation({
     mutationFn: async (vote: Omit<Vote, 'id' | 'created_at'>) => {
       const { data, error } = await supabase
@@ -53,6 +58,7 @@ export const useVotes = () => {
     },
   });
 
+  // Funzione per aggiornare un voto esistente.
   const updateVote = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Vote> & { id: string }) => {
       const { data, error } = await supabase
@@ -70,6 +76,7 @@ export const useVotes = () => {
     },
   });
 
+  // Funzione per eliminare un voto.
   const deleteVote = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
@@ -84,6 +91,7 @@ export const useVotes = () => {
     },
   });
 
+  // Helper per filtrare i voti.
   const getVotesByPlayer = (playerId: string) => {
     return votes.filter(vote => vote.player_id === playerId);
   };

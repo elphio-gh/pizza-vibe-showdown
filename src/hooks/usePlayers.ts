@@ -1,3 +1,5 @@
+// Questo hook gestisce l'elenco dei partecipanti alla sfida.
+// Permette di creare, aggiornare ed eliminare i giocatori dal database.
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Player } from '@/types/database';
@@ -6,6 +8,7 @@ import { useEffect } from 'react';
 export const usePlayers = () => {
   const queryClient = useQueryClient();
 
+  // Recupera tutti i giocatori presenti.
   const { data: players = [], isLoading, error } = useQuery({
     queryKey: ['players'],
     queryFn: async () => {
@@ -13,17 +16,17 @@ export const usePlayers = () => {
         .from('players')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data as Player[];
     },
   });
 
-  // Real-time subscription
+  // Aggiorna la lista dei giocatori se qualcuno si aggiunge o cambia nome.
   useEffect(() => {
     const channel = supabase
       .channel('players-changes')
-      .on('postgres_changes', 
+      .on('postgres_changes',
         { event: '*', schema: 'public', table: 'players' },
         () => {
           queryClient.invalidateQueries({ queryKey: ['players'] });
@@ -36,6 +39,7 @@ export const usePlayers = () => {
     };
   }, [queryClient]);
 
+  // Crea un nuovo profilo giocatore.
   const createPlayer = useMutation({
     mutationFn: async (username: string) => {
       const { data, error } = await supabase
@@ -43,7 +47,7 @@ export const usePlayers = () => {
         .insert([{ username }])
         .select()
         .single();
-      
+
       if (error) throw error;
       return data as Player;
     },
@@ -52,20 +56,21 @@ export const usePlayers = () => {
     },
   });
 
+  // Aggiorna lo stato di un giocatore (es: se è online o ha confermato la partecipazione).
   const updatePlayer = useMutation({
     mutationFn: async ({ id, username, is_confirmed, is_online }: { id: string; username?: string; is_confirmed?: boolean; is_online?: boolean }) => {
       const updateData: Partial<Pick<Player, 'username' | 'is_confirmed' | 'is_online'>> = {};
       if (username !== undefined) updateData.username = username;
       if (is_confirmed !== undefined) updateData.is_confirmed = is_confirmed;
       if (is_online !== undefined) updateData.is_online = is_online;
-      
+
       const { data, error } = await supabase
         .from('players')
         .update(updateData)
         .eq('id', id)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data as Player;
     },
@@ -74,15 +79,14 @@ export const usePlayers = () => {
     },
   });
 
+  // Elimina un giocatore e tutte le sue pizze e voti associati (pulizia ricorsiva).
   const deletePlayer = useMutation({
     mutationFn: async (id: string) => {
-      // First delete related votes
+      // Prima eliminiamo i dati collegati per evitare errori di chiavi esterne (Foreign Keys).
       await supabase.from('votes').delete().eq('player_id', id);
-      // Then delete related pizzas
       await supabase.from('pizzas').delete().eq('registered_by', id);
-      // Then delete sessions
       await supabase.from('sessions').delete().eq('player_id', id);
-      // Finally delete player
+      // Infine eliminiamo il profilo.
       const { error } = await supabase.from('players').delete().eq('id', id);
       if (error) throw error;
     },

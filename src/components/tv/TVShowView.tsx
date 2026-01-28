@@ -1,3 +1,5 @@
+// Questo componente è la "Regia" della TV.
+// Ascolta i comandi dell'Admin e decide cosa mostrare sullo schermo gigante.
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,14 +16,17 @@ import { AnimatedBackground } from './AnimatedBackground';
 import { Maximize, Minimize } from 'lucide-react';
 
 export const TVShowView: React.FC = () => {
+  // Riceviamo i comandi in tempo reale dal database.
   const { tvCommand } = useTVCommands();
   const { setRole, setPlayerId, setPlayerName } = useRole();
   const { clearSession } = useCurrentSession();
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Il comando attuale (default è 'waiting' se non c'è nulla).
   const currentCommand = tvCommand?.command || 'waiting';
 
+  // Funzione per mettere l'app a tutto schermo (ottimo per la TV).
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
@@ -32,7 +37,7 @@ export const TVShowView: React.FC = () => {
     }
   };
 
-  // Handle fullscreen change
+  // Gestiamo i cambiamenti dello stato "Fullscreen" del browser.
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
@@ -42,15 +47,13 @@ export const TVShowView: React.FC = () => {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // ESC key listener to go back to landing page
+  // Scorciatoia da tastiera: premendo ESC torniamo alla schermata iniziale.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        // Exit fullscreen if active
         if (document.fullscreenElement) {
           document.exitFullscreen();
         }
-        // Clear session and navigate to landing
         setRole(null);
         setPlayerId(null);
         setPlayerName(null);
@@ -63,6 +66,7 @@ export const TVShowView: React.FC = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [navigate, setRole, setPlayerId, setPlayerName, clearSession]);
 
+  // Questa funzione decide quale "Sottocomponente" mostrare in base al comando.
   const renderContent = () => {
     switch (currentCommand) {
       case 'stop_televote':
@@ -83,6 +87,7 @@ export const TVShowView: React.FC = () => {
     }
   };
 
+  // Cambiamo anche lo sfondo in base alla situazione (es: coriandoli se c'è un vincitore).
   const getBackgroundVariant = (): 'default' | 'winner' | 'pre_winner' | 'stop' | 'pause' => {
     switch (currentCommand) {
       case 'winner':
@@ -100,9 +105,10 @@ export const TVShowView: React.FC = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Animated background for burn-in protection */}
+      {/* Sfondo animato (protegge anche gli schermi OLED dal burn-in!) */}
       <AnimatedBackground variant={getBackgroundVariant()} />
 
+      {/* Pulsante per il tutto schermo */}
       <Button
         onClick={toggleFullscreen}
         className="fixed top-4 right-4 z-50 bg-muted/50 hover:bg-muted text-foreground"
@@ -115,7 +121,6 @@ export const TVShowView: React.FC = () => {
         )}
       </Button>
 
-      {/* ESC hint */}
       <div className="fixed bottom-4 right-4 z-50 opacity-30 hover:opacity-80 transition-opacity">
         <span className="font-russo text-xs text-muted-foreground">
           Premi ESC per uscire

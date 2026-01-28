@@ -1,3 +1,5 @@
+// Componente principale che definisce la struttura globale dell'applicazione.
+// Qui configuriamo i "Provider" (per i dati e lo stile) e le rotte della navigazione.
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,14 +17,18 @@ import PlayerRejoinPage from "./pages/PlayerRejoinPage";
 import PlayerSelectPage from "./pages/PlayerSelectPage";
 import MyPizzaPage from "./pages/MyPizzaPage";
 
+// Inizializziamo il client per gestire le richieste ai dati (caching e fetching).
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    {/* Fornisce le informazioni sul ruolo dell'utente (Admin o Player) a tutta l'app */}
     <RoleProvider>
       <TooltipProvider>
+        {/* Componenti per mostrare notifiche a comparsa */}
         <Toaster />
         <Sonner />
+        {/* Gestione della navigazione tra le diverse pagine */}
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -34,6 +40,7 @@ const App = () => (
             <Route path="/player-rejoin" element={<PlayerRejoinPage />} />
             <Route path="/player-select" element={<PlayerSelectPage />} />
             <Route path="/my-pizza" element={<MyPizzaPage />} />
+            {/* Pagina di errore se l'indirizzo non esiste */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

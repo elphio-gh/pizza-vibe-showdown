@@ -1,5 +1,9 @@
-import { useState, useEffect } from 'react';
+// Questo file gestisce il "LocalStorage", ovvero la memoria del browser.
+// Serve a far sì che se l'utente ricarica la pagina, l'app si ricordi ancora chi è
+// e se ha già inserito la password.
+import { useState } from 'react';
 
+// Hook generico per salvare qualsiasi dato nel browser in formato JSON.
 export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
@@ -23,12 +27,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
   return [storedValue, setValue];
 }
 
-export interface RecentProfile {
-  id: string;
-  username: string;
-  lastUsed: string;
-}
-
+// Gestisce l'elenco dei profili usati di recente su questo dispositivo.
 export const useRecentProfiles = () => {
   const [profiles, setProfiles] = useLocalStorage<RecentProfile[]>('tbc_recent_profiles', []);
 
@@ -36,7 +35,7 @@ export const useRecentProfiles = () => {
     const updated = [
       { ...profile, lastUsed: new Date().toISOString() },
       ...profiles.filter(p => p.id !== profile.id)
-    ].slice(0, 5); // Keep only 5 most recent
+    ].slice(0, 5); // Teniamo solo i 5 più recenti
     setProfiles(updated);
   };
 
@@ -47,6 +46,7 @@ export const useRecentProfiles = () => {
   return { profiles, addProfile, removeProfile };
 };
 
+// Gestisce i dati della sessione attuale dell'utente (Token, ID, Nome).
 export const useCurrentSession = () => {
   const [sessionToken, setSessionToken] = useLocalStorage<string | null>('tbc_session_token', null);
   const [currentPlayerId, setCurrentPlayerId] = useLocalStorage<string | null>('tbc_player_id', null);
@@ -69,13 +69,7 @@ export const useCurrentSession = () => {
   };
 };
 
-// Role-specific password storage
-export interface RoleAuth {
-  admin: boolean;
-  tv: boolean;
-  player: boolean;
-}
-
+// Gestisce l'autenticazione per ogni ruolo (Admin, TV, Giocatore).
 export const useRoleAuth = () => {
   const [auth, setAuth] = useLocalStorage<RoleAuth>('tbc_role_auth', {
     admin: false,
@@ -97,3 +91,15 @@ export const useRoleAuth = () => {
 
   return { auth, setRoleAuthenticated, isRoleAuthenticated, clearAllAuth };
 };
+
+export interface RecentProfile {
+  id: string;
+  username: string;
+  lastUsed: string;
+}
+
+export interface RoleAuth {
+  admin: boolean;
+  tv: boolean;
+  player: boolean;
+}

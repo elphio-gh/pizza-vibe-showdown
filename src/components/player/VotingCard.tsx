@@ -1,3 +1,5 @@
+// Questo componente gestisce la scheda di votazione per una singola pizza.
+// Include gli slider per i vari criteri e messaggi divertenti (meme) per l'utente.
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,16 +7,16 @@ import { Pizza, Vote } from '@/types/database';
 import { VoteSlider } from './VoteSlider';
 import { useVotes } from '@/hooks/useVotes';
 import { useRole } from '@/contexts/RoleContext';
-import { ArrowLeft, Send, Check, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Send, Check } from 'lucide-react';
 import { VoteFeedback } from '@/components/effects/VoteFeedback';
 
 interface VotingCardProps {
   pizza: Pizza;
-  existingVote?: Vote;
+  existingVote?: Vote; // Se l'utente ha già votato, mostriamo i voti salvati
   onBack: () => void;
 }
 
-// Meme-style warning messages
+// Messaggi di avvertimento in stile "meme" per rendere l'uso dell'app più simpatico.
 const WARNING_MESSAGES = [
   "⚠️ ATTENZIONE: Il voto è definitivo come la carbonara con la panna... irreversibile! 🍝",
   "🚨 Una volta votato, non si torna indietro. Come l'ananas sulla pizza, è una scelta di vita! 🍍",
@@ -23,26 +25,19 @@ const WARNING_MESSAGES = [
   "💀 No take-backsies! Questo voto è più definitivo di un messaggio su WhatsApp con le spunte blu ✓✓",
 ];
 
+// Funzioni helper per cambiare Emoji e Testo in base al punteggio raggiunto.
 const getScoreEmoji = (score: number): string => {
   if (score <= 3) return '💩';
-  if (score <= 4) return '😬';
   if (score <= 5) return '😐';
-  if (score <= 6) return '🤔';
   if (score <= 7) return '😊';
-  if (score <= 8) return '😍';
   if (score <= 9) return '🔥';
   return '🏆';
 };
 
 const getScoreLabel = (score: number): string => {
   if (score <= 2) return 'Tragica';
-  if (score <= 3) return 'Scarsa';
-  if (score <= 4) return 'Meh...';
   if (score <= 5) return 'Nella media';
-  if (score <= 6) return 'Discreta';
-  if (score <= 7) return 'Buona!';
   if (score <= 8) return 'Ottima!';
-  if (score <= 9) return 'TOP!';
   return 'LEGGENDARIA!';
 };
 
@@ -53,11 +48,12 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
   const [showFeedback, setShowFeedback] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
 
-  // Random warning message (stays the same during component lifecycle)
+  // Scegliamo un messaggio di avvertimento a caso per questa sessione.
   const [warningMessage] = useState(() =>
     WARNING_MESSAGES[Math.floor(Math.random() * WARNING_MESSAGES.length)]
   );
 
+  // Stato interno per i voti dei 5 criteri.
   const [votes, setVotes] = useState({
     aspetto: existingVote?.aspetto ?? 5,
     gusto: existingVote?.gusto ?? 5,
@@ -66,8 +62,9 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
     tony_factor: existingVote?.tony_factor ?? 5,
   });
 
-  const isReadOnly = !!existingVote;
+  const isReadOnly = !!existingVote; // Se esiste già un voto, disabilitiamo le modifiche.
 
+  // Calcolo del punteggio medio pesato (riutilizza la logica definita nei tipi).
   const calculateScore = () => {
     return (
       votes.aspetto * 0.15 +
@@ -80,6 +77,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
 
   const currentScore = calculateScore();
 
+  // Funzione per inviare il voto al database (Supabase).
   const handleSubmit = async () => {
     if (!playerId || isSubmitting || isReadOnly) return;
 
@@ -91,7 +89,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
         ...votes,
       });
       setFinalScore(currentScore);
-      setShowFeedback(true);
+      setShowFeedback(true); // Mostra l'effetto grafico di successo
     } catch (error) {
       console.error('Error submitting vote:', error);
     } finally {
@@ -105,6 +103,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
         <VoteFeedback score={finalScore} onComplete={onBack} />
       )}
 
+      {/* Pulsante per tornare indietro alla lista delle pizze */}
       <Button
         variant="ghost"
         onClick={onBack}
@@ -132,6 +131,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
         </CardHeader>
 
         <CardContent className="space-y-4">
+          {/* Slider per ogni categoria */}
           <VoteSlider
             label="Aspetto"
             emoji="📸"
@@ -170,7 +170,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
 
           {!isReadOnly && (
             <>
-              {/* Score Preview */}
+              {/* Box di anteprima del voto attuale */}
               <div className="p-4 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl border-2 border-primary/30">
                 <div className="text-center space-y-2">
                   <p className="font-russo text-sm text-muted-foreground uppercase tracking-wide">
@@ -190,6 +190,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
                 </div>
               </div>
 
+              {/* Messaggio divertente di avvertimento */}
               <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
                 <p className="font-russo text-sm text-center text-destructive/90 leading-relaxed">
                   {warningMessage}

@@ -1,25 +1,29 @@
+// Pagina di atterraggio (Landing Page) dell'applicazione.
+// Qui l'utente sceglie se entrare come Giocatore, Admin o visualizzare la TV.
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRole } from '@/contexts/RoleContext';
 import { RoleButton } from '@/components/landing/RoleButton';
 import { useRoleAuth } from '@/hooks/useLocalStorage';
-import { User, Shield, Tv } from 'lucide-react';
+import { User, Shield, Tv } from 'lucide-react'; // Icone moderne
 
 const Index: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook per cambiare pagina via codice
   const { setRole } = useRole();
   const { isRoleAuthenticated } = useRoleAuth();
 
+  // Funzione chiamata quando si clicca su "GIOCATORE"
   const handlePlayerClick = () => {
     if (isRoleAuthenticated('player')) {
-      // Already authenticated, go to player select/rejoin flow
+      // Se è già loggato, lo portiamo alla selezione del profilo
       navigate('/player-rejoin');
     } else {
-      // Need to authenticate first
+      // Altrimenti deve prima inserire la password/nome
       navigate('/player-login');
     }
   };
 
+  // Funzione per l'accesso Admin
   const handleAdminClick = () => {
     if (isRoleAuthenticated('admin')) {
       setRole('admin');
@@ -29,6 +33,7 @@ const Index: React.FC = () => {
     }
   };
 
+  // Funzione per visualizzare l'interfaccia TV (quella che vedono tutti sul grande schermo)
   const handleTVClick = () => {
     setRole('tv');
     navigate('/tv');
@@ -36,6 +41,7 @@ const Index: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
+      {/* Intestazione con animazioni CSS */}
       <div className="text-center mb-12 animate-bounce-in">
         <div className="text-[100px] md:text-[150px] mb-4 animate-float">🍕</div>
         <h1 className="font-display text-5xl md:text-7xl bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent mb-4">
@@ -46,6 +52,7 @@ const Index: React.FC = () => {
         </p>
       </div>
 
+      {/* Pulsanti per scegliere il ruolo */}
       <div className="flex flex-col md:flex-row gap-6 md:gap-8 w-full max-w-4xl justify-center items-center">
         <RoleButton
           icon={User}

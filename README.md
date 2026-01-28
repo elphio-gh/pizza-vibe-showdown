@@ -37,63 +37,43 @@ Come si costruisce un'app complessa senza scrivere codice? Ecco la ricetta segre
 
 ---
 
-## 🔍 Reverse Engineering del Database
+## 🏗️ Struttura del Progetto
 
-Poiché il database è stato creato magicamente da Lovable, non abbiamo scritto script SQL. Ma guardando il file `types.ts`, possiamo dedurre esattamente come ragiona il backend. Ecco lo "Schema Dedotto":
+Ecco come è organizzato il cuore dell'applicazione:
 
-### 1. `players`
-La tabella degli utenti. Non c'è un'autenticazione complessa, solo un nickname.
--   **`id`**: UUID univoco.
--   **`username`**: Il nome che appare in classifica.
--   **`is_confirmed`**: Per evitare che qualcuno entri per sbaglio.
+```text
+src/
+├── components/          # Componenti UI riutilizzabili
+│   ├── admin/           # Pannello di controllo per la regia
+│   ├── landing/         # Schermata iniziale (scelta ruolo)
+│   ├── player/          # Interfaccia di voto per gli invitati
+│   ├── tv/              # Visualizzazione per il grande schermo
+│   └── ui/              # Componenti base (bottoni, card, etc.)
+├── contexts/            # Gestione dello stato globale (Ruoli, Auth)
+├── hooks/               # Logica di interazione con il database Supabase
+├── integrations/        # Configurazione client Supabase
+├── lib/                 # Utility varie (classi CSS, etc.)
+├── pages/               # Le "Pagine" principali dell'app (Routes)
+└── types/               # Definizioni TypeScript (Modelli dati)
+```
 
-### 2. `pizzas`
-Le vere protagoniste.
--   **`brand`** & **`flavor`**: Marca e gusto (es. "Buitoni" - "Margherita").
--   **`number`**: Il numero assegnato per la degustazione alla cieca (Pizza #1, Pizza #2...).
--   **`registered_by`**: Una Foreign Key che punta a `players`. L'AI ha capito da sola che ogni pizza deve avere un "proprietario".
+### Componenti Principali
 
-### 3. `votes`
-Il cuore della logica di business.
--   Collega un `player_id` a una `pizza_id`.
--   Contiene i 5 voti sacri: **Aspetto, Gusto, Impasto, Farcitura, Tony Factor**.
--   Tutti campi numerici (`number`), pronti per le medie matematiche.
-
-### 4. `tv_commands`
-La magia del telecomando.
--   Questa tabella ha una sola riga che viene aggiornata costantemente.
--   L'Admin scrive qui lo stato ("WAITING", "VOTING", "REVEAL").
--   Tutti i client (TV e cellulari) ascoltano i cambiamenti su questa tabella per reagire all'unisono.
+- **`TVShowView`**: Il cuore pulsante che tutti vedono. Gestisce i vari stati (Attesa, Reveal, Vincitore) con animazioni e background dinamici.
+- **`VotingCard`**: L'interfaccia dove i giocatori inseriscono i voti sui 5 parametri pizza.
+- **`AdminPage`**: Il telecomando dell'host per comandare la TV e gestire i partecipanti.
+- **`RoleContext`**: Assicura che ogni utente veda solo ciò che gli spetta in base al suo ruolo.
 
 ---
 
-## 🏗️ Architettura & State Management
+## 🔍 Il Database (Supabase)
 
-Perché **React + Supabase Realtime**?
+L'app utilizza un database relazionale Postgres con funzionalità Realtime:
 
-Per un'app di voting live, il ritardo è il nemico. L'AI ha scelto questa stack per un motivo preciso: la **Sincronizzazione**.
-
-### Il pattern `useEffect` + `onPostgresChanges`
-Invece di chiedere al server "ci sono nuovi voti?" ogni secondo (Polling), l'app apre una WebSocket.
-Quando qualcuno vota, Supabase "urla" il cambiamento a tutti i client connessi.
-
-Nel codice troverai spesso questo pattern (generato dall'AI):
-
-```typescript
-useEffect(() => {
-  const channel = supabase
-    .channel('public:tv_commands')
-    .on('postgres_changes', { event: 'UPDATE', table: 'tv_commands' }, (payload) => {
-      // Aggiorna lo stato immediatamente!
-      setTvState(payload.new.command);
-    })
-    .subscribe();
-
-  return () => supabase.removeChannel(channel);
-}, []);
-```
-
-Questo è ciò che rende l'esperienza fluida come una mozzarella filante.
+- **`players`**: Lista dei partecipanti.
+- **`pizzas`**: Elenco delle pizze in gara (scelta cieca tramite numeri).
+- **`votes`**: I voti pesati su Aspetto, Gusto, Impasto, Farcitura e Tony Factor.
+- **`tv_commands`**: Tabella di sincronizzazione per comandare tutti i client all'unisono.
 
 ---
 
@@ -103,50 +83,40 @@ Questo è ciò che rende l'esperienza fluida come una mozzarella filante.
 
 ### ✨ Caratteristiche
 -   **Regia TV**: Un'interfaccia Admin che controlla la TV in salotto.
--   **Reveal Cinematografico**: La classifica si svela dal basso verso l'alto, con suspense e musica.
+-   **Reveal Cinematografico**: La classifica si svela dal basso verso l'alto, con suspense.
 -   **Calcolo Automatico**: Medie ponderate e classifiche istantanee.
--   **Space Drift**: Uno screensaver fluttuante per evitare il burn-in del tuo OLED mentre mangi.
+-   **Space Drift**: Screensaver fluttuante anti-burnin per gli OLED.
 
 ---
 
 ## 🚀 Installazione
 
-Vuoi far girare questo mostro di carboidrati sul tuo PC?
-
-### Prerequisiti
--   Node.js 18+
--   Un account Supabase (gratuito)
-
-### Setup
+### Setup Locale
 
 ```bash
 # 1. Clona il repo
-git clone https://github.com/tuousername/pizza-vibe-showdown.git
+git clone https://github.com/elphio-gh/pizza-vibe-showdown.git
 cd pizza-vibe-showdown
 
 # 2. Installa le dipendenze
 npm install
 
-# 3. Configura le variabili d'ambiente
-# Crea un progetto su Supabase e prendi le chiavi
-cp .env.example .env
+# 3. Configura le variabili d'ambiente (.env)
+VITE_SUPABASE_URL=tua_url
+VITE_SUPABASE_ANON_KEY=tua_chiave
 
 # 4. Avvia il server
 npm run dev
 ```
 
-### 🔐 Password di Default
-Per entrare nei ruoli protetti durante i test:
--   **Giocatore**: `pizza`
--   **Admin**: `alfonso`
-
-> **Nota del Manutentore:** Se trovi un bug, ricorda: l'ha scritto un'AI. Il tuo compito non è lamentarti, ma fare da **Human Debugger**. Apri la console, leggi l'errore, e spiega all'AI come risolverlo. Benvenuto nel futuro.
+### 🔐 Accesso
+Per motivi di sicurezza, le password di accesso ai ruoli sono configurate nel file `.env` o gestite tramite variabili d'ambiente su Supabase. Chiedi all'amministratore del progetto per le credenziali di test.
 
 ---
 
 <div align="center">
 
-**Fatto con 🍕, 🤖 e tanto ❤️**
+**Fatto con 🍕, 🤖 e tanto ❤️ da elphio-gh**
 
 *"La pizza è come il codice: quando è buona, è buonissima. Quando è cattiva... è comunque pizza."*
 
