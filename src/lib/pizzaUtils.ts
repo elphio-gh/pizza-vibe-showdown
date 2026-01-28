@@ -81,6 +81,9 @@ export const getPizzaEmoji = (flavor: string | null | undefined, seed: number | 
     }
 
     // 2. Se non capiamo, usiamo il seed per prenderne una a caso (ma fissa per quel seed)
+    // Utilizziamo un semplice algoritmo di hashing (djb2-like) per generare un indice
+    // che sia sempre lo stesso per lo stesso input (determinismo).
+    // Questo evita che l'emoji cambi ricaricando la pagina.
     const seedString = String(seed || flavor || 'default');
     let hash = 0;
     for (let i = 0; i < seedString.length; i++) {

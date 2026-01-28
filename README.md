@@ -87,6 +87,10 @@ L'app utilizza un database relazionale Postgres con funzionalità Realtime:
 -   **Calcolo Automatico**: Medie ponderate e classifiche istantanee.
 -   **Space Drift**: Screensaver fluttuante anti-burnin per gli OLED.
 
+### 🧠 Smart Emoji System
+L'app non si limita a mostrare testo. Un algoritmo intelligente analizza i gusti inseriti (es. "Diavola", "4 Formaggi") e assegna automaticamente l'emoji corretta (🌶️, 🧀).
+Per i gusti sconosciuti o creativi (es. "Pizza Kebab"), un sistema di hashing deterministico assegna un'emoji cibo unica e costante, garantendo coerenza visiva senza bisogno di database aggiuntivi.
+
 ---
 
 ## 🚀 Installazione
