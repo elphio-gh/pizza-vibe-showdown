@@ -131,15 +131,17 @@ export const TVDirectorRemote: React.FC = () => {
 
     // Determine if we should transition to pre_winner on next
     const handleNext = () => {
-        if (isAtLastBeforeWinner && currentCommand === 'reveal') {
-            // At last position, next goes to pre-winner state
+        const nextPos = getNextGroupPosition();
+        // The winner group starts at (totalPositions - topGroupSize + 1)
+        // So the "threshold" is the last position of the non-winner groups
+        const winnerThreshold = totalPositions - (topGroupSize || 0);
+
+        if (currentCommand === 'reveal' && nextPos > winnerThreshold) {
+            // Next position would enter the winner group -> Go to pre-winner state
             setPreWinner();
         } else {
-            const nextPos = getNextGroupPosition();
-            // Only proceed if we're still before the winner threshold
-            if (nextPos <= totalPositions - (topGroupSize || 1)) {
-                setPosition(nextPos);
-            }
+            // Otherwise just move to next position
+            setPosition(nextPos);
         }
     };
 

@@ -193,22 +193,27 @@ export const RevealMode: React.FC = () => {
 
           {/* Category Averages */}
           {details.averages && (
-            <div className="flex flex-wrap gap-2 mb-3">
-              <span className="px-3 py-1 bg-background/50 rounded-lg text-base font-russo border border-border/50">
-                👀 {details.averages.aspetto.toFixed(1)}
-              </span>
-              <span className="px-3 py-1 bg-background/50 rounded-lg text-base font-russo border border-border/50">
-                😋 {details.averages.gusto.toFixed(1)}
-              </span>
-              <span className="px-3 py-1 bg-background/50 rounded-lg text-base font-russo border border-border/50">
-                🫓 {details.averages.impasto.toFixed(1)}
-              </span>
-              <span className="px-3 py-1 bg-background/50 rounded-lg text-base font-russo border border-border/50">
-                🧀 {details.averages.farcitura.toFixed(1)}
-              </span>
-              <span className="px-3 py-1 bg-background/50 rounded-lg text-base font-russo border border-border/50">
-                🎸 {details.averages.tony_factor.toFixed(1)}
-              </span>
+            <div className="flex flex-wrap gap-3 mb-3">
+              <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                <span className="text-xl font-russo">🧀 {details.averages.farcitura.toFixed(1)}</span>
+                <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Farcitura</span>
+              </div>
+              <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                <span className="text-xl font-russo">😋 {details.averages.gusto.toFixed(1)}</span>
+                <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Gusto</span>
+              </div>
+              <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                <span className="text-xl font-russo">🥖 {details.averages.impasto.toFixed(1)}</span>
+                <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Impasto</span>
+              </div>
+              <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                <span className="text-xl font-russo">📸 {details.averages.aspetto.toFixed(1)}</span>
+                <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Aspetto</span>
+              </div>
+              <div className="flex flex-col items-center px-3 py-2 bg-background/50 rounded-lg border border-border/50 min-w-[80px]">
+                <span className="text-xl font-russo">🕶️ {details.averages.tony_factor.toFixed(1)}</span>
+                <span className="text-[0.6rem] uppercase tracking-wider text-muted-foreground font-sans mt-1">Tony F.</span>
+              </div>
             </div>
           )}
         </div>
@@ -284,7 +289,7 @@ export const RevealMode: React.FC = () => {
         {showAnimation && currentGroup.length > 0 && (
           <motion.div
             key={currentPosition}
-            className={`flex flex-wrap justify-center gap-6 w-full ${isExAequo ? 'max-w-7xl' : 'max-w-5xl'
+            className={`flex flex-wrap justify-center gap-6 w-full ${isExAequo ? 'max-w-[95vw]' : 'max-w-[85vw]'
               }`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

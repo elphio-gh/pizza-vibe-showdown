@@ -126,12 +126,14 @@ export const TVShowView: React.FC = () => {
         )}
       </Button>
 
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2 animate-float">
-        <QRCodeDisplay />
-        <span className="font-russo text-xs text-muted-foreground whitespace-nowrap bg-background/80 px-2 py-1 rounded-md border border-border/50">
-          ESC per uscire • F per Schermo Intero
-        </span>
-      </div>
+      {(currentCommand === 'waiting' || currentCommand === 'reset') && (
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2 animate-float">
+          <QRCodeDisplay />
+          <span className="font-russo text-xs text-muted-foreground whitespace-nowrap bg-background/80 px-2 py-1 rounded-md border border-border/50">
+            ESC per uscire • F per Schermo Intero
+          </span>
+        </div>
+      )}
 
       <div className="relative z-10">
         {renderContent()}
