@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import { useRole } from '@/contexts/RoleContext';
-import { Navigation } from '@/components/shared/Navigation';
 import { PlayerOnboarding } from '@/components/player/PlayerOnboarding';
 import { PizzaList } from '@/components/player/PizzaList';
 import { VotingCard } from '@/components/player/VotingCard';
@@ -11,7 +10,7 @@ import { useSessions } from '@/hooks/useSessions';
 import { usePlayers } from '@/hooks/usePlayers';
 import { usePizzas } from '@/hooks/usePizzas';
 import { Button } from '@/components/ui/button';
-import { Plus, Pencil } from 'lucide-react';
+import { Plus, Pencil, LogOut } from 'lucide-react';
 import { formatTitleCase } from '@/lib/stringUtils';
 
 const PlayerPage: React.FC = () => {
@@ -20,7 +19,7 @@ const PlayerPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const { currentPlayerId, setCurrentPlayerId, currentPlayerName, setCurrentPlayerName, setSessionToken } = useCurrentSession();
+  const { currentPlayerId, setCurrentPlayerId, currentPlayerName, setCurrentPlayerName, setSessionToken, clearSession } = useCurrentSession();
   const { addProfile } = useRecentProfiles();
   const { getSessionByToken, linkPlayerToSession } = useSessions();
   // Disabilita realtime per evitare crash su iOS Safari
@@ -124,28 +123,29 @@ const PlayerPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
+  // Funzione per uscire dalla sessione
+  const handleLogout = () => {
+    clearSession();
+    setRole(null);
+    setPlayerId(null);
+    setPlayerName(null);
+    navigate('/');
+  };
+
   if (!playerId) {
-    return (
-      <>
-        <Navigation showProfileSwitcher />
-        <PlayerOnboarding />
-      </>
-    );
+    return <PlayerOnboarding />;
   }
 
   // Show voting card if pizza selected
   if (selectedPizza) {
     return (
-      <>
-        <Navigation showProfileSwitcher />
-        <div className="container mx-auto px-4 pt-20 pb-8">
-          <VotingCard
-            pizza={selectedPizza.pizza}
-            existingVote={selectedPizza.vote}
-            onBack={handleBackFromVoting}
-          />
-        </div>
-      </>
+      <div className="container mx-auto px-4 pt-6 pb-8">
+        <VotingCard
+          pizza={selectedPizza.pizza}
+          existingVote={selectedPizza.vote}
+          onBack={handleBackFromVoting}
+        />
+      </div>
     );
   }
 
@@ -153,48 +153,57 @@ const PlayerPage: React.FC = () => {
   const currentPlayer = players.find(p => p.id === playerId);
 
   return (
-    <>
-      <Navigation showProfileSwitcher />
-      <div className="container mx-auto px-4 pt-20 pb-8">
-        <div className="mb-6">
-          <h1 className="font-display text-4xl text-primary text-glow-orange">
+    <div className="container mx-auto px-4 pt-6 pb-8">
+      {/* Header con saluto e pulsante logout */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="font-display text-3xl sm:text-4xl text-primary text-glow-orange">
             Ciao {formatTitleCase(currentPlayer?.username) || ''}! 🍕
           </h1>
-          <p className="font-sans text-muted-foreground">
-            Vota le pizze dei tuoi amici!
-          </p>
-        </div>
-
-        {/* My Pizza Button - harmonized with app style */}
-        <div className="mb-6">
           <Button
-            onClick={() => navigate('/my-pizza')}
-            className={`w-full h-auto py-4 flex-col gap-1 font-sans font-bold text-xl transition-all ${myPizza
-              ? 'bg-accent/20 border-2 border-accent text-accent hover:bg-accent/30'
-              : 'gradient-pizza text-primary-foreground box-glow-orange'
-              }`}
+            variant="ghost"
+            size="sm"
+            onClick={handleLogout}
+            className="text-muted-foreground hover:text-destructive flex items-center gap-1.5 shrink-0"
           >
-            {myPizza ? (
-              <>
-                <div className="flex items-center gap-2 text-sm uppercase opacity-90 mb-1">
-                  <Pencil className="w-4 h-4" /> Modifica la tua pizza
-                </div>
-                <div className="text-xl leading-tight text-center w-full whitespace-normal break-words px-2">
-                  {myPizza.brand} - {myPizza.flavor}
-                </div>
-              </>
-            ) : (
-              <>
-                <Plus className="w-6 h-6 mr-2" />
-                Registra la tua Pizza 🍕
-              </>
-            )}
+            <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline text-sm">Esci</span>
           </Button>
         </div>
-
-        <PizzaList onSelectPizza={handleSelectPizza} />
+        <p className="font-sans text-muted-foreground mt-1">
+          Vota le pizze dei tuoi amici!
+        </p>
       </div>
-    </>
+
+      {/* My Pizza Button - harmonized with app style */}
+      <div className="mb-6">
+        <Button
+          onClick={() => navigate('/my-pizza')}
+          className={`w-full h-auto py-4 flex-col gap-1 font-sans font-bold text-xl transition-all ${myPizza
+            ? 'bg-accent/20 border-2 border-accent text-accent hover:bg-accent/30'
+            : 'gradient-pizza text-primary-foreground box-glow-orange'
+            }`}
+        >
+          {myPizza ? (
+            <>
+              <div className="flex items-center gap-2 text-sm uppercase opacity-90 mb-1">
+                <Pencil className="w-4 h-4" /> Modifica la tua pizza
+              </div>
+              <div className="text-xl leading-tight text-center w-full whitespace-normal break-words px-2">
+                {myPizza.brand} - {myPizza.flavor}
+              </div>
+            </>
+          ) : (
+            <>
+              <Plus className="w-6 h-6 mr-2" />
+              Registra la tua Pizza 🍕
+            </>
+          )}
+        </Button>
+      </div>
+
+      <PizzaList onSelectPizza={handleSelectPizza} />
+    </div>
   );
 };
 

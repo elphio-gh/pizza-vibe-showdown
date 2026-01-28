@@ -29,7 +29,7 @@ export const PlayerOnboarding: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 pt-20">
+    <div className="min-h-screen flex items-center justify-center p-4 pt-6">
       <div className="w-full max-w-md space-y-8 animate-bounce-in">
         <div className="text-center space-y-4">
           <div className="text-8xl animate-float">🍕</div>

@@ -1,11 +1,8 @@
-// Questo componente è la "Regia" della TV.
-// Ascolta i comandi dell'Admin e decide cosa mostrare sullo schermo gigante.
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useTVCommands } from '@/hooks/useTVCommands';
 import { useRole } from '@/contexts/RoleContext';
-import { useCurrentSession } from '@/hooks/useLocalStorage';
 import { WaitingMode } from './WaitingMode';
 import { RevealMode } from './RevealMode';
 import { WinnerCelebration } from './WinnerCelebration';
@@ -20,7 +17,6 @@ export const TVShowView: React.FC = () => {
   // Riceviamo i comandi in tempo reale dal database.
   const { tvCommand } = useTVCommands();
   const { setRole, setPlayerId, setPlayerName } = useRole();
-  const { clearSession } = useCurrentSession();
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -55,10 +51,10 @@ export const TVShowView: React.FC = () => {
         if (document.fullscreenElement) {
           document.exitFullscreen();
         }
+        // Solo reset dello stato React, NON cancellare la sessione del giocatore
         setRole(null);
         setPlayerId(null);
         setPlayerName(null);
-        clearSession();
         navigate('/');
       }
       // 'F' key shortcut to toggle fullscreen mode quickly
@@ -69,7 +65,7 @@ export const TVShowView: React.FC = () => {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [navigate, setRole, setPlayerId, setPlayerName, clearSession]);
+  }, [navigate, setRole, setPlayerId, setPlayerName]);
 
   // Questa funzione decide quale "Sottocomponente" mostrare in base al comando.
   const renderContent = () => {

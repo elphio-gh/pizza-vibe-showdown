@@ -3,7 +3,7 @@ import { useRole } from '@/contexts/RoleContext';
 import { Button } from '@/components/ui/button';
 import { Home, User, Shield, Tv } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useCurrentSession } from '@/hooks/useLocalStorage';
+
 import { formatTitleCase } from '@/lib/stringUtils';
 
 interface NavigationProps {
@@ -12,14 +12,15 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({ showProfileSwitcher = false }) => {
   const { role, setRole, playerName, setPlayerId, setPlayerName } = useRole();
-  const { clearSession } = useCurrentSession();
+
   const navigate = useNavigate();
 
   const handleGoHome = () => {
+    // Solo reset dello stato React in memoria, NON cancellare la sessione localStorage
+    // La sessione persiste così che l'utente venga riconosciuto al ritorno
     setRole(null);
     setPlayerId(null);
     setPlayerName(null);
-    clearSession();
     navigate('/');
   };
 
