@@ -9,7 +9,8 @@ export const PlayerOnboarding: React.FC = () => {
   const [username, setUsername] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setPlayerId, setPlayerName } = useRole();
-  const { createPlayer } = usePlayers();
+  // Disabilita realtime per evitare crash su iOS Safari
+  const { createPlayer } = usePlayers({ disableRealtime: true });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

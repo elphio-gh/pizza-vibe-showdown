@@ -15,7 +15,8 @@ export const PizzaRegistration: React.FC<PizzaRegistrationProps> = ({ onSuccess 
   const [flavor, setFlavor] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { playerId } = useRole();
-  const { createPizza } = usePizzas();
+  // Disabilita realtime per evitare crash su iOS Safari
+  const { createPizza } = usePizzas({ disableRealtime: true });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

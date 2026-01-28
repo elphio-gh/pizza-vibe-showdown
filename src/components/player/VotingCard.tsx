@@ -88,7 +88,8 @@ const getScoreLabel = (score: number): string => {
 
 export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onBack }) => {
   const { playerId } = useRole();
-  const { createVote } = useVotes();
+  // Disabilita realtime per evitare crash su iOS Safari
+  const { createVote } = useVotes({ disableRealtime: true });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [finalScore, setFinalScore] = useState(0);

@@ -5,7 +5,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { Vote } from '@/types/database';
 import { useEffect } from 'react';
 
-export const useVotes = () => {
+// Opzioni per controllare il comportamento dell'hook
+interface UseVotesOptions {
+  // Se true, disabilita la subscription realtime (utile per iOS Safari che ha problemi di memoria)
+  disableRealtime?: boolean;
+}
+
+export const useVotes = (options?: UseVotesOptions) => {
   const queryClient = useQueryClient();
 
   // Recupera l'elenco di tutti i voti dal database.
@@ -22,8 +28,11 @@ export const useVotes = () => {
     },
   });
 
-  // Iscrizione in tempo reale: se qualcuno vota, la nostra app si aggiorna da sola!
+  // Iscrizione in tempo reale (può essere disabilitata per risparmiare memoria su iOS)
   useEffect(() => {
+    // Skip subscription se disableRealtime è true
+    if (options?.disableRealtime) return;
+
     const channel = supabase
       .channel('votes-changes')
       .on('postgres_changes',
@@ -38,7 +47,7 @@ export const useVotes = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, options?.disableRealtime]);
 
   // Funzione per creare un nuovo voto (una "Mutation" in termini tecnici).
   const createVote = useMutation({

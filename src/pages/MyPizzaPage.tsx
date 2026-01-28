@@ -10,7 +10,8 @@ import { ArrowLeft, Package, Trash2, Check, AlertTriangle } from 'lucide-react';
 const MyPizzaPage: React.FC = () => {
     const navigate = useNavigate();
     const { playerId, role } = useRole();
-    const { pizzas, createPizza, updatePizza, deletePizza } = usePizzas();
+    // Disabilita realtime per evitare crash su iOS Safari
+    const { pizzas, createPizza, updatePizza, deletePizza } = usePizzas({ disableRealtime: true });
 
     const [brand, setBrand] = useState('');
     const [flavor, setFlavor] = useState('');

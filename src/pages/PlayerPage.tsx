@@ -22,8 +22,9 @@ const PlayerPage: React.FC = () => {
   const { currentPlayerId, setCurrentPlayerId, currentPlayerName, setCurrentPlayerName, setSessionToken } = useCurrentSession();
   const { addProfile } = useRecentProfiles();
   const { getSessionByToken, linkPlayerToSession } = useSessions();
-  const { createPlayer, players, updatePlayer } = usePlayers();
-  const { pizzas } = usePizzas();
+  // Disabilita realtime per evitare crash su iOS Safari
+  const { createPlayer, players, updatePlayer } = usePlayers({ disableRealtime: true });
+  const { pizzas } = usePizzas({ disableRealtime: true });
 
 
   // Check if player has registered a pizza

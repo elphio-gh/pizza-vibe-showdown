@@ -13,10 +13,11 @@ interface PizzaListProps {
 }
 
 export const PizzaList: React.FC<PizzaListProps> = ({ onSelectPizza }) => {
-  const { pizzas, isLoading } = usePizzas();
-  const { votes } = useVotes();
+  // Disabilita realtime per evitare crash su iOS Safari
+  const { pizzas, isLoading } = usePizzas({ disableRealtime: true });
+  const { votes } = useVotes({ disableRealtime: true });
   const { playerId } = useRole();
-  const { players } = usePlayers();
+  const { players } = usePlayers({ disableRealtime: true });
   const navigate = useNavigate();
 
   const getVoteForPizza = (pizzaId: string): Vote | undefined => {

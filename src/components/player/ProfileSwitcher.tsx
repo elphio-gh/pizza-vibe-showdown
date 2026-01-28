@@ -17,7 +17,8 @@ export const ProfileSwitcher: React.FC = () => {
   const { playerId, playerName, setPlayerId, setPlayerName } = useRole();
   const { profiles, addProfile, removeProfile } = useRecentProfiles();
   const { setCurrentPlayerId, setCurrentPlayerName } = useCurrentSession();
-  const { createPlayer } = usePlayers();
+  // Disabilita realtime per evitare crash su iOS Safari
+  const { createPlayer } = usePlayers({ disableRealtime: true });
 
   const [isOpen, setIsOpen] = useState(false);
   const [newNickname, setNewNickname] = useState('');

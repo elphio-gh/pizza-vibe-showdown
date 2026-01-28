@@ -13,7 +13,8 @@ const PlayerSelectPage: React.FC = () => {
     const { setPlayerId, setPlayerName, setRole } = useRole();
     const { setCurrentPlayerId, setCurrentPlayerName } = useCurrentSession();
     const { addProfile } = useRecentProfiles();
-    const { players, createPlayer } = usePlayers();
+    // Disabilita realtime per evitare crash su iOS Safari
+    const { players, createPlayer } = usePlayers({ disableRealtime: true });
 
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newNickname, setNewNickname] = useState('');

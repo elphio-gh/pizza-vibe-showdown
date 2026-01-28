@@ -3,7 +3,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { Pizza } from '@/types/database';
 import { useEffect } from 'react';
 
-export const usePizzas = () => {
+// Opzioni per controllare il comportamento dell'hook
+interface UsePizzasOptions {
+  // Se true, disabilita la subscription realtime (utile per iOS Safari che ha problemi di memoria)
+  disableRealtime?: boolean;
+}
+
+export const usePizzas = (options?: UsePizzasOptions) => {
   const queryClient = useQueryClient();
 
   const { data: pizzas = [], isLoading, error } = useQuery({
@@ -19,8 +25,11 @@ export const usePizzas = () => {
     },
   });
 
-  // Real-time subscription
+  // Real-time subscription (può essere disabilitata per risparmiare memoria su iOS)
   useEffect(() => {
+    // Skip subscription se disableRealtime è true
+    if (options?.disableRealtime) return;
+
     const channel = supabase
       .channel('pizzas-changes')
       .on('postgres_changes',
@@ -34,7 +43,7 @@ export const usePizzas = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, options?.disableRealtime]);
 
   const createPizza = useMutation({
     mutationFn: async ({ brand, flavor, registered_by }: { brand: string; flavor: string; registered_by?: string }) => {

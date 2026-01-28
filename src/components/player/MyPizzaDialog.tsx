@@ -26,8 +26,9 @@ import {
 
 export const MyPizzaDialog: React.FC = () => {
   const { playerId } = useRole();
-  const { pizzas, createPizza, updatePizza, deletePizza } = usePizzas();
-  
+  // Disabilita realtime per evitare crash su iOS Safari
+  const { pizzas, createPizza, updatePizza, deletePizza } = usePizzas({ disableRealtime: true });
+
   const [open, setOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [brand, setBrand] = useState('');
@@ -93,8 +94,8 @@ export const MyPizzaDialog: React.FC = () => {
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             className={`font-russo ${myPizza ? 'border-accent text-accent' : 'border-secondary text-secondary'}`}
           >
@@ -102,7 +103,7 @@ export const MyPizzaDialog: React.FC = () => {
             {myPizza ? 'La mia Pizza' : '+ Registra Pizza'}
           </Button>
         </DialogTrigger>
-        
+
         <DialogContent className="bg-card">
           <DialogHeader>
             <DialogTitle className="font-display text-xl text-secondary flex items-center gap-2">

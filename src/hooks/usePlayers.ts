@@ -5,7 +5,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { Player } from '@/types/database';
 import { useEffect } from 'react';
 
-export const usePlayers = () => {
+// Opzioni per controllare il comportamento dell'hook
+interface UsePlayersOptions {
+  // Se true, disabilita la subscription realtime (utile per iOS Safari che ha problemi di memoria)
+  disableRealtime?: boolean;
+}
+
+export const usePlayers = (options?: UsePlayersOptions) => {
   const queryClient = useQueryClient();
 
   // Recupera tutti i giocatori presenti.
@@ -22,8 +28,11 @@ export const usePlayers = () => {
     },
   });
 
-  // Aggiorna la lista dei giocatori se qualcuno si aggiunge o cambia nome.
+  // Aggiorna la lista dei giocatori se qualcuno si aggiunge o cambia nome (può essere disabilitato per iOS)
   useEffect(() => {
+    // Skip subscription se disableRealtime è true
+    if (options?.disableRealtime) return;
+
     const channel = supabase
       .channel('players-changes')
       .on('postgres_changes',
@@ -37,7 +46,7 @@ export const usePlayers = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, options?.disableRealtime]);
 
   // Crea un nuovo profilo giocatore.
   const createPlayer = useMutation({
