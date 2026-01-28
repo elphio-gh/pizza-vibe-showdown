@@ -34,9 +34,13 @@ export const PizzaRegistration: React.FC<PizzaRegistrationProps> = ({ onSuccess 
 
   const availableEmojis = useMemo(() => getAvailableEmojis(usedEmojis), [usedEmojis]);
 
-  // Derived current emoji (manual or auto-generated)
-  // Note: We use a temporary seed '0' for preview if we don't have a number yet
-  const currentEmoji = manualEmoji || getPizzaEmoji(flavor, '0');
+  // Derived current emoji (manual > auto-generated if available > first available)
+  const currentEmoji = useMemo(() => {
+    if (manualEmoji) return manualEmoji;
+    const autoEmoji = getPizzaEmoji(flavor, '0');
+    if (!usedEmojis.has(autoEmoji)) return autoEmoji;
+    return availableEmojis[0] || '🍕';
+  }, [manualEmoji, flavor, usedEmojis, availableEmojis]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +58,7 @@ export const PizzaRegistration: React.FC<PizzaRegistrationProps> = ({ onSuccess 
       await createPizza.mutateAsync({
         brand: brand.trim(),
         flavor: flavor.trim(),
-        emoji: manualEmoji, // Pass the manual emoji if set
+        emoji: currentEmoji, // Pass the current emoji (manual or auto-generated)
         registered_by: playerId || undefined,
       });
       setBrand('');

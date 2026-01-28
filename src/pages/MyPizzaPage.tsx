@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRole } from '@/contexts/RoleContext';
 import { usePizzas } from '@/hooks/usePizzas';
@@ -6,9 +6,9 @@ import { useCurrentSession } from '@/hooks/useLocalStorage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Package, Trash2, Check, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Package, Trash2, AlertTriangle } from 'lucide-react';
 
-import { getPizzaEmoji } from '@/lib/pizzaUtils';
+import { getPizzaEmoji, getAvailableEmojis } from '@/lib/pizzaUtils';
 
 const MyPizzaPage: React.FC = () => {
     const navigate = useNavigate();
@@ -20,17 +20,44 @@ const MyPizzaPage: React.FC = () => {
 
     const [brand, setBrand] = useState('');
     const [flavor, setFlavor] = useState('');
+    const [manualEmoji, setManualEmoji] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     // Find player's pizza
     const myPizza = pizzas.find(p => p.registered_by === playerId);
 
+    // Calculate used emojis (excluding current pizza's emoji if editing, so it can be re-selected)
+    const usedEmojis = useMemo(() => {
+        return new Set(
+            pizzas
+                .filter(p => p.id !== myPizza?.id) // Exclude current pizza when editing
+                .map(p => p.emoji || getPizzaEmoji(p.flavor, p.number))
+        );
+    }, [pizzas, myPizza?.id]);
+
+    const availableEmojis = useMemo(() => getAvailableEmojis(usedEmojis), [usedEmojis]);
+
+    // Derived current emoji (manual > DB saved > auto-generated if available > random from available)
+    const currentEmoji = useMemo(() => {
+        // If user manually selected one, use it
+        if (manualEmoji) return manualEmoji;
+        // If editing and pizza has a saved emoji, use it
+        if (myPizza?.emoji) return myPizza.emoji;
+        // Try auto-generated based on flavor
+        const autoEmoji = getPizzaEmoji(flavor, myPizza?.number);
+        // If auto-generated is available, use it
+        if (!usedEmojis.has(autoEmoji)) return autoEmoji;
+        // Otherwise pick first available
+        return availableEmojis[0] || '🍕';
+    }, [manualEmoji, myPizza?.emoji, myPizza?.number, flavor, usedEmojis, availableEmojis]);
+
     // Sync form with existing pizza
     useEffect(() => {
         if (myPizza) {
             setBrand(myPizza.brand);
             setFlavor(myPizza.flavor);
+            setManualEmoji(myPizza.emoji || null);
         }
     }, [myPizza]);
 
@@ -61,12 +88,14 @@ const MyPizzaPage: React.FC = () => {
                     id: myPizza.id,
                     brand: brand.trim(),
                     flavor: flavor.trim(),
+                    emoji: currentEmoji,
                     registered_by: playerId
                 });
             } else {
                 await createPizza.mutateAsync({
                     brand: brand.trim(),
                     flavor: flavor.trim(),
+                    emoji: currentEmoji,
                     registered_by: playerId || undefined,
                 });
             }
@@ -115,9 +144,23 @@ const MyPizzaPage: React.FC = () => {
                 <div className="space-y-6 max-w-md mx-auto w-full">
                     {/* Title */}
                     <div className="text-center space-y-2">
-                        <div className="text-6xl animate-float">
-                            {getPizzaEmoji(flavor, myPizza?.number)}
-                        </div>
+                        {/* Tap to randomize emoji - Mobile friendly! */}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (availableEmojis.length > 0) {
+                                    const randomIndex = Math.floor(Math.random() * availableEmojis.length);
+                                    setManualEmoji(availableEmojis[randomIndex]);
+                                }
+                            }}
+                            className="text-6xl animate-float hover:scale-125 active:scale-90 transition-transform cursor-pointer focus:outline-none mx-auto block"
+                            title="Tap per cambiare emoji"
+                        >
+                            {currentEmoji}
+                        </button>
+                        <p className="text-xs text-muted-foreground italic">
+                            👆 Tap per cambiare emoji!
+                        </p>
                         <h1 className="font-display text-3xl text-secondary">
                             {myPizza ? 'La tua Pizza' : 'Registra Pizza'}
                         </h1>

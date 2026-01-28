@@ -32,8 +32,6 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { getPizzaEmoji, getAvailableEmojis } from "@/lib/pizzaUtils";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const PizzaManager: React.FC = () => {
   const { pizzas, createPizza, updatePizza, deletePizza, isLoading } = usePizzas();
@@ -55,7 +53,6 @@ export const PizzaManager: React.FC = () => {
   }, [pizzas, editingPizza]);
   const availableEmojis = React.useMemo(() => getAvailableEmojis(usedEmojis), [usedEmojis]);
   const currentEmoji = formData.emoji || getPizzaEmoji(formData.flavor, '0');
-  const [isEmojiOpen, setIsEmojiOpen] = useState(false);
 
   const getPlayerName = (playerId: string | null) => {
     if (!playerId) return 'Nessuno';
@@ -135,27 +132,56 @@ export const PizzaManager: React.FC = () => {
           ) : pizzas.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">Nessuna pizza registrata</p>
           ) : (
-            pizzas.map((pizza) => (
-              <div
-                key={pizza.id}
-                className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg"
-              >
-                <span className="text-2xl">{getPizzaEmoji(pizza.flavor, pizza.number, pizza.emoji)}</span>
-                <div className="flex-1">
-                  <div className="font-russo">{pizza.brand} - {pizza.flavor}</div>
-                  <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    <UserCheck className="w-3 h-3" />
-                    Portata da: {getPlayerName(pizza.registered_by)}
+            pizzas.map((pizza) => {
+              // Calculate available emojis for this pizza (excluding other pizzas' emojis)
+              const pizzaUsedEmojis = new Set(
+                pizzas
+                  .filter(p => p.id !== pizza.id)
+                  .map(p => p.emoji || getPizzaEmoji(p.flavor, p.number))
+              );
+              const pizzaAvailableEmojis = getAvailableEmojis(pizzaUsedEmojis);
+
+              return (
+                <div
+                  key={pizza.id}
+                  className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg"
+                >
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (pizzaAvailableEmojis.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * pizzaAvailableEmojis.length);
+                        const newEmoji = pizzaAvailableEmojis[randomIndex];
+                        await updatePizza.mutateAsync({
+                          id: pizza.id,
+                          brand: pizza.brand,
+                          flavor: pizza.flavor,
+                          emoji: newEmoji,
+                          registered_by: pizza.registered_by
+                        });
+                      }
+                    }}
+                    className="text-2xl hover:scale-125 active:scale-90 transition-transform cursor-pointer"
+                    title="Tap per cambiare emoji"
+                  >
+                    {getPizzaEmoji(pizza.flavor, pizza.number, pizza.emoji)}
+                  </button>
+                  <div className="flex-1">
+                    <div className="font-russo">{pizza.brand} - {pizza.flavor}</div>
+                    <div className="text-xs text-muted-foreground flex items-center gap-1">
+                      <UserCheck className="w-3 h-3" />
+                      Portata da: {getPlayerName(pizza.registered_by)}
+                    </div>
                   </div>
+                  <Button size="icon" variant="ghost" onClick={() => openEditDialog(pizza)}>
+                    <Edit2 className="w-4 h-4 text-secondary" />
+                  </Button>
+                  <Button size="icon" variant="ghost" onClick={() => setDeleteConfirm(pizza)}>
+                    <Trash2 className="w-4 h-4 text-destructive" />
+                  </Button>
                 </div>
-                <Button size="icon" variant="ghost" onClick={() => openEditDialog(pizza)}>
-                  <Edit2 className="w-4 h-4 text-secondary" />
-                </Button>
-                <Button size="icon" variant="ghost" onClick={() => setDeleteConfirm(pizza)}>
-                  <Trash2 className="w-4 h-4 text-destructive" />
-                </Button>
-              </div>
-            ))
+              );
+            })
           )}
         </CardContent>
       </Card>
@@ -183,48 +209,19 @@ export const PizzaManager: React.FC = () => {
             <div className="space-y-2">
               <Label className="font-russo text-sm">Gusto & Emoji</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl z-20">
-                  <Popover open={isEmojiOpen} onOpenChange={setIsEmojiOpen}>
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        className="hover:scale-110 transition-transform cursor-pointer"
-                      >
-                        {currentEmoji}
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-64 p-2 bg-popover z-50">
-                      <h4 className="font-bold text-sm text-center mb-2">Scegli Emoji</h4>
-                      <ScrollArea className="h-48">
-                        <div className="grid grid-cols-5 gap-2 p-1">
-                          {availableEmojis.map(emoji => (
-                            <button
-                              key={emoji}
-                              type="button"
-                              onClick={() => {
-                                setFormData({ ...formData, emoji });
-                                setIsEmojiOpen(false);
-                              }}
-                              className="text-2xl hover:bg-accent rounded p-1"
-                            >
-                              {emoji}
-                            </button>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                      {formData.emoji && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full text-xs mt-2"
-                          onClick={() => setFormData({ ...formData, emoji: null })}
-                        >
-                          Reset
-                        </Button>
-                      )}
-                    </PopoverContent>
-                  </Popover>
-                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (availableEmojis.length > 0) {
+                      const randomIndex = Math.floor(Math.random() * availableEmojis.length);
+                      setFormData({ ...formData, emoji: availableEmojis[randomIndex] });
+                    }
+                  }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-xl hover:scale-125 active:scale-90 transition-transform cursor-pointer z-20"
+                  title="Tap per cambiare emoji"
+                >
+                  {currentEmoji}
+                </button>
                 <Input
                   value={formData.flavor}
                   onChange={(e) => setFormData({ ...formData, flavor: e.target.value })}

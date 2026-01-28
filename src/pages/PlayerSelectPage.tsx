@@ -36,6 +36,13 @@ const PlayerSelectPage: React.FC = () => {
         return players.some(p => p.username.toLowerCase() === normalizedNickname);
     }, [newNickname, players]);
 
+    // Sort players alphabetically by username
+    const sortedPlayers = React.useMemo(() => {
+        return [...players].sort((a, b) =>
+            a.username.toLowerCase().localeCompare(b.username.toLowerCase())
+        );
+    }, [players]);
+
     const handleCreatePlayer = async () => {
         if (!newNickname.trim() || isCreating || isDuplicate) return;
 
@@ -129,7 +136,7 @@ const PlayerSelectPage: React.FC = () => {
                                 Nessun giocatore registrato
                             </p>
                         ) : (
-                            players.map((player) => (
+                            sortedPlayers.map((player) => (
                                 <Card
                                     key={player.id}
                                     onClick={() => handleSelectPlayer(player)}
