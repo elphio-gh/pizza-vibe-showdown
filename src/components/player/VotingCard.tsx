@@ -19,7 +19,7 @@ interface VotingCardProps {
 
 // Messaggi di avvertimento in stile "meme" per rendere l'uso dell'app più simpatico.
 const WARNING_MESSAGES = [
-  "⚠️ ATTENZIONE: Il voto è definitivo come 'sta mano po esse fero o po esse piuma'. 🍝",
+  "🍝 'Sta mano po esse fero o po esse piuma'. Il voto è definitivo. 🍝",
   "🚨 Una volta votato, non si torna indietro. Neanche con la DeLorean a 88 miglia orarie! ⚡",
   "⚡ Voto permanente! Più indelebile di un tatuaggio fatto a Magaluf alle 4 di mattina. 🌴",
   "🔒 Il voto è per sempre, come la foto della patente venuta male. 📸",
@@ -235,9 +235,12 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
               </div>
 
               {/* Messaggio compatto di avvertimento */}
-              <div className="p-2 bg-destructive/10 border border-destructive/30 rounded-lg">
-                <p className="font-sans text-xs text-center text-destructive/90 leading-snug">
-                  {warningMessage}
+              <div className="p-3 border-2 border-destructive/40 bg-destructive/10 rounded-lg space-y-1">
+                <p className="font-russo text-xs text-center text-destructive uppercase tracking-widest animate-pulse">
+                  ⚠️ Attenzione: Voto Definitivo! ⚠️
+                </p>
+                <p className="font-sans text-xs text-center text-foreground/90 italic leading-snug">
+                  "{warningMessage}"
                 </p>
               </div>
 
