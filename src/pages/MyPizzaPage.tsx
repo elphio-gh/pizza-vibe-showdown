@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRole } from '@/contexts/RoleContext';
 import { usePizzas } from '@/hooks/usePizzas';
+import { useCurrentSession } from '@/hooks/useLocalStorage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +12,9 @@ import { getPizzaEmoji } from '@/lib/pizzaUtils';
 
 const MyPizzaPage: React.FC = () => {
     const navigate = useNavigate();
-    const { playerId, role } = useRole();
+    const { playerId, role, setRole, setPlayerId, setPlayerName } = useRole();
+    const { currentPlayerId, currentPlayerName } = useCurrentSession();
+
     // Disabilita realtime per evitare crash su iOS Safari
     const { pizzas, createPizza, updatePizza, deletePizza } = usePizzas({ disableRealtime: true });
 
@@ -31,9 +34,18 @@ const MyPizzaPage: React.FC = () => {
         }
     }, [myPizza]);
 
-    // Redirect if not a player
+    // Restore session if needed
     useEffect(() => {
-        if (role !== 'player') {
+        if (!role && currentPlayerId && currentPlayerName) {
+            setPlayerId(currentPlayerId);
+            setPlayerName(currentPlayerName);
+            setRole('player');
+        }
+    }, [role, currentPlayerId, currentPlayerName, setPlayerId, setPlayerName, setRole]);
+
+    // Redirect if not a player (only after check)
+    useEffect(() => {
+        if (role !== 'player' && role !== null) {
             navigate('/');
         }
     }, [role, navigate]);
@@ -75,6 +87,14 @@ const MyPizzaPage: React.FC = () => {
             console.error('Error deleting pizza:', error);
         }
     };
+
+    if (role === null) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <div className="animate-spin text-4xl">🍕</div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex flex-col bg-background">

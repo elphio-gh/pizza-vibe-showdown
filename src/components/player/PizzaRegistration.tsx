@@ -151,8 +151,8 @@ export const PizzaRegistration: React.FC<PizzaRegistrationProps> = ({ onSuccess 
                 maxLength={50}
               />
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1 ml-1">
-              * Clicca sull'emoji per cambiarla se quella automatica non ti piace. Deve essere unica!
+            <p className="text-xs text-muted-foreground mt-2 ml-1 italic">
+              * Clicca sull'emoji per sceglierne una personalizzata!
             </p>
           </div>
 

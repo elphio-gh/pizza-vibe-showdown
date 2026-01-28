@@ -47,8 +47,12 @@ export const PizzaManager: React.FC = () => {
   const [formData, setFormData] = useState({ brand: '', flavor: '', registered_by: '' as string | null, emoji: null as string | null });
 
   const usedEmojis = React.useMemo(() => {
-    return new Set(pizzas.map(p => p.emoji || getPizzaEmoji(p.flavor, p.number)));
-  }, [pizzas]);
+    return new Set(
+      pizzas
+        .filter(p => !editingPizza || p.id !== editingPizza.id)
+        .map(p => p.emoji || getPizzaEmoji(p.flavor, p.number))
+    );
+  }, [pizzas, editingPizza]);
   const availableEmojis = React.useMemo(() => getAvailableEmojis(usedEmojis), [usedEmojis]);
   const currentEmoji = formData.emoji || getPizzaEmoji(formData.flavor, '0');
   const [isEmojiOpen, setIsEmojiOpen] = useState(false);
