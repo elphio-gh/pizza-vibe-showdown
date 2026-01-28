@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pizza, Vote } from '@/types/database';
-import { VoteSlider } from './VoteSlider';
+import { CompactVoteRow } from './CompactVoteRow';
 import { useVotes } from '@/hooks/useVotes';
 import { useRole } from '@/contexts/RoleContext';
 import { ArrowLeft, Send, Check } from 'lucide-react';
@@ -161,53 +161,57 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
       </Button>
 
       <Card className="bg-card border-2 border-primary/50">
-        <CardHeader className="text-center pb-2">
-          <div className="text-6xl mb-2">{getPizzaEmoji(pizza.flavor, pizza.number, pizza.emoji)}</div>
-          <CardTitle className="font-schoolbell text-3xl text-primary">
-            {pizza.brand} - {pizza.flavor}
-          </CardTitle>
-          <p className="font-sans text-sm text-muted-foreground">
-            Pizza #{pizza.number}
-          </p>
+        <CardHeader className="text-center py-3 pb-2">
+          <div className="flex items-center justify-center gap-3">
+            <span className="text-4xl">{getPizzaEmoji(pizza.flavor, pizza.number, pizza.emoji)}</span>
+            <div>
+              <CardTitle className="font-schoolbell text-2xl text-primary">
+                {pizza.brand} - {pizza.flavor}
+              </CardTitle>
+              <p className="font-sans text-xs text-muted-foreground">
+                Pizza #{pizza.number}
+              </p>
+            </div>
+          </div>
           {isReadOnly && (
-            <div className="flex items-center justify-center gap-2 mt-2 px-4 py-2 bg-green-500/20 rounded-lg">
-              <Check className="w-5 h-5 text-green-500" />
-              <span className="font-sans font-bold text-green-500">Già votata!</span>
+            <div className="flex items-center justify-center gap-2 mt-2 px-3 py-1 bg-green-500/20 rounded-lg">
+              <Check className="w-4 h-4 text-green-500" />
+              <span className="font-sans font-bold text-sm text-green-500">Già votata!</span>
             </div>
           )}
         </CardHeader>
 
-        <CardContent className="space-y-4">
-          {/* Slider per ogni categoria */}
-          <VoteSlider
-            label="Aspetto"
-            emoji="📸"
-            value={votes.aspetto}
-            onChange={(v) => setVotes({ ...votes, aspetto: v })}
+        <CardContent className="space-y-2">
+          {/* Slider compatti per ogni categoria */}
+          <CompactVoteRow
+            label="Ricchezza farcitura"
+            emoji="🧀"
+            value={votes.farcitura}
+            onChange={(v) => setVotes({ ...votes, farcitura: v })}
             disabled={isReadOnly}
           />
-          <VoteSlider
+          <CompactVoteRow
             label="Gusto"
             emoji="😋"
             value={votes.gusto}
             onChange={(v) => setVotes({ ...votes, gusto: v })}
             disabled={isReadOnly}
           />
-          <VoteSlider
+          <CompactVoteRow
             label="Impasto"
             emoji="🥖"
             value={votes.impasto}
             onChange={(v) => setVotes({ ...votes, impasto: v })}
             disabled={isReadOnly}
           />
-          <VoteSlider
-            label="Farcitura"
-            emoji="🧀"
-            value={votes.farcitura}
-            onChange={(v) => setVotes({ ...votes, farcitura: v })}
+          <CompactVoteRow
+            label="Aspetto"
+            emoji="📸"
+            value={votes.aspetto}
+            onChange={(v) => setVotes({ ...votes, aspetto: v })}
             disabled={isReadOnly}
           />
-          <VoteSlider
+          <CompactVoteRow
             label="Fattore Tony Buitony"
             emoji="🕶️"
             value={votes.tony_factor}
@@ -217,29 +221,22 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
 
           {!isReadOnly && (
             <>
-              {/* Box di anteprima del voto attuale */}
-              <div className="p-4 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl border-2 border-primary/30">
-                <div className="text-center space-y-2">
-                  <p className="font-sans font-bold text-sm text-muted-foreground uppercase tracking-wide">
-                    Voto che stai per dare
+              {/* Box compatto di anteprima del voto */}
+              <div className="p-3 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl border-2 border-primary/30">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-3xl">{getScoreEmoji(currentScore)}</span>
+                  <p className="font-display text-3xl text-primary text-glow-orange">
+                    {currentScore.toFixed(1)}
                   </p>
-                  <div className="flex items-center justify-center gap-3">
-                    <span className="text-5xl">{getScoreEmoji(currentScore)}</span>
-                    <div className="text-left">
-                      <p className="font-display text-4xl text-primary text-glow-orange">
-                        {currentScore.toFixed(1)}
-                      </p>
-                      <p className="font-sans font-bold text-sm text-foreground">
-                        {getScoreLabel(currentScore)}
-                      </p>
-                    </div>
-                  </div>
+                  <p className="font-sans font-bold text-sm text-foreground">
+                    {getScoreLabel(currentScore)}
+                  </p>
                 </div>
               </div>
 
-              {/* Messaggio divertente di avvertimento */}
-              <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
-                <p className="font-sans font-bold text-sm text-center text-destructive/90 leading-relaxed">
+              {/* Messaggio compatto di avvertimento */}
+              <div className="p-2 bg-destructive/10 border border-destructive/30 rounded-lg">
+                <p className="font-sans text-xs text-center text-destructive/90 leading-snug">
                   {warningMessage}
                 </p>
               </div>
@@ -247,7 +244,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="w-full py-6 font-display text-xl gradient-pizza text-primary-foreground box-glow-orange touch-manipulation"
+                className="w-full py-4 font-display text-lg gradient-pizza text-primary-foreground box-glow-orange touch-manipulation"
               >
                 {isSubmitting ? (
                   'Invio...'
