@@ -126,19 +126,16 @@
   .font-russo {}
 }
 
-/* Disabilita animazioni pesanti su mobile per evitare crash iOS Safari */
+/* Disabilita TUTTE le animazioni su mobile (iOS e Android).
+   Le animazioni sono attive solo su desktop (> 768px) */
 @media (max-width: 768px),
 (prefers-reduced-motion: reduce) {
 
-  .animate-float,
-  .animate-bounce-in,
-  .animate-pulse-glow,
-  .animate-confetti,
-  .animate-count-up,
-  .animate-slide-up,
-  .animate-shake,
-  .animate-glasses-drop {
+  *,
+  *::before,
+  *::after {
     animation: none !important;
+    transition: none !important;
   }
 }
 
