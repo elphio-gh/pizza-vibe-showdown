@@ -40,7 +40,8 @@ export const RoleButton: React.FC<RoleButtonProps> = ({
     <button
       onClick={onClick}
       className={cn(
-        'relative w-full transition-all duration-300 transform',
+        // touch-manipulation rimuove il delay di 300ms su iOS Safari
+        'relative w-full transition-all duration-300 transform touch-manipulation',
         'flex items-center justify-center',
         layout === 'col' ? 'flex-col' : 'flex-row',
         'border-4 border-foreground/20 rounded-2xl',

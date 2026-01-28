@@ -9,15 +9,20 @@ const Slider = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SliderPrimitive.Root
     ref={ref}
-    // touch-none invece di touch-pan-y per prevenire interferenze scroll su iOS Safari
-    className={cn("relative flex w-full touch-none select-none items-center", className)}
+    // pan-y: permette scroll verticale ma lascia che lo slider gestisca i movimenti orizzontali (drag)
+    // touch-none era troppo aggressivo e bloccava completamente il touch su iOS Safari
+    className={cn("relative flex w-full select-none items-center", className)}
+    style={{ touchAction: 'pan-y' }}
     {...props}
   >
     <SliderPrimitive.Track className="relative h-3 w-full grow overflow-hidden rounded-full bg-secondary">
       <SliderPrimitive.Range className="absolute h-full bg-primary" />
     </SliderPrimitive.Track>
-    {/* touch-none sul thumb per migliorare il drag su iOS Safari */}
-    <SliderPrimitive.Thumb className="block h-10 w-10 rounded-full border-4 border-primary bg-background shadow-lg ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 touch-none cursor-grab active:cursor-grabbing" />
+    {/* pan-y sul thumb per permettere il drag orizzontale su iOS Safari */}
+    <SliderPrimitive.Thumb
+      className="block h-10 w-10 rounded-full border-4 border-primary bg-background shadow-lg ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-grab active:cursor-grabbing"
+      style={{ touchAction: 'pan-y' }}
+    />
   </SliderPrimitive.Root>
 ));
 Slider.displayName = SliderPrimitive.Root.displayName;
