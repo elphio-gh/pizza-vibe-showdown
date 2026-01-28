@@ -67,7 +67,7 @@ const PlayerSelectPage: React.FC = () => {
                         <h1 className="font-sans font-bold text-3xl text-primary">
                             Chi sei?
                         </h1>
-                        <p className="font-russo text-sm text-muted-foreground">
+                        <p className="font-sans text-sm text-muted-foreground">
                             Seleziona il tuo profilo o creane uno nuovo
                         </p>
                     </div>
@@ -87,7 +87,7 @@ const PlayerSelectPage: React.FC = () => {
                                 value={newNickname}
                                 onChange={(e) => setNewNickname(e.target.value)}
                                 placeholder="Il tuo nome..."
-                                className="font-russo py-5 text-lg"
+                                className="font-sans py-5 text-lg font-bold"
                                 maxLength={30}
                                 autoFocus
                             />
@@ -98,7 +98,7 @@ const PlayerSelectPage: React.FC = () => {
                                         setShowCreateForm(false);
                                         setNewNickname('');
                                     }}
-                                    className="flex-1 font-russo"
+                                    className="flex-1 font-sans font-bold"
                                 >
                                     Annulla
                                 </Button>
@@ -115,11 +115,11 @@ const PlayerSelectPage: React.FC = () => {
 
                     {/* Player List */}
                     <div className="flex-1 overflow-y-auto space-y-2 pb-4">
-                        <p className="font-russo text-xs text-muted-foreground text-center sticky top-0 bg-background py-2">
+                        <p className="font-sans font-bold text-xs text-muted-foreground text-center sticky top-0 bg-background py-2">
                             Oppure seleziona un profilo esistente:
                         </p>
                         {players.length === 0 ? (
-                            <p className="text-center text-muted-foreground font-russo py-8">
+                            <p className="text-center text-muted-foreground font-sans py-8">
                                 Nessun giocatore registrato
                             </p>
                         ) : (
@@ -131,7 +131,7 @@ const PlayerSelectPage: React.FC = () => {
                                 >
                                     <CardContent className="py-4 flex items-center gap-3">
                                         <User className="w-5 h-5 text-primary" />
-                                        <span className="font-russo text-lg flex-1">{player.username}</span>
+                                        <span className="font-sans font-bold text-lg flex-1">{player.username}</span>
                                     </CardContent>
                                 </Card>
                             ))

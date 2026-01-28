@@ -166,13 +166,13 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
           <CardTitle className="font-schoolbell text-3xl text-primary">
             {pizza.brand} - {pizza.flavor}
           </CardTitle>
-          <p className="font-russo text-sm text-muted-foreground">
+          <p className="font-sans text-sm text-muted-foreground">
             Pizza #{pizza.number}
           </p>
           {isReadOnly && (
             <div className="flex items-center justify-center gap-2 mt-2 px-4 py-2 bg-green-500/20 rounded-lg">
               <Check className="w-5 h-5 text-green-500" />
-              <span className="font-russo text-green-500">Già votata!</span>
+              <span className="font-sans font-bold text-green-500">Già votata!</span>
             </div>
           )}
         </CardHeader>
@@ -220,7 +220,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
               {/* Box di anteprima del voto attuale */}
               <div className="p-4 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl border-2 border-primary/30">
                 <div className="text-center space-y-2">
-                  <p className="font-russo text-sm text-muted-foreground uppercase tracking-wide">
+                  <p className="font-sans font-bold text-sm text-muted-foreground uppercase tracking-wide">
                     Voto che stai per dare
                   </p>
                   <div className="flex items-center justify-center gap-3">
@@ -229,7 +229,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
                       <p className="font-display text-4xl text-primary text-glow-orange">
                         {currentScore.toFixed(1)}
                       </p>
-                      <p className="font-russo text-sm text-foreground">
+                      <p className="font-sans font-bold text-sm text-foreground">
                         {getScoreLabel(currentScore)}
                       </p>
                     </div>
@@ -239,7 +239,7 @@ export const VotingCard: React.FC<VotingCardProps> = ({ pizza, existingVote, onB
 
               {/* Messaggio divertente di avvertimento */}
               <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
-                <p className="font-russo text-sm text-center text-destructive/90 leading-relaxed">
+                <p className="font-sans font-bold text-sm text-center text-destructive/90 leading-relaxed">
                   {warningMessage}
                 </p>
               </div>
