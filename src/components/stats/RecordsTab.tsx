@@ -80,8 +80,8 @@ export const RecordsTab: React.FC<RecordsTabProps> = ({ pizzas, votes, players }
                                 <span className="text-xl">⚡</span>
                                 <span className="font-russo text-sm">La più controversa</span>
                             </div>
-                            <div className="font-russo text-lg">
-                                {records.mostControversial.brand}
+                            <div className="font-russo text-md leading-tight">
+                                {records.mostControversial.brand} - {records.mostControversial.flavor}
                             </div>
                             <div className="text-[10px] text-muted-foreground">
                                 Varianza molto alta nei voti
@@ -98,8 +98,8 @@ export const RecordsTab: React.FC<RecordsTabProps> = ({ pizzas, votes, players }
                                 <span className="text-xl">🤝</span>
                                 <span className="font-russo text-sm">Quella che mette d'accordo</span>
                             </div>
-                            <div className="font-russo text-lg">
-                                {records.mostAgreed.brand}
+                            <div className="font-russo text-md leading-tight">
+                                {records.mostAgreed.brand} - {records.mostAgreed.flavor}
                             </div>
                             <div className="text-[10px] text-muted-foreground">
                                 Voti molto simili tra loro
