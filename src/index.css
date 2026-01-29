@@ -140,16 +140,29 @@
 /* Disabilita TUTTE le animazioni su mobile (iOS e Android).
    Le animazioni sono attive solo su desktop (> 768px) */
 @media (max-width: 768px) {
+
   /* Disabilita selezione testo globale su mobile */
   body {
     -webkit-user-select: none;
     user-select: none;
   }
-  
+
   /* Riabilita per input */
-  input, textarea, [contenteditable] {
+  input,
+  textarea,
+  [contenteditable] {
     -webkit-user-select: text;
     user-select: text;
+  }
+
+  /* CRITICAL FIX for iOS: Disable backdrop-filter globally on mobile */
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: hsl(var(--background) / 0.95) !important;
   }
 }
 
@@ -165,36 +178,58 @@
 }
 
 @layer utilities {
-  .text-glow-orange {
-    text-shadow: 0 0 10px hsl(18 100% 60% / 0.8), 0 0 20px hsl(18 100% 60% / 0.5), 0 0 30px hsl(18 100% 60% / 0.3);
+
+  /* Simplified shadows for mobile to prevent GPU crash */
+  @media (max-width: 768px) {
+
+    .text-glow-orange,
+    .text-glow-yellow,
+    .text-glow-blue,
+    .text-glow-pink {
+      text-shadow: none !important;
+    }
+
+    .box-glow-orange,
+    .box-glow-yellow,
+    .box-glow-blue,
+    .box-glow-pink {
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+    }
   }
 
-  .text-glow-yellow {
-    text-shadow: 0 0 10px hsl(48 100% 62% / 0.8), 0 0 20px hsl(48 100% 62% / 0.5), 0 0 30px hsl(48 100% 62% / 0.3);
-  }
+  /* Desktop Complex Shadows */
+  @media (min-width: 769px) {
+    .text-glow-orange {
+      text-shadow: 0 0 10px hsl(18 100% 60% / 0.8), 0 0 20px hsl(18 100% 60% / 0.5), 0 0 30px hsl(18 100% 60% / 0.3);
+    }
 
-  .text-glow-blue {
-    text-shadow: 0 0 10px hsl(248 75% 69% / 0.8), 0 0 20px hsl(248 75% 69% / 0.5), 0 0 30px hsl(248 75% 69% / 0.3);
-  }
+    .text-glow-yellow {
+      text-shadow: 0 0 10px hsl(48 100% 62% / 0.8), 0 0 20px hsl(48 100% 62% / 0.5), 0 0 30px hsl(48 100% 62% / 0.3);
+    }
 
-  .text-glow-pink {
-    text-shadow: 0 0 10px hsl(330 100% 50% / 0.8), 0 0 20px hsl(330 100% 50% / 0.5), 0 0 30px hsl(330 100% 50% / 0.3);
-  }
+    .text-glow-blue {
+      text-shadow: 0 0 10px hsl(248 75% 69% / 0.8), 0 0 20px hsl(248 75% 69% / 0.5), 0 0 30px hsl(248 75% 69% / 0.3);
+    }
 
-  .box-glow-orange {
-    box-shadow: 0 0 15px hsl(18 100% 60% / 0.5), 0 0 30px hsl(18 100% 60% / 0.3), inset 0 0 15px hsl(18 100% 60% / 0.1);
-  }
+    .text-glow-pink {
+      text-shadow: 0 0 10px hsl(330 100% 50% / 0.8), 0 0 20px hsl(330 100% 50% / 0.5), 0 0 30px hsl(330 100% 50% / 0.3);
+    }
 
-  .box-glow-yellow {
-    box-shadow: 0 0 15px hsl(48 100% 62% / 0.5), 0 0 30px hsl(48 100% 62% / 0.3), inset 0 0 15px hsl(48 100% 62% / 0.1);
-  }
+    .box-glow-orange {
+      box-shadow: 0 0 15px hsl(18 100% 60% / 0.5), 0 0 30px hsl(18 100% 60% / 0.3), inset 0 0 15px hsl(18 100% 60% / 0.1);
+    }
 
-  .box-glow-blue {
-    box-shadow: 0 0 15px hsl(248 75% 69% / 0.5), 0 0 30px hsl(248 75% 69% / 0.3), inset 0 0 15px hsl(248 75% 69% / 0.1);
-  }
+    .box-glow-yellow {
+      box-shadow: 0 0 15px hsl(48 100% 62% / 0.5), 0 0 30px hsl(48 100% 62% / 0.3), inset 0 0 15px hsl(48 100% 62% / 0.1);
+    }
 
-  .box-glow-pink {
-    box-shadow: 0 0 15px hsl(330 100% 50% / 0.5), 0 0 30px hsl(330 100% 50% / 0.3), inset 0 0 15px hsl(330 100% 50% / 0.1);
+    .box-glow-blue {
+      box-shadow: 0 0 15px hsl(248 75% 69% / 0.5), 0 0 30px hsl(248 75% 69% / 0.3), inset 0 0 15px hsl(248 75% 69% / 0.1);
+    }
+
+    .box-glow-pink {
+      box-shadow: 0 0 15px hsl(330 100% 50% / 0.5), 0 0 30px hsl(330 100% 50% / 0.3), inset 0 0 15px hsl(330 100% 50% / 0.1);
+    }
   }
 
   .gradient-pizza {
