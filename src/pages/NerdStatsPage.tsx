@@ -330,18 +330,27 @@ const NerdStatsPage: React.FC = () => {
     });
 
     // Media voti per ora (se possibile)
-    const votesByHour = votes.reduce((acc, v) => {
-      const hour = new Date(v.created_at).getHours();
-      if (!acc[hour]) acc[hour] = [];
-      acc[hour].push(v);
-      return acc;
-    }, {} as Record<number, Vote[]>);
+    // Media voti per intervallo di 15 minuti
+    const votesByInterval = votes.reduce((acc, v) => {
+      const date = new Date(v.created_at);
+      const hour = date.getHours();
+      const minute = date.getMinutes();
 
-    const hourlyStats = Object.entries(votesByHour).map(([hour, hourVotes]) => ({
-      hour: parseInt(hour),
-      count: hourVotes.length,
-      average: hourVotes.reduce((acc, v) => acc + calculateVoteScore(v), 0) / hourVotes.length
-    })).sort((a, b) => a.hour - b.hour);
+      // Arrotonda ai 15 minuti (0, 15, 30, 45)
+      const intervalKey = `${hour}:${Math.floor(minute / 15) * 15 === 0 ? '00' : Math.floor(minute / 15) * 15}`;
+      const sortKey = hour * 60 + Math.floor(minute / 15) * 15; // Per ordinamento
+
+      if (!acc[sortKey]) acc[sortKey] = { label: intervalKey, votes: [] };
+      acc[sortKey].votes.push(v);
+      return acc;
+    }, {} as Record<number, { label: string, votes: Vote[] }>);
+
+    const intervalStats = Object.entries(votesByInterval).map(([sortKey, data]) => ({
+      sortKey: parseInt(sortKey),
+      label: data.label,
+      count: data.votes.length,
+      average: data.votes.reduce((acc, v) => acc + calculateVoteScore(v), 0) / data.votes.length
+    })).sort((a, b) => a.sortKey - b.sortKey);
 
     return {
       pizzasWithScores,
@@ -368,7 +377,7 @@ const NerdStatsPage: React.FC = () => {
       theRocker,
       theContrarian,
       bestByCategory,
-      hourlyStats,
+      intervalStats,
       totalVotes: votes.length,
       totalPizzas: pizzas.length,
       totalPlayers: players.length,
@@ -643,7 +652,7 @@ const NerdStatsPage: React.FC = () => {
                             {player.votesGiven.map(v => (
                               <div key={v.vote.id} className="flex items-center gap-2 text-[11px] bg-muted/30 rounded p-1.5">
                                 <span>{v.pizza.emoji || '🍕'}</span>
-                                <span className="flex-1 truncate font-russo">#{v.pizza.number} {v.pizza.brand}</span>
+                                <span className="flex-1 truncate font-russo">#{v.pizza.number} {v.pizza.brand} - {v.pizza.flavor}</span>
                                 <span className="font-display text-secondary">{v.score.toFixed(1)}</span>
                               </div>
                             ))}
@@ -698,13 +707,20 @@ const NerdStatsPage: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-2">
                 {stats.bestByCategory.map(item => (
-                  <div key={item.category} className="flex items-center gap-2 text-[11px]">
-                    <span>{item.emoji}</span>
-                    <span className="font-russo flex-1">{item.categoryName}</span>
-                    <div className="text-right">
-                      <span className="text-green-500">🥇 #{item.best.pizza.number}</span>
-                      <span className="text-muted-foreground mx-1">|</span>
-                      <span className="text-red-500">💀 #{item.worst.pizza.number}</span>
+                  <div key={item.category} className="flex flex-col gap-1 text-[11px] border-b border-border/50 pb-2 last:border-0 last:pb-0">
+                    <div className="flex items-center gap-2">
+                      <span>{item.emoji}</span>
+                      <span className="font-russo flex-1">{item.categoryName}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 pl-6">
+                      <div className="text-green-500 truncate">
+                        🥇 #{item.best.pizza.number} {item.best.pizza.brand}
+                        <div className="text-[10px] opacity-80 truncate">{item.best.pizza.flavor}</div>
+                      </div>
+                      <div className="text-red-500 text-right truncate">
+                        💀 #{item.worst.pizza.number} {item.worst.pizza.brand}
+                        <div className="text-[10px] opacity-80 truncate">{item.worst.pizza.flavor}</div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -712,25 +728,27 @@ const NerdStatsPage: React.FC = () => {
             </Card>
 
             {/* Voti per ora */}
-            {stats.hourlyStats.length > 1 && (
+            {/* Voti nel tempo (15 min) */}
+            {stats.intervalStats.length > 1 && (
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-russo">⏰ Voti per Ora</CardTitle>
+                  <CardTitle className="text-sm font-russo">⏰ Voti per Orario</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-1">
-                    {stats.hourlyStats.map(h => (
-                      <div key={h.hour} className="flex items-center gap-2 text-[11px]">
-                        <span className="font-russo w-12">{h.hour}:00</span>
+                    {stats.intervalStats.map(h => (
+                      <div key={h.label} className="flex items-center gap-2 text-[11px]">
+                        <span className="font-russo w-12">{h.label}</span>
                         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                           <div
                             className="h-full bg-primary rounded-full"
-                            style={{ width: `${(h.count / Math.max(...stats.hourlyStats.map(x => x.count))) * 100}%` }}
+                            style={{ width: `${(h.count / Math.max(...stats.intervalStats.map(x => x.count))) * 100}%` }}
                           />
                         </div>
                         <span className="text-muted-foreground">{h.count} voti</span>
                         <span className="font-display text-secondary">{h.average.toFixed(1)}</span>
                       </div>
+
                     ))}
                   </div>
                 </CardContent>
@@ -759,7 +777,10 @@ const NerdStatsPage: React.FC = () => {
                     {stats.highestSingleVote.score.toFixed(2)}
                   </div>
                   <div className="text-[10px] text-muted-foreground">
-                    {pizzas.find(p => p.id === stats.highestSingleVote.pizza_id)?.brand} -
+                    {(() => {
+                      const p = pizzas.find(px => px.id === stats.highestSingleVote.pizza_id);
+                      return p ? `${p.brand} - ${p.flavor}` : 'Unknown Pizza';
+                    })()} -
                     dato da {players.find(p => p.id === stats.highestSingleVote.player_id)?.username}
                   </div>
                 </CardContent>
@@ -778,7 +799,10 @@ const NerdStatsPage: React.FC = () => {
                     {stats.lowestSingleVote.score.toFixed(2)}
                   </div>
                   <div className="text-[10px] text-muted-foreground">
-                    {pizzas.find(p => p.id === stats.lowestSingleVote.pizza_id)?.brand} -
+                    {(() => {
+                      const p = pizzas.find(px => px.id === stats.lowestSingleVote.pizza_id);
+                      return p ? `${p.brand} - ${p.flavor}` : 'Unknown Pizza';
+                    })()} -
                     dato da {players.find(p => p.id === stats.lowestSingleVote.player_id)?.username}
                   </div>
                 </CardContent>
@@ -892,7 +916,7 @@ const NerdStatsPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{stats.mostControversial.emoji || '🍕'}</span>
                     <span className="font-sans font-bold text-lg">
-                      #{stats.mostControversial.number} {stats.mostControversial.brand}
+                      #{stats.mostControversial.number} {stats.mostControversial.brand} - {stats.mostControversial.flavor}
                     </span>
                   </div>
                   <div className="text-[10px] text-muted-foreground">
@@ -913,7 +937,7 @@ const NerdStatsPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{stats.mostAgreed.emoji || '🍕'}</span>
                     <span className="font-sans font-bold text-lg">
-                      #{stats.mostAgreed.number} {stats.mostAgreed.brand}
+                      #{stats.mostAgreed.number} {stats.mostAgreed.brand} - {stats.mostAgreed.flavor}
                     </span>
                   </div>
                   <div className="text-[10px] text-muted-foreground">

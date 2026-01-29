@@ -130,7 +130,7 @@
   h1,
   h2,
   h3 {
-    @apply font-display;
+    /* @apply font-display; Rimosso per usare font leggibile di default */
     letter-spacing: 0.05em;
   }
 
