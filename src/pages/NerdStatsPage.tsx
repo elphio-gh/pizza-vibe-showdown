@@ -511,7 +511,7 @@ const NerdStatsPage: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <div className="text-xl">{item.pizza.emoji || '🍕'}</div>
                         <div className="flex-1 min-w-0 text-left">
-                          <div className="font-russo text-sm truncate">#{item.pizza.number} {item.pizza.brand} - {item.pizza.flavor}</div>
+                          <div className="font-russo text-sm truncate">{item.pizza.brand} - {item.pizza.flavor}</div>
                         </div>
                         <div className="font-display text-lg text-secondary">{item.pizza.averageScore.toFixed(2)}</div>
                         {expandedPizzas.has(item.pizza.id) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -652,7 +652,7 @@ const NerdStatsPage: React.FC = () => {
                               <div key={v.vote.id} className="flex items-center gap-2 text-[11px] bg-muted/30 rounded p-1.5">
                                 <span className="font-russo w-4 text-center text-muted-foreground">{idx + 1}</span>
                                 <span>{v.pizza.emoji || '🍕'}</span>
-                                <span className="flex-1 truncate font-russo">#{v.pizza.number} {v.pizza.brand} - {v.pizza.flavor}</span>
+                                <span className="flex-1 truncate font-russo">{v.pizza.brand} - {v.pizza.flavor}</span>
                                 <span className="font-display text-secondary">{v.score.toFixed(1)}</span>
                               </div>
                             ))}
@@ -714,10 +714,10 @@ const NerdStatsPage: React.FC = () => {
                     </div>
                     <div className="flex flex-col gap-1 pl-6">
                       <div className="text-green-500 truncate">
-                        🥇 #{item.best.pizza.number} {item.best.pizza.brand} - {item.best.pizza.flavor}
+                        🥇 {item.best.pizza.brand} - {item.best.pizza.flavor}
                       </div>
                       <div className="text-red-500 truncate">
-                        💀 #{item.worst.pizza.number} {item.worst.pizza.brand} - {item.worst.pizza.flavor}
+                        💀 {item.worst.pizza.brand} - {item.worst.pizza.flavor}
                       </div>
                     </div>
                   </div>
@@ -914,7 +914,7 @@ const NerdStatsPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{stats.mostControversial.emoji || '🍕'}</span>
                     <span className="font-sans font-bold text-lg">
-                      #{stats.mostControversial.number} {stats.mostControversial.brand} - {stats.mostControversial.flavor}
+                      {stats.mostControversial.brand} - {stats.mostControversial.flavor}
                     </span>
                   </div>
                   <div className="text-[10px] text-muted-foreground">
@@ -935,7 +935,7 @@ const NerdStatsPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{stats.mostAgreed.emoji || '🍕'}</span>
                     <span className="font-sans font-bold text-lg">
-                      #{stats.mostAgreed.number} {stats.mostAgreed.brand} - {stats.mostAgreed.flavor}
+                      {stats.mostAgreed.brand} - {stats.mostAgreed.flavor}
                     </span>
                   </div>
                   <div className="text-[10px] text-muted-foreground">
