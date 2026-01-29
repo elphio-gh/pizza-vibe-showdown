@@ -712,11 +712,11 @@ const NerdStatsPage: React.FC = () => {
                       <span>{item.emoji}</span>
                       <span className="font-russo flex-1">{item.categoryName}</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 pl-6">
+                    <div className="flex flex-col gap-1 pl-6">
                       <div className="text-green-500 truncate">
                         🥇 #{item.best.pizza.number} {item.best.pizza.brand} - {item.best.pizza.flavor}
                       </div>
-                      <div className="text-red-500 text-right truncate">
+                      <div className="text-red-500 truncate">
                         💀 #{item.worst.pizza.number} {item.worst.pizza.brand} - {item.worst.pizza.flavor}
                       </div>
                     </div>
