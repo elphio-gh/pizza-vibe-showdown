@@ -511,8 +511,7 @@ const NerdStatsPage: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <div className="text-xl">{item.pizza.emoji || '🍕'}</div>
                         <div className="flex-1 min-w-0 text-left">
-                          <div className="font-russo text-sm truncate">#{item.pizza.number} {item.pizza.brand}</div>
-                          <div className="text-[10px] text-muted-foreground truncate">{item.pizza.flavor}</div>
+                          <div className="font-russo text-sm truncate">#{item.pizza.number} {item.pizza.brand} - {item.pizza.flavor}</div>
                         </div>
                         <div className="font-display text-lg text-secondary">{item.pizza.averageScore.toFixed(2)}</div>
                         {expandedPizzas.has(item.pizza.id) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -715,12 +714,10 @@ const NerdStatsPage: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-2 pl-6">
                       <div className="text-green-500 truncate">
-                        🥇 #{item.best.pizza.number} {item.best.pizza.brand}
-                        <div className="text-[10px] opacity-80 truncate">{item.best.pizza.flavor}</div>
+                        🥇 #{item.best.pizza.number} {item.best.pizza.brand} - {item.best.pizza.flavor}
                       </div>
                       <div className="text-red-500 text-right truncate">
-                        💀 #{item.worst.pizza.number} {item.worst.pizza.brand}
-                        <div className="text-[10px] opacity-80 truncate">{item.worst.pizza.flavor}</div>
+                        💀 #{item.worst.pizza.number} {item.worst.pizza.brand} - {item.worst.pizza.flavor}
                       </div>
                     </div>
                   </div>
