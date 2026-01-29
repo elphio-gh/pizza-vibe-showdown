@@ -392,7 +392,7 @@ const NerdStatsPage: React.FC = () => {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center">
           <div className="text-6xl mb-4">🍕❓</div>
-          <h2 className="font-display text-2xl text-primary mb-2">Nessun dato!</h2>
+          <h2 className="font-sans font-bold text-2xl text-primary mb-2">Nessun dato!</h2>
           <p className="font-russo text-muted-foreground">Non ci sono ancora voti da analizzare.</p>
         </div>
       </div>
@@ -405,7 +405,7 @@ const NerdStatsPage: React.FC = () => {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border py-2 px-4 shadow-sm">
         <div className="text-center">
-          <h1 className="font-display text-xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h1 className="font-sans font-bold text-xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             📊 STATS 4 NERD 🤓
           </h1>
           <p className="font-russo text-[10px] text-muted-foreground">
@@ -444,7 +444,7 @@ const NerdStatsPage: React.FC = () => {
 
         {/* TAB 1: CLASSIFICA */}
         <TabsContent value="classifica" className="space-y-3">
-          <h2 className="font-display text-lg text-primary flex items-center gap-2 mb-4">
+          <h2 className="font-sans font-bold text-lg text-primary flex items-center gap-2 mb-4">
             <Trophy className="w-5 h-5" /> Classifica Finale ({stats.totalPizzas} pizze)
           </h2>
 
@@ -484,7 +484,7 @@ const NerdStatsPage: React.FC = () => {
 
         {/* TAB 2: PIZZE - Dettaglio categorie per pizza */}
         <TabsContent value="pizze" className="space-y-3">
-          <h2 className="font-display text-lg text-primary flex items-center gap-2 mb-4">
+          <h2 className="font-sans font-bold text-lg text-primary flex items-center gap-2 mb-4">
             <Pizza className="w-5 h-5" /> Dettaglio Pizze ({stats.totalPizzas})
           </h2>
 
@@ -573,7 +573,7 @@ const NerdStatsPage: React.FC = () => {
             </Card>
           </div>
 
-          <h3 className="font-display text-sm text-primary flex items-center gap-2 mt-6 mb-3">
+          <h3 className="font-sans font-bold text-sm text-primary flex items-center gap-2 mt-6 mb-3">
             <User className="w-4 h-4" /> Tutti i Votanti ({stats.participatingPlayers})
           </h3>
 
@@ -660,7 +660,7 @@ const NerdStatsPage: React.FC = () => {
 
         {/* TAB 4: CATEGORIE */}
         <TabsContent value="categorie" className="space-y-4">
-          <h2 className="font-display text-lg text-primary flex items-center gap-2 mb-4">
+          <h2 className="font-sans font-bold text-lg text-primary flex items-center gap-2 mb-4">
             <BarChart3 className="w-5 h-5" /> Analisi Categorie
           </h2>
 
@@ -741,7 +741,7 @@ const NerdStatsPage: React.FC = () => {
 
         {/* TAB 5: RECORDS */}
         <TabsContent value="records" className="space-y-3">
-          <h2 className="font-display text-lg text-primary flex items-center gap-2 mb-4">
+          <h2 className="font-sans font-bold text-lg text-primary flex items-center gap-2 mb-4">
             <Award className="w-5 h-5" /> Record & Fun Facts
           </h2>
 
@@ -793,7 +793,7 @@ const NerdStatsPage: React.FC = () => {
                     <span className="text-xl">🎢</span>
                     <span className="font-russo text-sm">Votante Più Polarizzato</span>
                   </div>
-                  <div className="font-display text-lg">{stats.mostPolarizedVoter.username}</div>
+                  <div className="font-sans font-bold text-lg">{stats.mostPolarizedVoter.username}</div>
                   <div className="text-[10px] text-muted-foreground">
                     Range voti: {stats.mostPolarizedVoter.minVote.toFixed(1)} → {stats.mostPolarizedVoter.maxVote.toFixed(1)} (Δ{(stats.mostPolarizedVoter.maxVote - stats.mostPolarizedVoter.minVote).toFixed(1)})
                   </div>
@@ -809,7 +809,7 @@ const NerdStatsPage: React.FC = () => {
                     <span className="text-xl">⚖️</span>
                     <span className="font-russo text-sm">Votante Più Consistente</span>
                   </div>
-                  <div className="font-display text-lg">{stats.mostConsistentVoter.username}</div>
+                  <div className="font-sans font-bold text-lg">{stats.mostConsistentVoter.username}</div>
                   <div className="text-[10px] text-muted-foreground">
                     Range voti: {stats.mostConsistentVoter.minVote.toFixed(1)} → {stats.mostConsistentVoter.maxVote.toFixed(1)} (Δ{(stats.mostConsistentVoter.maxVote - stats.mostConsistentVoter.minVote).toFixed(1)})
                   </div>
@@ -825,7 +825,7 @@ const NerdStatsPage: React.FC = () => {
                     <span className="text-xl">🧐</span>
                     <span className="font-russo text-sm">L'Esteta</span>
                   </div>
-                  <div className="font-display text-lg text-primary">{stats.theAesthete.username}</div>
+                  <div className="font-sans font-bold text-lg text-primary">{stats.theAesthete.username}</div>
                   <div className="text-[10px] text-muted-foreground">
                     Media aspetto: {stats.theAesthete.categoryAverages.aspetto.toFixed(2)} - "L'occhio vuole la sua parte"
                   </div>
@@ -841,7 +841,7 @@ const NerdStatsPage: React.FC = () => {
                     <span className="text-xl">🥖</span>
                     <span className="font-russo text-sm">Il Sommelier</span>
                   </div>
-                  <div className="font-display text-lg text-primary">{stats.impastoSommelier.username}</div>
+                  <div className="font-sans font-bold text-lg text-primary">{stats.impastoSommelier.username}</div>
                   <div className="text-[10px] text-muted-foreground">
                     Media impasto: {stats.impastoSommelier.categoryAverages.impasto.toFixed(2)} - "Si sente il lievito madre?"
                   </div>
@@ -857,7 +857,7 @@ const NerdStatsPage: React.FC = () => {
                     <span className="text-xl">🤘</span>
                     <span className="font-russo text-sm">Il Rocker</span>
                   </div>
-                  <div className="font-display text-lg text-primary">{stats.theRocker.username}</div>
+                  <div className="font-sans font-bold text-lg text-primary">{stats.theRocker.username}</div>
                   <div className="text-[10px] text-muted-foreground">
                     Media Tony Factor: {stats.theRocker.categoryAverages.tony_factor.toFixed(2)} - "Volume a palla!"
                   </div>
@@ -873,7 +873,7 @@ const NerdStatsPage: React.FC = () => {
                     <span className="text-xl">🦓</span>
                     <span className="font-russo text-sm">Bastian Contrario</span>
                   </div>
-                  <div className="font-display text-lg text-primary">{stats.theContrarian.username}</div>
+                  <div className="font-sans font-bold text-lg text-primary">{stats.theContrarian.username}</div>
                   <div className="text-[10px] text-muted-foreground">
                     Deviazione media: {stats.theContrarian.deviation.toFixed(2)} - "Voi non capite nulla"
                   </div>
@@ -891,7 +891,7 @@ const NerdStatsPage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{stats.mostControversial.emoji || '🍕'}</span>
-                    <span className="font-display text-lg">
+                    <span className="font-sans font-bold text-lg">
                       #{stats.mostControversial.number} {stats.mostControversial.brand}
                     </span>
                   </div>
@@ -912,7 +912,7 @@ const NerdStatsPage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{stats.mostAgreed.emoji || '🍕'}</span>
-                    <span className="font-display text-lg">
+                    <span className="font-sans font-bold text-lg">
                       #{stats.mostAgreed.number} {stats.mostAgreed.brand}
                     </span>
                   </div>
