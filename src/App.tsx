@@ -16,6 +16,7 @@ import AdminLoginPage from "./pages/AdminLoginPage";
 import PlayerRejoinPage from "./pages/PlayerRejoinPage";
 import PlayerSelectPage from "./pages/PlayerSelectPage";
 import MyPizzaPage from "./pages/MyPizzaPage";
+import NerdStatsPage from "./pages/NerdStatsPage";
 
 // Inizializziamo il client per gestire le richieste ai dati (caching e fetching).
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/player-rejoin" element={<PlayerRejoinPage />} />
             <Route path="/player-select" element={<PlayerSelectPage />} />
             <Route path="/my-pizza" element={<MyPizzaPage />} />
+            <Route path="/stats" element={<NerdStatsPage />} />
             {/* Pagina di errore se l'indirizzo non esiste */}
             <Route path="*" element={<NotFound />} />
           </Routes>
