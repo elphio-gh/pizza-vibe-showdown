@@ -68,7 +68,7 @@ const NerdStatsPage: React.FC = () => {
   const { pizzas } = usePizzas();
   const { votes } = useVotes({ disableRealtime: true });
   const { players } = usePlayers();
-  const [selectedTab, setSelectedTab] = useState('classifica');
+  const [selectedTab, setSelectedTab] = useState('records');
   const [expandedPlayers, setExpandedPlayers] = useState<Set<string>>(new Set());
   const [expandedPizzas, setExpandedPizzas] = useState<Set<string>>(new Set());
 
@@ -244,13 +244,21 @@ const NerdStatsPage: React.FC = () => {
 
     const globalAverage = votes.reduce((acc, v) => acc + calculateVoteScore(v), 0) / votes.length;
 
-    // Distribuzione voti
+    // Distribuzione voti - raggruppa i punteggi in bucket da 1 a 10
+    // Ogni bucket cattura i voti con punteggio arrotondato per difetto
     const voteDistribution = Array.from({ length: 10 }, (_, i) => {
-      const min = i + 1;
-      const max = i + 2;
+      const bucket = i + 1; // bucket 1, 2, 3, ..., 10
       return {
-        range: `${min}`,
-        count: allVoteScores.filter(v => v.score >= min && v.score < max).length
+        range: `${bucket}`,
+        count: allVoteScores.filter(v => {
+          // Score 1.0-1.99 va in bucket 1, 2.0-2.99 in bucket 2, ecc.
+          // Per bucket 10, cattura anche score esattamente 10
+          const roundedBucket = Math.floor(v.score);
+          if (bucket === 10) {
+            return roundedBucket >= 10 || (v.score >= 9.5 && v.score < 10);
+          }
+          return roundedBucket === bucket || (roundedBucket === bucket - 1 && v.score >= bucket);
+        }).length
       };
     });
 
@@ -280,9 +288,36 @@ const NerdStatsPage: React.FC = () => {
     const mostGenerouscategory = categoryRankings[0];
     const mostStingyCategory = categoryRankings[categoryRankings.length - 1];
 
+    // MEME STATS CALCS
+    // 1. Il Sommelier dell'Impasto (Max avg impasto)
+    const impastoSommelier = [...playerStats]
+      .sort((a, b) => b.categoryAverages.impasto - a.categoryAverages.impasto)[0];
+
+    // 2. L'Esteta (Max avg aspetto)
+    const theAesthete = [...playerStats]
+      .sort((a, b) => b.categoryAverages.aspetto - a.categoryAverages.aspetto)[0];
+
+    // 3. Il Rocker (Max avg tony_factor)
+    const theRocker = [...playerStats]
+      .sort((a, b) => b.categoryAverages.tony_factor - a.categoryAverages.tony_factor)[0];
+
+    // 4. Bastian Contrario (Max deviation from consensus)
+    const theContrarian = [...playerStats].map(player => {
+      const playerVotes = votes.filter(v => v.player_id === player.id);
+      if (playerVotes.length === 0) return { ...player, deviation: 0 };
+
+      const totalDeviation = playerVotes.reduce((acc, vote) => {
+        const pizza = pizzasWithScores.find(p => p.id === vote.pizza_id);
+        if (!pizza) return acc;
+        return acc + Math.abs(calculateVoteScore(vote) - pizza.averageScore);
+      }, 0);
+
+      return { ...player, deviation: totalDeviation / playerVotes.length };
+    }).sort((a, b) => b.deviation - a.deviation)[0];
+
     // Pizza con miglior punteggio per categoria
     const bestByCategory = ['aspetto', 'gusto', 'impasto', 'farcitura', 'tony_factor'].map(cat => {
-      const sorted = [...pizzaDetailedStats].sort((a, b) => 
+      const sorted = [...pizzaDetailedStats].sort((a, b) =>
         b.categoryAverages[cat as keyof typeof b.categoryAverages] - a.categoryAverages[cat as keyof typeof a.categoryAverages]
       );
       return {
@@ -328,6 +363,10 @@ const NerdStatsPage: React.FC = () => {
       mostConsistentVoter,
       mostGenerouscategory,
       mostStingyCategory,
+      impastoSommelier,
+      theAesthete,
+      theRocker,
+      theContrarian,
       bestByCategory,
       hourlyStats,
       totalVotes: votes.length,
@@ -360,541 +399,605 @@ const NerdStatsPage: React.FC = () => {
     );
   }
 
+
   return (
-    <div className="min-h-screen bg-background pb-8">
+    <div className="min-h-screen bg-background pb-8 md:max-w-7xl md:mx-auto shadow-2xl shadow-black/20">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border p-4">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border py-2 px-4 shadow-sm">
         <div className="text-center">
-          <h1 className="font-display text-2xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h1 className="font-display text-xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             📊 STATS 4 NERD 🤓
           </h1>
-          <p className="font-russo text-xs text-muted-foreground mt-1">
+          <p className="font-russo text-[10px] text-muted-foreground">
             Tony Buitony Cup Deep Analytics
           </p>
         </div>
       </div>
 
       {/* Quick Stats Banner */}
-      <div className="grid grid-cols-4 gap-2 p-4 bg-card/50">
-        <div className="text-center">
-          <div className="text-2xl font-display text-primary">{stats.totalPizzas}</div>
-          <div className="text-[10px] text-muted-foreground font-russo">Pizze</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-display text-secondary">{stats.totalVotes}</div>
-          <div className="text-[10px] text-muted-foreground font-russo">Voti</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-display text-accent">{stats.participatingPlayers}</div>
-          <div className="text-[10px] text-muted-foreground font-russo">Votanti</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-display text-destructive">{stats.globalAverage.toFixed(1)}</div>
-          <div className="text-[10px] text-muted-foreground font-russo">Media</div>
-        </div>
-      </div>
+
 
       {/* Tabs Navigation */}
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="px-4">
-        <TabsList className="grid w-full grid-cols-5 mb-4">
-          <TabsTrigger value="classifica" className="text-xs px-1">🏆</TabsTrigger>
-          <TabsTrigger value="pizze" className="text-xs px-1">🍕</TabsTrigger>
-          <TabsTrigger value="votanti" className="text-xs px-1">👥</TabsTrigger>
-          <TabsTrigger value="categorie" className="text-xs px-1">📈</TabsTrigger>
-          <TabsTrigger value="records" className="text-xs px-1">🎯</TabsTrigger>
+      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="px-4 mt-4">
+        <TabsList className="grid w-full grid-cols-5 mb-4 h-auto p-1 bg-muted/50">
+          <TabsTrigger value="records" className="text-[10px] md:text-sm px-1 py-2 flex flex-col md:flex-row items-center gap-1 data-[state=active]:text-primary">
+            <Award className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="truncate w-full text-center md:w-auto">Records</span>
+          </TabsTrigger>
+          <TabsTrigger value="classifica" className="text-[10px] md:text-sm px-1 py-2 flex flex-col md:flex-row items-center gap-1 data-[state=active]:text-primary">
+            <Trophy className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="truncate w-full text-center md:w-auto">Classifica</span>
+          </TabsTrigger>
+          <TabsTrigger value="pizze" className="text-[10px] md:text-sm px-1 py-2 flex flex-col md:flex-row items-center gap-1 data-[state=active]:text-primary">
+            <Pizza className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="truncate w-full text-center md:w-auto">Pizze</span>
+          </TabsTrigger>
+          <TabsTrigger value="votanti" className="text-[10px] md:text-sm px-1 py-2 flex flex-col md:flex-row items-center gap-1 data-[state=active]:text-primary">
+            <Users className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="truncate w-full text-center md:w-auto">Votanti</span>
+          </TabsTrigger>
+          <TabsTrigger value="categorie" className="text-[10px] md:text-sm px-1 py-2 flex flex-col md:flex-row items-center gap-1 data-[state=active]:text-primary">
+            <BarChart3 className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="truncate w-full text-center md:w-auto">Stats</span>
+          </TabsTrigger>
         </TabsList>
 
         {/* TAB 1: CLASSIFICA */}
         <TabsContent value="classifica" className="space-y-3">
-          <h2 className="font-display text-lg text-primary flex items-center gap-2">
-            <Trophy className="w-5 h-5" /> Classifica Finale
+          <h2 className="font-display text-lg text-primary flex items-center gap-2 mb-4">
+            <Trophy className="w-5 h-5" /> Classifica Finale ({stats.totalPizzas} pizze)
           </h2>
 
-          {stats.pizzasWithScores.map((pizza, index) => (
-            <Card key={pizza.id} className={`${index === 0 ? 'border-primary box-glow-orange' : ''}`}>
-              <CardContent className="p-3">
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl font-display text-primary min-w-[2rem] text-center">
-                    {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">{pizza.emoji || '🍕'}</span>
-                      <div className="truncate">
-                        <div className="font-russo text-sm truncate">{pizza.brand} - {pizza.flavor}</div>
-                        <div className="text-[10px] text-muted-foreground">
-                          Pizza #{pizza.number} • {pizza.voteCount} voti
-                          {pizza.registeredByPlayer && (
-                            <span className="text-primary"> • {pizza.registeredByPlayer.username}</span>
-                          )}
+          <div className="space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
+
+            {stats.pizzasWithScores.map((pizza, index) => (
+              <Card key={pizza.id} className={`${index === 0 ? 'border-primary box-glow-orange' : ''}`}>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl font-display text-primary min-w-[2rem] text-center">
+                      {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{pizza.emoji || '🍕'}</span>
+                        <div className="truncate">
+                          <div className="font-russo text-sm truncate">{pizza.brand} - {pizza.flavor}</div>
+                          <div className="text-[10px] text-muted-foreground">
+                            Pizza #{pizza.number} • {pizza.voteCount} voti
+                            {pizza.registeredByPlayer && (
+                              <span className="text-primary"> • {pizza.registeredByPlayer.username}</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
+                    <div className="text-right">
+                      <div className="font-display text-xl text-secondary">{pizza.averageScore.toFixed(2)}</div>
+                      <div className="text-[10px] text-muted-foreground">pts</div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-display text-xl text-secondary">{pizza.averageScore.toFixed(2)}</div>
-                    <div className="text-[10px] text-muted-foreground">pts</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
 
         {/* TAB 2: PIZZE - Dettaglio categorie per pizza */}
         <TabsContent value="pizze" className="space-y-3">
-          <h2 className="font-display text-lg text-primary flex items-center gap-2">
-            <Pizza className="w-5 h-5" /> Dettaglio Pizze
+          <h2 className="font-display text-lg text-primary flex items-center gap-2 mb-4">
+            <Pizza className="w-5 h-5" /> Dettaglio Pizze ({stats.totalPizzas})
           </h2>
 
-          {stats.pizzaDetailedStats.map((item, index) => (
-            <Collapsible
-              key={item.pizza.id}
-              open={expandedPizzas.has(item.pizza.id)}
-              onOpenChange={() => togglePizza(item.pizza.id)}
-            >
-              <Card className={index === 0 ? 'border-primary' : ''}>
-                <CollapsibleTrigger className="w-full">
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="text-xl">{item.pizza.emoji || '🍕'}</div>
-                      <div className="flex-1 min-w-0 text-left">
-                        <div className="font-russo text-sm truncate">#{item.pizza.number} {item.pizza.brand}</div>
-                        <div className="text-[10px] text-muted-foreground truncate">{item.pizza.flavor}</div>
-                      </div>
-                      <div className="font-display text-lg text-secondary">{item.pizza.averageScore.toFixed(2)}</div>
-                      {expandedPizzas.has(item.pizza.id) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                    </div>
-                  </CardContent>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <CardContent className="pt-0 pb-3 px-3">
-                    <div className="border-t border-border pt-3 space-y-2">
-                      {item.categoryDetails.map(cat => (
-                        <div key={cat.name} className="flex items-center gap-2">
-                          <span className="text-sm">{cat.emoji}</span>
-                          <span className="font-russo text-xs flex-1">{cat.name}</span>
-                          <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
-                              style={{ width: `${(cat.average / 10) * 100}%` }}
-                            />
-                          </div>
-                          <span className="font-display text-sm text-secondary min-w-[2.5rem] text-right">{cat.average.toFixed(1)}</span>
+          <div className="space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
+
+            {stats.pizzaDetailedStats.map((item, index) => (
+              <Collapsible
+                key={item.pizza.id}
+                open={expandedPizzas.has(item.pizza.id)}
+                onOpenChange={() => togglePizza(item.pizza.id)}
+              >
+                <Card className={index === 0 ? 'border-primary' : ''}>
+                  <CollapsibleTrigger className="w-full">
+                    <CardContent className="p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="text-xl">{item.pizza.emoji || '🍕'}</div>
+                        <div className="flex-1 min-w-0 text-left">
+                          <div className="font-russo text-sm truncate">#{item.pizza.number} {item.pizza.brand}</div>
+                          <div className="text-[10px] text-muted-foreground truncate">{item.pizza.flavor}</div>
                         </div>
-                      ))}
-                      <div className="text-[10px] text-muted-foreground pt-2 flex justify-between">
-                        <span>{item.pizza.voteCount} voti totali</span>
-                        {item.pizza.registeredByPlayer && (
-                          <span>di {item.pizza.registeredByPlayer.username}</span>
-                        )}
+                        <div className="font-display text-lg text-secondary">{item.pizza.averageScore.toFixed(2)}</div>
+                        {expandedPizzas.has(item.pizza.id) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                       </div>
-                    </div>
-                  </CardContent>
-                </CollapsibleContent>
-              </Card>
-            </Collapsible>
-          ))}
+                    </CardContent>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <CardContent className="pt-0 pb-3 px-3">
+                      <div className="border-t border-border pt-3 space-y-2">
+                        {item.categoryDetails.map(cat => (
+                          <div key={cat.name} className="flex items-center gap-2">
+                            <span className="text-sm">{cat.emoji}</span>
+                            <span className="font-russo text-xs flex-1">{cat.name}</span>
+                            <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
+                                style={{ width: `${(cat.average / 10) * 100}%` }}
+                              />
+                            </div>
+                            <span className="font-display text-sm text-secondary min-w-[2.5rem] text-right">{cat.average.toFixed(1)}</span>
+                          </div>
+                        ))}
+                        <div className="text-[10px] text-muted-foreground pt-2 flex justify-between">
+                          <span>{item.pizza.voteCount} voti totali</span>
+                          {item.pizza.registeredByPlayer && (
+                            <span>di {item.pizza.registeredByPlayer.username}</span>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
+            ))}
+          </div>
         </TabsContent>
 
         {/* TAB 3: VOTANTI - Dettaglio voti per ogni utente */}
         <TabsContent value="votanti" className="space-y-4">
-          {/* Classifiche rapide */}
-          <div className="grid grid-cols-2 gap-2">
+          {/* Top 3 Generosi e Top 3 Tirchi */}
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* Top 3 Generosi */}
             <Card className="bg-gradient-to-br from-green-500/10 to-transparent">
               <CardContent className="p-2">
-                <div className="text-[10px] text-muted-foreground mb-1">🎁 Più Generoso</div>
-                <div className="font-russo text-sm truncate">{stats.generousVoters[0]?.username}</div>
-                <div className="font-display text-primary">{stats.generousVoters[0]?.averageGiven.toFixed(2)}</div>
+                <div className="text-[10px] text-muted-foreground mb-2">🎁 Top 3 Generosi</div>
+                {stats.generousVoters.slice(0, 3).map((voter, idx) => (
+                  <div key={voter.id} className="flex items-center gap-1 mb-1">
+                    <span className="text-xs">{idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}</span>
+                    <span className="font-russo text-xs truncate flex-1">{voter.username}</span>
+                    <span className="font-display text-xs text-primary">{voter.averageGiven.toFixed(2)}</span>
+                  </div>
+                ))}
               </CardContent>
             </Card>
+            {/* Top 3 Tirchi */}
             <Card className="bg-gradient-to-br from-red-500/10 to-transparent">
               <CardContent className="p-2">
-                <div className="text-[10px] text-muted-foreground mb-1">😤 Più Tirchio</div>
-                <div className="font-russo text-sm truncate">{stats.stingyVoters[0]?.username}</div>
-                <div className="font-display text-destructive">{stats.stingyVoters[0]?.averageGiven.toFixed(2)}</div>
+                <div className="text-[10px] text-muted-foreground mb-2">😤 Top 3 Tirchi</div>
+                {stats.stingyVoters.slice(0, 3).map((voter, idx) => (
+                  <div key={voter.id} className="flex items-center gap-1 mb-1">
+                    <span className="text-xs">{idx === 0 ? '💀' : idx === 1 ? '😬' : '😑'}</span>
+                    <span className="font-russo text-xs truncate flex-1">{voter.username}</span>
+                    <span className="font-display text-xs text-destructive">{voter.averageGiven.toFixed(2)}</span>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           </div>
 
-          <h3 className="font-display text-sm text-primary flex items-center gap-2">
-            <User className="w-4 h-4" /> Tutti i Votanti
+          <h3 className="font-display text-sm text-primary flex items-center gap-2 mt-6 mb-3">
+            <User className="w-4 h-4" /> Tutti i Votanti ({stats.participatingPlayers})
           </h3>
 
-          {stats.playerStats.map(player => (
-            <Collapsible
-              key={player.id}
-              open={expandedPlayers.has(player.id)}
-              onOpenChange={() => togglePlayer(player.id)}
-            >
-              <Card>
-                <CollapsibleTrigger className="w-full">
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="text-xl">
-                        {player.averageGiven >= 7 ? '💖' : player.averageGiven >= 6 ? '😊' : '😐'}
-                      </div>
-                      <div className="flex-1 min-w-0 text-left">
-                        <div className="font-russo text-sm">{player.username}</div>
-                        <div className="text-[10px] text-muted-foreground">
-                          {player.totalVotes} voti • media {player.averageGiven.toFixed(2)}
-                        </div>
-                      </div>
-                      <div className="text-right text-[10px] text-muted-foreground">
-                        <div>max: {player.maxVote.toFixed(1)}</div>
-                        <div>min: {player.minVote.toFixed(1)}</div>
-                      </div>
-                      {expandedPlayers.has(player.id) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                    </div>
-                  </CardContent>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <CardContent className="pt-0 pb-3 px-3">
-                    <div className="border-t border-border pt-3 space-y-3">
-                      {/* Medie per categoria */}
-                      <div>
-                        <div className="text-[10px] text-muted-foreground mb-2">Medie per categoria:</div>
-                        <div className="grid grid-cols-5 gap-1 text-center">
-                          <div>
-                            <div className="text-sm">👀</div>
-                            <div className="font-display text-xs">{player.categoryAverages.aspetto.toFixed(1)}</div>
-                          </div>
-                          <div>
-                            <div className="text-sm">😋</div>
-                            <div className="font-display text-xs">{player.categoryAverages.gusto.toFixed(1)}</div>
-                          </div>
-                          <div>
-                            <div className="text-sm">🍞</div>
-                            <div className="font-display text-xs">{player.categoryAverages.impasto.toFixed(1)}</div>
-                          </div>
-                          <div>
-                            <div className="text-sm">🧀</div>
-                            <div className="font-display text-xs">{player.categoryAverages.farcitura.toFixed(1)}</div>
-                          </div>
-                          <div>
-                            <div className="text-sm">🎸</div>
-                            <div className="font-display text-xs">{player.categoryAverages.tony_factor.toFixed(1)}</div>
-                          </div>
-                        </div>
-                      </div>
+          <div className="space-y-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
 
-                      {/* Lista voti dati */}
-                      <div>
-                        <div className="text-[10px] text-muted-foreground mb-2">Voti dati:</div>
-                        <div className="space-y-1 max-h-48 overflow-y-auto">
-                          {player.votesGiven.map(v => (
-                            <div key={v.vote.id} className="flex items-center gap-2 text-[11px] bg-muted/30 rounded p-1.5">
-                              <span>{v.pizza.emoji || '🍕'}</span>
-                              <span className="flex-1 truncate font-russo">#{v.pizza.number} {v.pizza.brand}</span>
-                              <span className="font-display text-secondary">{v.score.toFixed(1)}</span>
+            {stats.playerStats.map(player => (
+              <Collapsible
+                key={player.id}
+                open={expandedPlayers.has(player.id)}
+                onOpenChange={() => togglePlayer(player.id)}
+              >
+                <Card>
+                  <CollapsibleTrigger className="w-full">
+                    <CardContent className="p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="text-xl">
+                          {player.averageGiven >= 7 ? '💖' : player.averageGiven >= 6 ? '😊' : '😐'}
+                        </div>
+                        <div className="flex-1 min-w-0 text-left">
+                          <div className="font-russo text-sm">{player.username}</div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {player.totalVotes} voti • media {player.averageGiven.toFixed(2)}
+                          </div>
+                        </div>
+                        <div className="text-right text-[10px] text-muted-foreground">
+                          <div>max: {player.maxVote.toFixed(1)}</div>
+                          <div>min: {player.minVote.toFixed(1)}</div>
+                        </div>
+                        {expandedPlayers.has(player.id) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                      </div>
+                    </CardContent>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <CardContent className="pt-0 pb-3 px-3">
+                      <div className="border-t border-border pt-3 space-y-3">
+                        {/* Medie per categoria */}
+                        <div>
+                          <div className="text-[10px] text-muted-foreground mb-2">Medie per categoria:</div>
+                          <div className="grid grid-cols-5 gap-1 text-center">
+                            <div>
+                              <div className="text-sm">👀</div>
+                              <div className="font-display text-xs">{player.categoryAverages.aspetto.toFixed(1)}</div>
                             </div>
-                          ))}
+                            <div>
+                              <div className="text-sm">😋</div>
+                              <div className="font-display text-xs">{player.categoryAverages.gusto.toFixed(1)}</div>
+                            </div>
+                            <div>
+                              <div className="text-sm">🍞</div>
+                              <div className="font-display text-xs">{player.categoryAverages.impasto.toFixed(1)}</div>
+                            </div>
+                            <div>
+                              <div className="text-sm">🧀</div>
+                              <div className="font-display text-xs">{player.categoryAverages.farcitura.toFixed(1)}</div>
+                            </div>
+                            <div>
+                              <div className="text-sm">🎸</div>
+                              <div className="font-display text-xs">{player.categoryAverages.tony_factor.toFixed(1)}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Lista voti dati */}
+                        <div>
+                          <div className="text-[10px] text-muted-foreground mb-2">Voti dati:</div>
+                          <div className="space-y-1 max-h-48 overflow-y-auto">
+                            {player.votesGiven.map(v => (
+                              <div key={v.vote.id} className="flex items-center gap-2 text-[11px] bg-muted/30 rounded p-1.5">
+                                <span>{v.pizza.emoji || '🍕'}</span>
+                                <span className="flex-1 truncate font-russo">#{v.pizza.number} {v.pizza.brand}</span>
+                                <span className="font-display text-secondary">{v.score.toFixed(1)}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </CollapsibleContent>
-              </Card>
-            </Collapsible>
-          ))}
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
+            ))}
+          </div>
         </TabsContent>
 
         {/* TAB 4: CATEGORIE */}
         <TabsContent value="categorie" className="space-y-4">
-          <h2 className="font-display text-lg text-primary flex items-center gap-2">
+          <h2 className="font-display text-lg text-primary flex items-center gap-2 mb-4">
             <BarChart3 className="w-5 h-5" /> Analisi Categorie
           </h2>
 
-          {stats.categoryStats.map(cat => (
-            <Card key={cat.name}>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">{cat.emoji}</span>
-                    <span className="font-russo text-sm">{cat.name}</span>
-                    <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">{cat.weight}</span>
-                  </div>
-                  <div className="font-display text-lg text-secondary">{cat.average.toFixed(2)}</div>
-                </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all"
-                    style={{ width: `${(cat.average / 10) * 100}%` }}
-                  />
-                </div>
-                <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
-                  <span>Min: {cat.min}</span>
-                  <span>Max: {cat.max}</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-          {/* Miglior/Peggior pizza per categoria */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-russo">🏅 Best & Worst per Categoria</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {stats.bestByCategory.map(item => (
-                <div key={item.category} className="flex items-center gap-2 text-[11px]">
-                  <span>{item.emoji}</span>
-                  <span className="font-russo flex-1">{item.categoryName}</span>
-                  <div className="text-right">
-                    <span className="text-green-500">🥇 #{item.best.pizza.number}</span>
-                    <span className="text-muted-foreground mx-1">|</span>
-                    <span className="text-red-500">💀 #{item.worst.pizza.number}</span>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Distribuzione voti */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-russo flex items-center gap-2">
-                📊 Distribuzione Voti
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-end justify-between h-24 gap-1">
-                {stats.voteDistribution.map((bucket, i) => {
-                  const maxCount = Math.max(...stats.voteDistribution.map(b => b.count));
-                  const height = maxCount > 0 ? (bucket.count / maxCount) * 100 : 0;
-                  return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                      <div
-                        className="w-full bg-gradient-to-t from-primary to-secondary rounded-t"
-                        style={{ height: `${Math.max(height, 4)}%` }}
-                      />
-                      <span className="text-[8px] text-muted-foreground">{bucket.range}</span>
+            {stats.categoryStats.map(cat => (
+              <Card key={cat.name}>
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{cat.emoji}</span>
+                      <span className="font-russo text-sm">{cat.name}</span>
+                      <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">{cat.weight}</span>
                     </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
+                    <div className="font-display text-lg text-secondary">{cat.average.toFixed(2)}</div>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all"
+                      style={{ width: `${(cat.average / 10) * 100}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+                    <span>Min: {cat.min}</span>
+                    <span>Max: {cat.max}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
 
-          {/* Voti per ora */}
-          {stats.hourlyStats.length > 1 && (
+            {/* Miglior/Peggior pizza per categoria */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-russo">⏰ Voti per Ora</CardTitle>
+                <CardTitle className="text-sm font-russo">🏅 Best & Worst per Categoria</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  {stats.hourlyStats.map(h => (
-                    <div key={h.hour} className="flex items-center gap-2 text-[11px]">
-                      <span className="font-russo w-12">{h.hour}:00</span>
-                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary rounded-full"
-                          style={{ width: `${(h.count / Math.max(...stats.hourlyStats.map(x => x.count))) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-muted-foreground">{h.count} voti</span>
-                      <span className="font-display text-secondary">{h.average.toFixed(1)}</span>
+              <CardContent className="space-y-2">
+                {stats.bestByCategory.map(item => (
+                  <div key={item.category} className="flex items-center gap-2 text-[11px]">
+                    <span>{item.emoji}</span>
+                    <span className="font-russo flex-1">{item.categoryName}</span>
+                    <div className="text-right">
+                      <span className="text-green-500">🥇 #{item.best.pizza.number}</span>
+                      <span className="text-muted-foreground mx-1">|</span>
+                      <span className="text-red-500">💀 #{item.worst.pizza.number}</span>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </CardContent>
             </Card>
-          )}
+
+            {/* Voti per ora */}
+            {stats.hourlyStats.length > 1 && (
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-russo">⏰ Voti per Ora</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-1">
+                    {stats.hourlyStats.map(h => (
+                      <div key={h.hour} className="flex items-center gap-2 text-[11px]">
+                        <span className="font-russo w-12">{h.hour}:00</span>
+                        <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full"
+                            style={{ width: `${(h.count / Math.max(...stats.hourlyStats.map(x => x.count))) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-muted-foreground">{h.count} voti</span>
+                        <span className="font-display text-secondary">{h.average.toFixed(1)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </TabsContent>
 
         {/* TAB 5: RECORDS */}
         <TabsContent value="records" className="space-y-3">
-          <h2 className="font-display text-lg text-primary flex items-center gap-2">
+          <h2 className="font-display text-lg text-primary flex items-center gap-2 mb-4">
             <Award className="w-5 h-5" /> Record & Fun Facts
           </h2>
 
-          {/* Voto più alto */}
-          {stats.highestSingleVote && (
-            <Card className="border-secondary">
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">🚀</span>
-                  <span className="font-russo text-sm">Voto più alto</span>
-                </div>
-                <div className="text-2xl font-display text-secondary">
-                  {stats.highestSingleVote.score.toFixed(2)}
-                </div>
-                <div className="text-[10px] text-muted-foreground">
-                  {pizzas.find(p => p.id === stats.highestSingleVote.pizza_id)?.brand} -
-                  dato da {players.find(p => p.id === stats.highestSingleVote.player_id)?.username}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          <div className="space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
 
-          {/* Voto più basso */}
-          {stats.lowestSingleVote && (
-            <Card className="border-destructive">
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">💀</span>
-                  <span className="font-russo text-sm">Voto più basso</span>
-                </div>
-                <div className="text-2xl font-display text-destructive">
-                  {stats.lowestSingleVote.score.toFixed(2)}
-                </div>
-                <div className="text-[10px] text-muted-foreground">
-                  {pizzas.find(p => p.id === stats.lowestSingleVote.pizza_id)?.brand} -
-                  dato da {players.find(p => p.id === stats.lowestSingleVote.player_id)?.username}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+            {/* Voto più alto */}
+            {stats.highestSingleVote && (
+              <Card className="border-secondary">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">🚀</span>
+                    <span className="font-russo text-sm">Voto più alto</span>
+                  </div>
+                  <div className="text-2xl font-display text-secondary">
+                    {stats.highestSingleVote.score.toFixed(2)}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {pizzas.find(p => p.id === stats.highestSingleVote.pizza_id)?.brand} -
+                    dato da {players.find(p => p.id === stats.highestSingleVote.player_id)?.username}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Votante più polarizzato */}
-          {stats.mostPolarizedVoter && (
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">🎢</span>
-                  <span className="font-russo text-sm">Votante Più Polarizzato</span>
-                </div>
-                <div className="font-display text-lg">{stats.mostPolarizedVoter.username}</div>
-                <div className="text-[10px] text-muted-foreground">
-                  Range voti: {stats.mostPolarizedVoter.minVote.toFixed(1)} → {stats.mostPolarizedVoter.maxVote.toFixed(1)} (Δ{(stats.mostPolarizedVoter.maxVote - stats.mostPolarizedVoter.minVote).toFixed(1)})
-                </div>
-              </CardContent>
-            </Card>
-          )}
+            {/* Voto più basso */}
+            {stats.lowestSingleVote && (
+              <Card className="border-destructive">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">💀</span>
+                    <span className="font-russo text-sm">Voto più basso</span>
+                  </div>
+                  <div className="text-2xl font-display text-destructive">
+                    {stats.lowestSingleVote.score.toFixed(2)}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {pizzas.find(p => p.id === stats.lowestSingleVote.pizza_id)?.brand} -
+                    dato da {players.find(p => p.id === stats.lowestSingleVote.player_id)?.username}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Votante più consistente */}
-          {stats.mostConsistentVoter && (
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">⚖️</span>
-                  <span className="font-russo text-sm">Votante Più Consistente</span>
-                </div>
-                <div className="font-display text-lg">{stats.mostConsistentVoter.username}</div>
-                <div className="text-[10px] text-muted-foreground">
-                  Range voti: {stats.mostConsistentVoter.minVote.toFixed(1)} → {stats.mostConsistentVoter.maxVote.toFixed(1)} (Δ{(stats.mostConsistentVoter.maxVote - stats.mostConsistentVoter.minVote).toFixed(1)})
-                </div>
-              </CardContent>
-            </Card>
-          )}
+            {/* Votante più polarizzato */}
+            {stats.mostPolarizedVoter && (
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">🎢</span>
+                    <span className="font-russo text-sm">Votante Più Polarizzato</span>
+                  </div>
+                  <div className="font-display text-lg">{stats.mostPolarizedVoter.username}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Range voti: {stats.mostPolarizedVoter.minVote.toFixed(1)} → {stats.mostPolarizedVoter.maxVote.toFixed(1)} (Δ{(stats.mostPolarizedVoter.maxVote - stats.mostPolarizedVoter.minVote).toFixed(1)})
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Pizza più controversa */}
-          {stats.mostControversial && stats.mostControversial.variance > 0 && (
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">🎭</span>
-                  <span className="font-russo text-sm">Pizza più controversa</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">{stats.mostControversial.emoji || '🍕'}</span>
-                  <span className="font-display text-lg">
-                    #{stats.mostControversial.number} {stats.mostControversial.brand}
-                  </span>
-                </div>
-                <div className="text-[10px] text-muted-foreground">
-                  Varianza: {stats.mostControversial.variance.toFixed(2)} - "Amore o odio!"
-                </div>
-              </CardContent>
-            </Card>
-          )}
+            {/* Votante più consistente */}
+            {stats.mostConsistentVoter && (
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">⚖️</span>
+                    <span className="font-russo text-sm">Votante Più Consistente</span>
+                  </div>
+                  <div className="font-display text-lg">{stats.mostConsistentVoter.username}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Range voti: {stats.mostConsistentVoter.minVote.toFixed(1)} → {stats.mostConsistentVoter.maxVote.toFixed(1)} (Δ{(stats.mostConsistentVoter.maxVote - stats.mostConsistentVoter.minVote).toFixed(1)})
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Pizza più unanime */}
-          {stats.mostAgreed && (
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">🤝</span>
-                  <span className="font-russo text-sm">Pizza più unanime</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">{stats.mostAgreed.emoji || '🍕'}</span>
-                  <span className="font-display text-lg">
-                    #{stats.mostAgreed.number} {stats.mostAgreed.brand}
-                  </span>
-                </div>
-                <div className="text-[10px] text-muted-foreground">
-                  Varianza: {stats.mostAgreed.variance.toFixed(2)} - "Tutti d'accordo!"
-                </div>
-              </CardContent>
-            </Card>
-          )}
+            {/* MEME: L'Esteta */}
+            {stats.theAesthete && (
+              <Card className="bg-purple-500/5">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">🧐</span>
+                    <span className="font-russo text-sm">L'Esteta</span>
+                  </div>
+                  <div className="font-display text-lg text-primary">{stats.theAesthete.username}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Media aspetto: {stats.theAesthete.categoryAverages.aspetto.toFixed(2)} - "L'occhio vuole la sua parte"
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Categoria insights */}
-          <div className="grid grid-cols-2 gap-2">
-            <Card className="bg-green-500/10">
-              <CardContent className="p-2">
-                <div className="text-[10px] text-muted-foreground">Categoria più alta</div>
-                <div className="text-lg">{stats.mostGenerouscategory.emoji}</div>
-                <div className="font-russo text-sm">{stats.mostGenerouscategory.name}</div>
-                <div className="font-display text-primary">{stats.mostGenerouscategory.avg.toFixed(2)}</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-red-500/10">
-              <CardContent className="p-2">
-                <div className="text-[10px] text-muted-foreground">Categoria più bassa</div>
-                <div className="text-lg">{stats.mostStingyCategory.emoji}</div>
-                <div className="font-russo text-sm">{stats.mostStingyCategory.name}</div>
-                <div className="font-display text-destructive">{stats.mostStingyCategory.avg.toFixed(2)}</div>
+            {/* MEME: Il Sommelier dell'Impasto */}
+            {stats.impastoSommelier && (
+              <Card className="bg-amber-500/5">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">🥖</span>
+                    <span className="font-russo text-sm">Il Sommelier</span>
+                  </div>
+                  <div className="font-display text-lg text-primary">{stats.impastoSommelier.username}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Media impasto: {stats.impastoSommelier.categoryAverages.impasto.toFixed(2)} - "Si sente il lievito madre?"
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* MEME: Il Rocker */}
+            {stats.theRocker && (
+              <Card className="bg-rose-500/5">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">🤘</span>
+                    <span className="font-russo text-sm">Il Rocker</span>
+                  </div>
+                  <div className="font-display text-lg text-primary">{stats.theRocker.username}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Media Tony Factor: {stats.theRocker.categoryAverages.tony_factor.toFixed(2)} - "Volume a palla!"
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* MEME: Bastian Contrario */}
+            {stats.theContrarian && (
+              <Card className="bg-slate-500/5">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">🦓</span>
+                    <span className="font-russo text-sm">Bastian Contrario</span>
+                  </div>
+                  <div className="font-display text-lg text-primary">{stats.theContrarian.username}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Deviazione media: {stats.theContrarian.deviation.toFixed(2)} - "Voi non capite nulla"
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Pizza più controversa */}
+            {stats.mostControversial && stats.mostControversial.variance > 0 && (
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">🎭</span>
+                    <span className="font-russo text-sm">Pizza più controversa</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">{stats.mostControversial.emoji || '🍕'}</span>
+                    <span className="font-display text-lg">
+                      #{stats.mostControversial.number} {stats.mostControversial.brand}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Varianza: {stats.mostControversial.variance.toFixed(2)} - "Amore o odio!"
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Pizza più unanime */}
+            {stats.mostAgreed && (
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">🤝</span>
+                    <span className="font-russo text-sm">Pizza più unanime</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">{stats.mostAgreed.emoji || '🍕'}</span>
+                    <span className="font-display text-lg">
+                      #{stats.mostAgreed.number} {stats.mostAgreed.brand}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Varianza: {stats.mostAgreed.variance.toFixed(2)} - "Tutti d'accordo!"
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Categoria insights */}
+            <div className="grid grid-cols-2 gap-2">
+              <Card className="bg-green-500/10">
+                <CardContent className="p-2">
+                  <div className="text-[10px] text-muted-foreground">Categoria più alta</div>
+                  <div className="text-lg">{stats.mostGenerouscategory.emoji}</div>
+                  <div className="font-russo text-sm">{stats.mostGenerouscategory.name}</div>
+                  <div className="font-display text-primary">{stats.mostGenerouscategory.avg.toFixed(2)}</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-red-500/10">
+                <CardContent className="p-2">
+                  <div className="text-[10px] text-muted-foreground">Categoria più bassa</div>
+                  <div className="text-lg">{stats.mostStingyCategory.emoji}</div>
+                  <div className="font-russo text-sm">{stats.mostStingyCategory.name}</div>
+                  <div className="font-display text-destructive">{stats.mostStingyCategory.avg.toFixed(2)}</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Self-voters */}
+            {stats.selfVoters.length > 0 && (
+              <Card className="border-destructive">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">🤡</span>
+                    <span className="font-russo text-sm">CHEATERS DETECTED!</span>
+                  </div>
+                  <div className="text-sm text-destructive">
+                    {stats.selfVoters.length} hanno votato la propria pizza! SHAME! 🔔
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Statistiche generali */}
+            <Card className="bg-gradient-to-br from-card to-muted/30">
+              <CardContent className="p-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xl">📈</span>
+                  <span className="font-russo text-sm">Riassunto Serata</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Pizze in gara:</span>
+                    <span className="font-display text-primary">{stats.totalPizzas}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Voti totali:</span>
+                    <span className="font-display text-secondary">{stats.totalVotes}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Votanti:</span>
+                    <span className="font-display text-accent">{stats.participatingPlayers}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Media globale:</span>
+                    <span className="font-display">{stats.globalAverage.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between col-span-2">
+                    <span className="text-muted-foreground">Voti/Giocatore:</span>
+                    <span className="font-display">
+                      {(stats.totalVotes / stats.participatingPlayers).toFixed(1)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between col-span-2">
+                    <span className="text-muted-foreground">Voti/Pizza:</span>
+                    <span className="font-display">
+                      {(stats.totalVotes / stats.totalPizzas).toFixed(1)}
+                    </span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* Self-voters */}
-          {stats.selfVoters.length > 0 && (
-            <Card className="border-destructive">
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">🤡</span>
-                  <span className="font-russo text-sm">CHEATERS DETECTED!</span>
-                </div>
-                <div className="text-sm text-destructive">
-                  {stats.selfVoters.length} hanno votato la propria pizza! SHAME! 🔔
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Statistiche generali */}
-          <Card className="bg-gradient-to-br from-card to-muted/30">
-            <CardContent className="p-3">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xl">📈</span>
-                <span className="font-russo text-sm">Riassunto Serata</span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Pizze in gara:</span>
-                  <span className="font-display text-primary">{stats.totalPizzas}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Voti totali:</span>
-                  <span className="font-display text-secondary">{stats.totalVotes}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Votanti:</span>
-                  <span className="font-display text-accent">{stats.participatingPlayers}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Media globale:</span>
-                  <span className="font-display">{stats.globalAverage.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between col-span-2">
-                  <span className="text-muted-foreground">Voti/Giocatore:</span>
-                  <span className="font-display">
-                    {(stats.totalVotes / stats.participatingPlayers).toFixed(1)}
-                  </span>
-                </div>
-                <div className="flex justify-between col-span-2">
-                  <span className="text-muted-foreground">Voti/Pizza:</span>
-                  <span className="font-display">
-                    {(stats.totalVotes / stats.totalPizzas).toFixed(1)}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
 
