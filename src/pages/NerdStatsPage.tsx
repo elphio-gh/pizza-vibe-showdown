@@ -166,7 +166,7 @@ const NerdStatsPage: React.FC = () => {
           vote,
           score: calculateVoteScore(vote)
         };
-      }).sort((a, b) => a.pizza.number - b.pizza.number);
+      }).sort((a, b) => b.score - a.score);
 
       return {
         id: player.id,
@@ -179,7 +179,7 @@ const NerdStatsPage: React.FC = () => {
         categoryAverages,
         votesGiven
       };
-    }).filter(p => p.totalVotes > 0);
+    }).filter(p => p.totalVotes > 0).sort((a, b) => a.username.localeCompare(b.username));
 
     // 4. CLASSIFICHE VOTANTI
     const generousVoters = [...playerStats].sort((a, b) => b.averageGiven - a.averageGiven);
@@ -649,8 +649,9 @@ const NerdStatsPage: React.FC = () => {
                         <div>
                           <div className="text-[10px] text-muted-foreground mb-2">Voti dati:</div>
                           <div className="space-y-1 max-h-48 overflow-y-auto">
-                            {player.votesGiven.map(v => (
+                            {player.votesGiven.map((v, idx) => (
                               <div key={v.vote.id} className="flex items-center gap-2 text-[11px] bg-muted/30 rounded p-1.5">
+                                <span className="font-russo w-4 text-center text-muted-foreground">{idx + 1}</span>
                                 <span>{v.pizza.emoji || '🍕'}</span>
                                 <span className="flex-1 truncate font-russo">#{v.pizza.number} {v.pizza.brand} - {v.pizza.flavor}</span>
                                 <span className="font-display text-secondary">{v.score.toFixed(1)}</span>
